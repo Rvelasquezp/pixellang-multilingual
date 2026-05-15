@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "wp-multilingual/language-switcher",
+	"version": "1.0.0",
+	"title": "Language Switcher",
+	"category": "widgets",
+	"icon": "translation",
+	"description": "Displays a language switcher for WP Multilingual.",
+	"textdomain": "wp-multilingual",
+	"attributes": {
+		"style": {
+			"type": "string",
+			"default": "flags",
+			"enum": ["flags", "text", "dropdown"]
+		},
+		"showLabel": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["left", "center", "right"]
+	},
+	"render": "render.php"
+}

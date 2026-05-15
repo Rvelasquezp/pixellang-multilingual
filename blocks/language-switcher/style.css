@@ -1,0 +1,9 @@
+.wpm-language-switcher { display: inline-flex; align-items: center; }
+.wpm-lang-list { list-style: none; margin: 0; padding: 0; display: flex; gap: .5rem; }
+.wpm-lang-item { display: inline-flex; align-items: center; }
+.wpm-lang-link, .wpm-lang-current { text-decoration: none; padding: 2px 6px; border-radius: 3px; font-size: .875rem; font-weight: 500; text-transform: uppercase; }
+.wpm-lang-current { opacity: .5; cursor: default; }
+.wpm-lang-link:hover { text-decoration: underline; }
+.wpm-style-dropdown select { padding: 4px 8px; border-radius: 4px; border: 1px solid currentColor; background: transparent; font-size: .875rem; cursor: pointer; }
+.wpm-language-switcher.aligncenter { justify-content: center; width: 100%; }
+.wpm-language-switcher.alignright  { justify-content: flex-end; width: 100%; }

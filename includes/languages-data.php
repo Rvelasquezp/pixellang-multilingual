@@ -1,0 +1,60 @@
+<?php
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Master list of supported languages.
+ * Keys: 2-letter ISO 639-1 slug.
+ */
+function wpm_get_available_languages() {
+	return array(
+		'fr' => array( 'label' => 'Français',            'locale' => 'fr_FR', 'flag' => '🇫🇷', 'english' => 'French' ),
+		'en' => array( 'label' => 'English',              'locale' => 'en_US', 'flag' => '🇺🇸', 'english' => 'English' ),
+		'es' => array( 'label' => 'Español',              'locale' => 'es_ES', 'flag' => '🇪🇸', 'english' => 'Spanish' ),
+		'de' => array( 'label' => 'Deutsch',              'locale' => 'de_DE', 'flag' => '🇩🇪', 'english' => 'German' ),
+		'it' => array( 'label' => 'Italiano',             'locale' => 'it_IT', 'flag' => '🇮🇹', 'english' => 'Italian' ),
+		'pt' => array( 'label' => 'Português',            'locale' => 'pt_PT', 'flag' => '🇵🇹', 'english' => 'Portuguese' ),
+		'nl' => array( 'label' => 'Nederlands',           'locale' => 'nl_NL', 'flag' => '🇳🇱', 'english' => 'Dutch' ),
+		'ru' => array( 'label' => 'Русский',              'locale' => 'ru_RU', 'flag' => '🇷🇺', 'english' => 'Russian' ),
+		'zh' => array( 'label' => '中文',                  'locale' => 'zh_CN', 'flag' => '🇨🇳', 'english' => 'Chinese' ),
+		'ja' => array( 'label' => '日本語',                'locale' => 'ja',    'flag' => '🇯🇵', 'english' => 'Japanese' ),
+		'ko' => array( 'label' => '한국어',                'locale' => 'ko_KR', 'flag' => '🇰🇷', 'english' => 'Korean' ),
+		'ar' => array( 'label' => 'العربية',              'locale' => 'ar',    'flag' => '🇸🇦', 'english' => 'Arabic' ),
+		'hi' => array( 'label' => 'हिन्दी',               'locale' => 'hi_IN', 'flag' => '🇮🇳', 'english' => 'Hindi' ),
+		'tr' => array( 'label' => 'Türkçe',               'locale' => 'tr_TR', 'flag' => '🇹🇷', 'english' => 'Turkish' ),
+		'pl' => array( 'label' => 'Polski',               'locale' => 'pl_PL', 'flag' => '🇵🇱', 'english' => 'Polish' ),
+		'sv' => array( 'label' => 'Svenska',              'locale' => 'sv_SE', 'flag' => '🇸🇪', 'english' => 'Swedish' ),
+		'da' => array( 'label' => 'Dansk',                'locale' => 'da_DK', 'flag' => '🇩🇰', 'english' => 'Danish' ),
+		'nb' => array( 'label' => 'Norsk',                'locale' => 'nb_NO', 'flag' => '🇳🇴', 'english' => 'Norwegian' ),
+		'fi' => array( 'label' => 'Suomi',                'locale' => 'fi',    'flag' => '🇫🇮', 'english' => 'Finnish' ),
+		'cs' => array( 'label' => 'Čeština',              'locale' => 'cs_CZ', 'flag' => '🇨🇿', 'english' => 'Czech' ),
+		'sk' => array( 'label' => 'Slovenčina',           'locale' => 'sk_SK', 'flag' => '🇸🇰', 'english' => 'Slovak' ),
+		'hu' => array( 'label' => 'Magyar',               'locale' => 'hu_HU', 'flag' => '🇭🇺', 'english' => 'Hungarian' ),
+		'ro' => array( 'label' => 'Română',               'locale' => 'ro_RO', 'flag' => '🇷🇴', 'english' => 'Romanian' ),
+		'bg' => array( 'label' => 'Български',            'locale' => 'bg_BG', 'flag' => '🇧🇬', 'english' => 'Bulgarian' ),
+		'hr' => array( 'label' => 'Hrvatski',             'locale' => 'hr',    'flag' => '🇭🇷', 'english' => 'Croatian' ),
+		'uk' => array( 'label' => 'Українська',           'locale' => 'uk',    'flag' => '🇺🇦', 'english' => 'Ukrainian' ),
+		'el' => array( 'label' => 'Ελληνικά',             'locale' => 'el',    'flag' => '🇬🇷', 'english' => 'Greek' ),
+		'he' => array( 'label' => 'עברית',                'locale' => 'he_IL', 'flag' => '🇮🇱', 'english' => 'Hebrew' ),
+		'fa' => array( 'label' => 'فارسی',                'locale' => 'fa_IR', 'flag' => '🇮🇷', 'english' => 'Persian' ),
+		'id' => array( 'label' => 'Bahasa Indonesia',     'locale' => 'id_ID', 'flag' => '🇮🇩', 'english' => 'Indonesian' ),
+		'ms' => array( 'label' => 'Bahasa Melayu',        'locale' => 'ms_MY', 'flag' => '🇲🇾', 'english' => 'Malay' ),
+		'th' => array( 'label' => 'ภาษาไทย',             'locale' => 'th',    'flag' => '🇹🇭', 'english' => 'Thai' ),
+		'vi' => array( 'label' => 'Tiếng Việt',           'locale' => 'vi',    'flag' => '🇻🇳', 'english' => 'Vietnamese' ),
+		'ca' => array( 'label' => 'Català',               'locale' => 'ca',    'flag' => '🏳️',  'english' => 'Catalan' ),
+		'eu' => array( 'label' => 'Euskara',              'locale' => 'eu',    'flag' => '🏳️',  'english' => 'Basque' ),
+		'gl' => array( 'label' => 'Galego',               'locale' => 'gl_ES', 'flag' => '🏳️',  'english' => 'Galician' ),
+		'lt' => array( 'label' => 'Lietuvių',             'locale' => 'lt_LT', 'flag' => '🇱🇹', 'english' => 'Lithuanian' ),
+		'lv' => array( 'label' => 'Latviešu',             'locale' => 'lv',    'flag' => '🇱🇻', 'english' => 'Latvian' ),
+		'et' => array( 'label' => 'Eesti',                'locale' => 'et',    'flag' => '🇪🇪', 'english' => 'Estonian' ),
+		'sr' => array( 'label' => 'Српски',               'locale' => 'sr_RS', 'flag' => '🇷🇸', 'english' => 'Serbian' ),
+		'sl' => array( 'label' => 'Slovenščina',          'locale' => 'sl_SI', 'flag' => '🇸🇮', 'english' => 'Slovenian' ),
+		'sq' => array( 'label' => 'Shqip',                'locale' => 'sq',    'flag' => '🇦🇱', 'english' => 'Albanian' ),
+		'mk' => array( 'label' => 'Македонски',           'locale' => 'mk_MK', 'flag' => '🇲🇰', 'english' => 'Macedonian' ),
+		'af' => array( 'label' => 'Afrikaans',            'locale' => 'af',    'flag' => '🇿🇦', 'english' => 'Afrikaans' ),
+		'sw' => array( 'label' => 'Kiswahili',            'locale' => 'sw',    'flag' => '🇰🇪', 'english' => 'Swahili' ),
+		'bn' => array( 'label' => 'বাংলা',               'locale' => 'bn_BD', 'flag' => '🇧🇩', 'english' => 'Bengali' ),
+		'ur' => array( 'label' => 'اردو',                 'locale' => 'ur',    'flag' => '🇵🇰', 'english' => 'Urdu' ),
+		'ta' => array( 'label' => 'தமிழ்',               'locale' => 'ta_IN', 'flag' => '🇮🇳', 'english' => 'Tamil' ),
+		'uk' => array( 'label' => 'Українська',           'locale' => 'uk',    'flag' => '🇺🇦', 'english' => 'Ukrainian' ),
+	);
+}
