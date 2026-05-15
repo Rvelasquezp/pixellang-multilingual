@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Multilingual
- * Plugin URI:  https://github.com/ricardovelasquez/wp-multilingual
+ * Plugin URI:  https://github.com/Rvelasquezp/pixellang-multilingual
  * Description: Plugin multilingüe tipo WPML — gestión de idiomas, URLs, SEO hreflang y bloque language-switcher.
  * Version:     1.0.0
  * Author:      Ricardo Velasquez
+ * Author URI:  https://ingcloud.ca
  * License:     GPL-2.0-or-later
  * Text Domain: wp-multilingual
  * Domain Path: /languages

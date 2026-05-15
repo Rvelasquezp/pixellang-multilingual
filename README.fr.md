@@ -183,4 +183,7 @@ add_filter( 'wpm_detected_language', function( $lang ) {
 
 **Ricardo Velasquez — Agence Pixel**
 
+- 🌐 Web : [ingcloud.ca](https://ingcloud.ca)
+- 🐙 GitHub : [github.com/Rvelasquezp/pixellang-multilingual](https://github.com/Rvelasquezp/pixellang-multilingual)
+
 Construit avec Claude Code.
