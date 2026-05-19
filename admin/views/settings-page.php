@@ -30,10 +30,11 @@ wp_localize_script( 'wpm-admin', 'wpmData', array(
 		     TAB NAV
 		     ===================================================================== -->
 		<nav class="wpm-tabs">
-			<a href="#wpm-tab-languages" class="wpm-tab active"><?php esc_html_e( 'Languages', 'wp-multilingual' ); ?></a>
-			<a href="#wpm-tab-menus"     class="wpm-tab"><?php esc_html_e( 'Menus', 'wp-multilingual' ); ?></a>
-			<a href="#wpm-tab-forms"     class="wpm-tab"><?php esc_html_e( 'Gravity Forms', 'wp-multilingual' ); ?></a>
-			<a href="#wpm-tab-pages"     class="wpm-tab"><?php esc_html_e( 'Page Map', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-languages"   class="wpm-tab active"><?php esc_html_e( 'Languages', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-post-types"  class="wpm-tab"><?php esc_html_e( 'Post Types', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-menus"       class="wpm-tab"><?php esc_html_e( 'Menus', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-forms"       class="wpm-tab"><?php esc_html_e( 'Gravity Forms', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-pages"       class="wpm-tab"><?php esc_html_e( 'Page Map', 'wp-multilingual' ); ?></a>
 		</nav>
 
 		<!-- =====================================================================
@@ -111,6 +112,68 @@ wp_localize_script( 'wpm-admin', 'wpmData', array(
 
 			</div><!-- .wpm-two-col -->
 		</div><!-- #wpm-tab-languages -->
+
+		<!-- =====================================================================
+		     TAB: POST TYPES
+		     ===================================================================== -->
+		<div id="wpm-tab-post-types" class="wpm-tab-panel" style="display:none">
+			<h2><?php esc_html_e( 'Post Types for Translation', 'wp-multilingual' ); ?></h2>
+			<p class="description">
+				<?php esc_html_e( 'Select which post types will have the Language & Translations panel in their editor. Page and Post are always enabled.', 'wp-multilingual' ); ?>
+			</p>
+
+			<?php
+			$enabled_types   = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+			$available_types = WPM_Admin::get_translatable_post_types();
+			?>
+
+			<table class="widefat wpm-table">
+				<thead>
+					<tr>
+						<th style="width:40px"><?php esc_html_e( 'Enable', 'wp-multilingual' ); ?></th>
+						<th><?php esc_html_e( 'Post Type', 'wp-multilingual' ); ?></th>
+						<th><?php esc_html_e( 'Slug', 'wp-multilingual' ); ?></th>
+						<th><?php esc_html_e( 'Supports', 'wp-multilingual' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php foreach ( $available_types as $slug => $obj ) :
+					$is_core     = in_array( $slug, array( 'page', 'post' ), true );
+					$is_enabled  = in_array( $slug, $enabled_types, true );
+					$supports    = array();
+					if ( post_type_supports( $slug, 'title' ) )     $supports[] = 'title';
+					if ( post_type_supports( $slug, 'editor' ) )    $supports[] = 'editor';
+					if ( post_type_supports( $slug, 'thumbnail' ) ) $supports[] = 'thumbnail';
+				?>
+					<tr>
+						<td style="text-align:center">
+							<input type="checkbox"
+								name="wpm_post_types[]"
+								value="<?php echo esc_attr( $slug ); ?>"
+								<?php checked( $is_enabled || $is_core ); ?>
+								<?php disabled( $is_core ); ?>
+							/>
+						</td>
+						<td>
+							<strong><?php echo esc_html( $obj->labels->singular_name ); ?></strong>
+							<?php if ( $is_core ) : ?>
+								<span class="wpm-picker-badge" style="margin-left:6px"><?php esc_html_e( 'Always on', 'wp-multilingual' ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td><code><?php echo esc_html( $slug ); ?></code></td>
+						<td><small style="color:#888"><?php echo esc_html( implode( ', ', $supports ) ); ?></small></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+
+			<?php
+			// Always submit page + post even if checkboxes are unchecked.
+			foreach ( array( 'page', 'post' ) as $core_type ) :
+			?>
+				<input type="hidden" name="wpm_post_types[]" value="<?php echo esc_attr( $core_type ); ?>" />
+			<?php endforeach; ?>
+		</div><!-- #wpm-tab-post-types -->
 
 		<!-- =====================================================================
 		     TAB: MENUS

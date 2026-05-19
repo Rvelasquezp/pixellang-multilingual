@@ -154,8 +154,9 @@ class WPM_Meta_Box {
 	// -------------------------------------------------------------------------
 
 	public function add_meta_box() {
-		// Pages & posts — language + translation links.
-		foreach ( array( 'page', 'post' ) as $screen ) {
+		// All enabled post types — language + translation links.
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		foreach ( $post_types as $screen ) {
 			add_meta_box(
 				'wpm-translations',
 				__( '🌐 Language & Translations', 'wp-multilingual' ),
@@ -360,7 +361,8 @@ class WPM_Meta_Box {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
-		if ( ! in_array( $post->post_type, array( 'page', 'post' ), true ) ) {
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		if ( ! in_array( $post->post_type, $post_types, true ) ) {
 			return;
 		}
 
@@ -456,9 +458,11 @@ class WPM_Meta_Box {
 	 * Excludes the current page being edited.
 	 */
 	private function get_pages_for_language( $lang, $exclude_id ) {
-		// Pages explicitly set to this language.
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+
+		// Posts explicitly set to this language.
 		$assigned = get_posts( array(
-			'post_type'      => array( 'page', 'post' ),
+			'post_type'      => $post_types,
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
 			'exclude'        => array( $exclude_id ),
@@ -472,9 +476,9 @@ class WPM_Meta_Box {
 			'order'   => 'ASC',
 		) );
 
-		// Pages with no language set yet.
+		// Posts with no language set yet.
 		$unassigned = get_posts( array(
-			'post_type'      => array( 'page', 'post' ),
+			'post_type'      => $post_types,
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
 			'exclude'        => array( $exclude_id ),

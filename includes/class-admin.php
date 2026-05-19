@@ -31,10 +31,11 @@ class WPM_Admin {
 	}
 
 	public function register_settings() {
-		register_setting( 'wpm_settings', 'wpm_languages', array( 'sanitize_callback' => array( $this, 'sanitize_languages' ) ) );
-		register_setting( 'wpm_settings', 'wpm_menus',     array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
-		register_setting( 'wpm_settings', 'wpm_forms',     array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
-		register_setting( 'wpm_settings', 'wpm_page_map',  array( 'sanitize_callback' => array( $this, 'sanitize_page_map' ) ) );
+		register_setting( 'wpm_settings', 'wpm_languages',   array( 'sanitize_callback' => array( $this, 'sanitize_languages' ) ) );
+		register_setting( 'wpm_settings', 'wpm_menus',       array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
+		register_setting( 'wpm_settings', 'wpm_forms',       array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
+		register_setting( 'wpm_settings', 'wpm_page_map',    array( 'sanitize_callback' => array( $this, 'sanitize_page_map' ) ) );
+		register_setting( 'wpm_settings', 'wpm_post_types',  array( 'sanitize_callback' => array( $this, 'sanitize_post_types' ) ) );
 	}
 
 	public function enqueue_assets( $hook ) {
@@ -114,5 +115,46 @@ class WPM_Admin {
 			$clean[ sanitize_key( $group_key ) ] = $clean_group;
 		}
 		return $clean;
+	}
+
+	public function sanitize_post_types( $input ) {
+		if ( ! is_array( $input ) ) {
+			return array( 'page', 'post' );
+		}
+		$allowed = array_keys( $this->get_translatable_post_types() );
+		$clean   = array();
+		foreach ( $input as $type ) {
+			$type = sanitize_key( $type );
+			if ( in_array( $type, $allowed, true ) ) {
+				$clean[] = $type;
+			}
+		}
+		// page and post are always included.
+		foreach ( array( 'page', 'post' ) as $required ) {
+			if ( ! in_array( $required, $clean, true ) ) {
+				$clean[] = $required;
+			}
+		}
+		return $clean;
+	}
+
+	/**
+	 * Returns all public post types that can be enabled for translation.
+	 * Excludes internal WP types.
+	 */
+	public static function get_translatable_post_types() {
+		$excluded = array( 'attachment', 'revision', 'nav_menu_item', 'custom_css',
+		                   'customize_changeset', 'oembed_cache', 'user_request',
+		                   'wp_block', 'wp_template', 'wp_template_part',
+		                   'wp_global_styles', 'wp_navigation', 'wp_font_face', 'wp_font_family' );
+
+		$types  = get_post_types( array( 'show_ui' => true ), 'objects' );
+		$result = array();
+		foreach ( $types as $slug => $obj ) {
+			if ( ! in_array( $slug, $excluded, true ) ) {
+				$result[ $slug ] = $obj;
+			}
+		}
+		return $result;
 	}
 }

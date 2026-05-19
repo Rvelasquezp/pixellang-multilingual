@@ -9,11 +9,18 @@ class WPM_Admin_Columns {
 	private static $instance = null;
 
 	private function __construct() {
-		foreach ( array( 'page', 'post' ) as $type ) {
-			add_filter( "manage_{$type}s_columns",              array( $this, 'add_columns' ) );
-			add_action( "manage_{$type}s_custom_column",        array( $this, 'render_column' ), 10, 2 );
-		}
+		add_action( 'admin_init', array( $this, 'register_column_hooks' ) );
 		add_action( 'admin_head', array( $this, 'column_styles' ) );
+	}
+
+	public function register_column_hooks() {
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		foreach ( $post_types as $type ) {
+			add_filter( "manage_{$type}s_columns",       array( $this, 'add_columns' ) );
+			add_action( "manage_{$type}s_custom_column", array( $this, 'render_column' ), 10, 2 );
+		}
+		add_action( 'quick_edit_custom_box', array( $this, 'render_quick_edit_box' ), 10, 2 );
+		add_action( 'save_post',             array( $this, 'save_quick_edit' ), 10, 2 );
 	}
 
 	public static function instance() {
@@ -45,6 +52,7 @@ class WPM_Admin_Columns {
 	// -------------------------------------------------------------------------
 
 	public function render_column( $column, $post_id ) {
+		$post_type = get_post_type( $post_id );
 		if ( 'wpm_language' !== $column && 'wpm_translations' !== $column ) {
 			return;
 		}
@@ -62,6 +70,9 @@ class WPM_Admin_Columns {
 
 		// ---- Language column ----
 		if ( 'wpm_language' === $column ) {
+			// Hidden span used by Quick Edit JS to pre-populate the select.
+			echo '<span class="wpm-qe-lang hidden">' . esc_html( $lang ) . '</span>';
+
 			if ( ! $lang || ! isset( $languages[ $lang ] ) ) {
 				echo '<span class="wpm-col-unset">' . esc_html__( 'Not set', 'wp-multilingual' ) . '</span>';
 				return;
@@ -107,7 +118,7 @@ class WPM_Admin_Columns {
 						. '</a>'
 						. '</span>';
 				} else {
-					$new_url = admin_url( 'post-new.php?post_type=page' );
+					$new_url = admin_url( 'post-new.php?post_type=' . urlencode( $post_type ) );
 					$parts[] = '<span class="wpm-trans-item wpm-trans-missing">'
 						. '<span class="wpm-trans-flag">' . esc_html( $flag ) . '</span>'
 						. '<span class="wpm-trans-none">' . esc_html( $cfg['label'] ) . '</span>'
@@ -132,7 +143,12 @@ class WPM_Admin_Columns {
 
 	public function column_styles() {
 		$screen = get_current_screen();
-		if ( ! $screen || ! in_array( $screen->id, array( 'edit-page', 'edit-post' ), true ) ) {
+		if ( ! $screen ) {
+			return;
+		}
+		$post_types    = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		$screen_ids    = array_map( function( $t ) { return 'edit-' . $t; }, $post_types );
+		if ( ! in_array( $screen->id, $screen_ids, true ) ) {
 			return;
 		}
 		?>
@@ -170,8 +186,90 @@ class WPM_Admin_Columns {
 		.wpm-trans-add  { color: #2271b1 !important; }
 		.wpm-trans-none { color: #aaa; font-size: 12px; flex: 1; }
 		.wpm-trans-missing .wpm-trans-none { font-style: italic; }
+		.wpm-qe-fieldset { margin-top: 8px; }
+		.wpm-qe-fieldset .title { min-width: 100px; }
 		</style>
+		<script>
+		jQuery(function($) {
+			if (typeof inlineEditPost === 'undefined') return;
+			var _edit = inlineEditPost.edit;
+			inlineEditPost.edit = function(id) {
+				_edit.apply(this, arguments);
+				var postId = (typeof id === 'object') ? this.getId(id) : id;
+				var lang   = $('#post-' + postId + ' .wpm-qe-lang').text().trim();
+				$('select[name="wpm_quick_lang"]').val(lang);
+			};
+		});
+		</script>
 		<?php
+	}
+
+	// -------------------------------------------------------------------------
+	// Quick Edit
+	// -------------------------------------------------------------------------
+
+	public function render_quick_edit_box( $column_name, $post_type ) {
+		if ( 'wpm_language' !== $column_name ) {
+			return;
+		}
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		if ( ! in_array( $post_type, $post_types, true ) ) {
+			return;
+		}
+
+		$manager   = WPM_Language_Manager::instance();
+		$languages = $manager->get_all();
+		$all       = wpm_get_available_languages();
+
+		if ( empty( $languages ) ) {
+			return;
+		}
+		?>
+		<fieldset class="inline-edit-col-left wpm-qe-fieldset">
+			<div class="inline-edit-col">
+				<label>
+					<span class="title"><?php esc_html_e( 'Language', 'wp-multilingual' ); ?></span>
+					<select name="wpm_quick_lang" id="wpm-qe-lang">
+						<option value=""><?php esc_html_e( '— not set —', 'wp-multilingual' ); ?></option>
+						<?php foreach ( $languages as $slug => $cfg ) :
+							$flag = isset( $all[ $slug ]['flag'] ) ? $all[ $slug ]['flag'] : '🌐';
+						?>
+							<option value="<?php echo esc_attr( $slug ); ?>">
+								<?php echo esc_html( $flag . ' ' . $cfg['label'] ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</label>
+			</div>
+		</fieldset>
+		<?php
+		wp_nonce_field( 'wpm_quick_edit_nonce', 'wpm_qe_nonce' );
+	}
+
+	public function save_quick_edit( $post_id, $post ) {
+		if ( ! isset( $_POST['wpm_qe_nonce'] ) ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( $_POST['wpm_qe_nonce'], 'wpm_quick_edit_nonce' ) ) {
+			return;
+		}
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		if ( ! in_array( $post->post_type, $post_types, true ) ) {
+			return;
+		}
+
+		$lang = isset( $_POST['wpm_quick_lang'] ) ? sanitize_key( $_POST['wpm_quick_lang'] ) : '';
+		if ( $lang ) {
+			update_post_meta( $post_id, '_wpm_language', $lang );
+		} else {
+			delete_post_meta( $post_id, '_wpm_language' );
+		}
 	}
 
 	// -------------------------------------------------------------------------

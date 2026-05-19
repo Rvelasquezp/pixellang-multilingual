@@ -61,6 +61,9 @@ function wpm_activate() {
 	if ( false === get_option( 'wpm_page_map' ) ) {
 		update_option( 'wpm_page_map', array() );
 	}
+	if ( false === get_option( 'wpm_post_types' ) ) {
+		update_option( 'wpm_post_types', array( 'page', 'post' ) );
+	}
 }
 
 register_deactivation_hook( __FILE__, 'wpm_deactivate' );
