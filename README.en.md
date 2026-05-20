@@ -168,6 +168,60 @@ Edit `includes/languages-data.php` and add an entry to the array:
 ),
 ```
 
+### Getting the current language in PHP
+
+You can get the active language slug (`fr`, `en`, `es`…) from any PHP file in your theme or plugin:
+
+```php
+$lang = WPM_Language_Manager::instance()->get_current();
+// Returns: 'fr', 'en', 'es', etc.
+```
+
+**In `functions.php` or AJAX functions:**
+
+```php
+function my_function() {
+    $lang = WPM_Language_Manager::instance()->get_current();
+    // use $lang...
+}
+```
+
+**Filter a WP_Query by language** (to show only posts in the active language):
+
+```php
+$lang = WPM_Language_Manager::instance()->get_current();
+
+$args = array(
+    'post_type'  => 'equipe',
+    'meta_query' => array(
+        array(
+            'key'   => '_wpm_language',
+            'value' => $lang,
+        ),
+    ),
+);
+$query = new WP_Query($args);
+```
+
+> The `_wpm_language` meta is assigned to each post from the editor (meta box) or via Quick Edit in the list table.
+
+**In AJAX functions** (`wp_ajax_*`) the `wpm_lang` cookie travels with the request, so `get_current()` returns the correct language automatically:
+
+```php
+add_action('wp_ajax_nopriv_my_action', function() {
+    $lang = WPM_Language_Manager::instance()->get_current();
+    $args = array(
+        'post_type'  => 'my_cpt',
+        'meta_query' => array(
+            array( 'key' => '_wpm_language', 'value' => $lang ),
+        ),
+    );
+    $query = new WP_Query($args);
+    // ...
+    wp_die();
+});
+```
+
 ### Available Hooks
 
 ```php

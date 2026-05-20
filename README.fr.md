@@ -168,6 +168,60 @@ Insérer le bloc **Language Switcher** depuis l'éditeur de blocs n'importe où 
 ),
 ```
 
+### Obtenir la langue actuelle en PHP
+
+Vous pouvez obtenir le slug de la langue active (`fr`, `en`, `es`…) depuis n'importe quel fichier PHP du thème ou d'une extension :
+
+```php
+$lang = WPM_Language_Manager::instance()->get_current();
+// Retourne : 'fr', 'en', 'es', etc.
+```
+
+**Dans `functions.php` ou dans des fonctions AJAX :**
+
+```php
+function ma_fonction() {
+    $lang = WPM_Language_Manager::instance()->get_current();
+    // utiliser $lang...
+}
+```
+
+**Filtrer un WP_Query par langue** (pour n'afficher que les posts dans la langue active) :
+
+```php
+$lang = WPM_Language_Manager::instance()->get_current();
+
+$args = array(
+    'post_type'  => 'equipe',
+    'meta_query' => array(
+        array(
+            'key'   => '_wpm_language',
+            'value' => $lang,
+        ),
+    ),
+);
+$query = new WP_Query($args);
+```
+
+> Le meta `_wpm_language` est assigné à chaque post depuis l'éditeur (meta box) ou via Quick Edit dans la liste des posts.
+
+**Dans les fonctions AJAX** (`wp_ajax_*`), le cookie `wpm_lang` est envoyé avec la requête, donc `get_current()` retourne automatiquement la bonne langue :
+
+```php
+add_action('wp_ajax_nopriv_mon_action', function() {
+    $lang = WPM_Language_Manager::instance()->get_current();
+    $args = array(
+        'post_type'  => 'mon_cpt',
+        'meta_query' => array(
+            array( 'key' => '_wpm_language', 'value' => $lang ),
+        ),
+    );
+    $query = new WP_Query($args);
+    // ...
+    wp_die();
+});
+```
+
 ### Hooks disponibles
 
 ```php
