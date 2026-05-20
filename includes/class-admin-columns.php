@@ -19,6 +19,10 @@ class WPM_Admin_Columns {
 			add_filter( "manage_{$type}s_columns",       array( $this, 'add_columns' ) );
 			add_action( "manage_{$type}s_custom_column", array( $this, 'render_column' ), 10, 2 );
 		}
+		// Always show Language column on the navigation menus list (language stored in wpm_menus).
+		add_filter( 'manage_wp_navigations_columns',       array( $this, 'add_columns' ) );
+		add_action( 'manage_wp_navigations_custom_column', array( $this, 'render_column' ), 10, 2 );
+
 		add_action( 'quick_edit_custom_box', array( $this, 'render_quick_edit_box' ), 10, 2 );
 		add_action( 'save_post',             array( $this, 'save_quick_edit' ), 10, 2 );
 	}
@@ -66,7 +70,19 @@ class WPM_Admin_Columns {
 			return;
 		}
 
-		$lang = get_post_meta( $post_id, '_wpm_language', true );
+		// Navigation menus store their language in wpm_menus option, not post meta.
+		if ( 'wp_navigation' === $post_type ) {
+			$menus = get_option( 'wpm_menus', array() );
+			$lang  = '';
+			foreach ( $menus as $slug => $nav_id ) {
+				if ( (int) $nav_id === $post_id ) {
+					$lang = $slug;
+					break;
+				}
+			}
+		} else {
+			$lang = get_post_meta( $post_id, '_wpm_language', true );
+		}
 
 		// ---- Language column ----
 		if ( 'wpm_language' === $column ) {
@@ -88,6 +104,11 @@ class WPM_Admin_Columns {
 
 		// ---- Translations column ----
 		if ( 'wpm_translations' === $column ) {
+			// Navigation menus don't use translation groups.
+			if ( 'wp_navigation' === $post_type ) {
+				echo '<span style="color:#aaa;">—</span>';
+				return;
+			}
 			$page_map = $manager->get_page_map();
 			$group    = $this->find_group( $post_id, $page_map );
 
@@ -146,8 +167,9 @@ class WPM_Admin_Columns {
 		if ( ! $screen ) {
 			return;
 		}
-		$post_types    = get_option( 'wpm_post_types', array( 'page', 'post' ) );
-		$screen_ids    = array_map( function( $t ) { return 'edit-' . $t; }, $post_types );
+		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
+		$screen_ids = array_map( function( $t ) { return 'edit-' . $t; }, $post_types );
+		$screen_ids[] = 'edit-wp_navigation';
 		if ( ! in_array( $screen->id, $screen_ids, true ) ) {
 			return;
 		}
@@ -172,7 +194,7 @@ class WPM_Admin_Columns {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			max-width: 110px;
+			max-width: 150px;
 			font-size: 12px;
 		}
 		.wpm-trans-edit,
@@ -262,6 +284,9 @@ class WPM_Admin_Columns {
 		$post_types = get_option( 'wpm_post_types', array( 'page', 'post' ) );
 		if ( ! in_array( $post->post_type, $post_types, true ) ) {
 			return;
+		}
+		if ( 'wp_navigation' === $post->post_type ) {
+			return; // Nav language is managed via Site Editor panel.
 		}
 
 		$lang = isset( $_POST['wpm_quick_lang'] ) ? sanitize_key( $_POST['wpm_quick_lang'] ) : '';
