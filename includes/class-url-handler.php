@@ -83,7 +83,8 @@ class WPM_Url_Handler {
 
 	private function get_redirect_url( $slug ) {
 		$referer = wp_get_referer();
-		if ( ! $referer ) {
+		// Ensure the referer belongs to this site before using it.
+		if ( ! $referer || ! wp_validate_redirect( $referer ) ) {
 			return home_url( '/' );
 		}
 		$post_id = url_to_postid( $referer );

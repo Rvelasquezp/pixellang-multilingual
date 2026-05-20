@@ -33,7 +33,7 @@ class WPM_Meta_Box {
 			'methods'             => 'POST',
 			'callback'            => array( $this, 'rest_save_nav_language' ),
 			'permission_callback' => function() {
-				return current_user_can( 'edit_posts' );
+				return current_user_can( 'edit_theme_options' );
 			},
 			'args' => array(
 				'nav_id' => array(
