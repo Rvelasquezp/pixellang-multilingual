@@ -18,7 +18,7 @@ $align_class = ! empty( $attributes['align'] ) ? 'align' . $attributes['align'] 
 			<?php foreach ( $languages as $slug => $cfg ) : ?>
 				<option value="<?php echo esc_url( $url_handler->switch_url( $slug ) ); ?>"
 					<?php selected( $slug, $current ); ?>>
-					<?php echo esc_html( isset( $cfg['label'] ) ? $cfg['label'] : strtoupper( $slug ) ); ?>
+					<?php echo esc_html( isset( $cfg['label'] ) ? $cfg['label'] : $slug  ); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -28,18 +28,18 @@ $align_class = ! empty( $attributes['align'] ) ? 'align' . $attributes['align'] 
 		<ul class="wpm-lang-list">
 			<?php foreach ( $languages as $slug => $cfg ) :
 				$is_active = ( $slug === $current );
-				$label     = isset( $cfg['label'] ) ? $cfg['label'] : strtoupper( $slug );
+				$label     = isset( $cfg['label'] ) ? $cfg['label'] : $slug ;
 				$url       = $url_handler->switch_url( $slug );
 			?>
 				<li class="wpm-lang-item<?php echo $is_active ? ' wpm-active' : ''; ?>">
 					<?php if ( $is_active ) : ?>
 						<span class="wpm-lang-current" aria-current="true">
-							<?php if ( $show_label ) echo esc_html( $label ); ?>
+							<?php echo esc_html( $slug  ); ?>
 						</span>
 					<?php else : ?>
 						<a href="<?php echo esc_url( $url ); ?>" hreflang="<?php echo esc_attr( $slug ); ?>"
 							rel="alternate" class="wpm-lang-link">
-							<?php if ( $show_label ) echo esc_html( $label ); ?>
+							<?php echo esc_html(  $slug  ); ?>
 						</a>
 					<?php endif; ?>
 				</li>

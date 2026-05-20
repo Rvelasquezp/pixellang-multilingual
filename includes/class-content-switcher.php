@@ -32,17 +32,20 @@ class WPM_Content_Switcher {
 			return $block_content;
 		}
 
-		$nav_post = get_post( $menu_id );
-		if ( ! $nav_post ) {
+		if ( ! get_post( $menu_id ) ) {
 			return $block_content;
 		}
 
-		$parsed = parse_blocks( $nav_post->post_content );
-		$output = '';
-		foreach ( $parsed as $inner ) {
-			$output .= render_block( $inner );
-		}
-		return $output;
+		// Render a full core/navigation block pointing to the target menu,
+		// keeping all original attributes (className, overlayMenu, etc.).
+		$swapped = array(
+			'blockName'    => 'core/navigation',
+			'attrs'        => array_merge( $block['attrs'], array( 'ref' => $menu_id ) ),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		return render_block( $swapped );
 	}
 
 	public function swap_gravity_form_block( $block_content, $block ) {

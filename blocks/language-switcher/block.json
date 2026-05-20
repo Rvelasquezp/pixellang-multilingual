@@ -8,6 +8,8 @@
 	"icon": "translation",
 	"description": "Displays a language switcher for WP Multilingual.",
 	"textdomain": "wp-multilingual",
+	"editorScript": "file:./editor.js",
+	"style": "file:./style.css",
 	"attributes": {
 		"style": {
 			"type": "string",
