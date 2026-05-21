@@ -6,6 +6,7 @@ $all_languages    = wpm_get_available_languages();
 $menus            = get_option( 'wpm_menus', array() );
 $forms            = get_option( 'wpm_forms', array() );
 $page_map         = get_option( 'wpm_page_map', array() );
+$template_map     = get_option( 'wpm_template_map', array() );
 $lang_slugs       = array_keys( $active_languages );
 
 // Pass all languages to JS.
@@ -35,6 +36,7 @@ wp_localize_script( 'wpm-admin', 'wpmData', array(
 			<a href="#wpm-tab-menus"       class="wpm-tab"><?php esc_html_e( 'Menus', 'wp-multilingual' ); ?></a>
 			<a href="#wpm-tab-forms"       class="wpm-tab"><?php esc_html_e( 'Gravity Forms', 'wp-multilingual' ); ?></a>
 			<a href="#wpm-tab-pages"       class="wpm-tab"><?php esc_html_e( 'Page Map', 'wp-multilingual' ); ?></a>
+			<a href="#wpm-tab-templates"   class="wpm-tab"><?php esc_html_e( 'Templates', 'wp-multilingual' ); ?></a>
 		</nav>
 
 		<!-- =====================================================================
@@ -292,6 +294,78 @@ wp_localize_script( 'wpm-admin', 'wpmData', array(
 				<span id="wpm-pagemap-slugs" style="display:none"><?php echo esc_attr( implode( ',', $lang_slugs ) ); ?></span>
 			</p>
 		</div>
+
+		<!-- =====================================================================
+		     TAB: TEMPLATES
+		     ===================================================================== -->
+		<div id="wpm-tab-templates" class="wpm-tab-panel" style="display:none">
+			<h2><?php esc_html_e( 'Template Parts per Language', 'wp-multilingual' ); ?></h2>
+			<p class="description">
+				<?php esc_html_e( 'Language versions of your template parts (header, footer, etc.). To assign a language to a template part, open it in the Site Editor — the "Template Languages" panel appears in the sidebar.', 'wp-multilingual' ); ?>
+			</p>
+
+			<?php if ( empty( $template_map ) ) : ?>
+				<div class="wpm-empty-notice" style="margin-top:16px">
+					<?php esc_html_e( 'No template parts assigned yet. Open a template part in the Site Editor and use the "🌐 Template Languages" panel to assign languages.', 'wp-multilingual' ); ?>
+				</div>
+			<?php else : ?>
+				<table class="widefat wpm-table" style="margin-top:16px">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Group', 'wp-multilingual' ); ?></th>
+							<?php foreach ( $active_languages as $slug => $cfg ) :
+								$avail = isset( $all_languages[ $slug ] ) ? $all_languages[ $slug ] : array();
+							?>
+								<th>
+									<?php echo isset( $avail['flag'] ) ? esc_html( $avail['flag'] ) : ''; ?>
+									<?php echo esc_html( $cfg['label'] ); ?>
+								</th>
+							<?php endforeach; ?>
+							<th><?php esc_html_e( 'Remove', 'wp-multilingual' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+					<?php foreach ( $template_map as $group_key => $group_langs ) :
+						$theme = get_stylesheet();
+					?>
+						<tr>
+							<td><strong><?php echo esc_html( $group_key ); ?></strong></td>
+							<?php foreach ( $active_languages as $slug => $cfg ) :
+								$info     = isset( $group_langs[ $slug ] ) ? $group_langs[ $slug ] : null;
+								$post_id  = $info ? (int) $info['id']   : 0;
+								$pt_slug  = $info ? esc_html( $info['slug'] ) : '';
+								$edit_url = $pt_slug ? admin_url( 'site-editor.php?p=' . rawurlencode( '/wp_template_part/' . $theme . '//' . $pt_slug ) . '&canvas=edit' ) : '';
+							?>
+								<td>
+									<?php if ( $info ) : ?>
+										<a href="<?php echo esc_url( $edit_url ); ?>" style="text-decoration:none">
+											<code><?php echo esc_html( $pt_slug ); ?></code> <span style="color:#2271b1">✏️</span>
+										</a>
+										<br><small style="color:#888">ID: <?php echo esc_html( $post_id ); ?></small>
+									<?php else : ?>
+										<span style="color:#bbb">—</span>
+									<?php endif; ?>
+								</td>
+							<?php endforeach; ?>
+							<td>
+								<button type="button" class="button wpm-remove-template-group" data-group="<?php echo esc_attr( $group_key ); ?>">✕</button>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
+
+			<p style="margin-top:20px; display:flex; gap:10px; align-items:center">
+				<a href="<?php echo esc_url( admin_url( 'site-editor.php?path=%2Fwp_template_part%2Fall' ) ); ?>" class="button">
+					<?php esc_html_e( '→ Open Template Parts in Site Editor', 'wp-multilingual' ); ?>
+				</a>
+				<button type="button" class="button" id="wpm-repair-templates">
+					🔧 <?php esc_html_e( 'Repair Template Parts', 'wp-multilingual' ); ?>
+				</button>
+				<span id="wpm-repair-status" style="font-size:13px"></span>
+			</p>
+		</div><!-- #wpm-tab-templates -->
 
 		<div class="wpm-save-bar">
 			<?php submit_button( __( 'Save Settings', 'wp-multilingual' ), 'primary large', 'submit', false ); ?>

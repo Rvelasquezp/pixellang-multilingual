@@ -26,6 +26,7 @@ require_once WPM_DIR . 'includes/class-hreflang.php';
 require_once WPM_DIR . 'includes/class-admin.php';
 require_once WPM_DIR . 'includes/class-meta-box.php';
 require_once WPM_DIR . 'includes/class-admin-columns.php';
+require_once WPM_DIR . 'includes/class-template-switcher.php';
 
 function wpm() {
 	static $instance = null;
@@ -38,6 +39,7 @@ function wpm() {
 		$instance->admin     = WPM_Admin::instance();
 		$instance->meta_box  = WPM_Meta_Box::instance();
 		$instance->columns   = WPM_Admin_Columns::instance();
+		$instance->templates = WPM_Template_Switcher::instance();
 	}
 	return $instance;
 }
@@ -63,6 +65,9 @@ function wpm_activate() {
 	}
 	if ( false === get_option( 'wpm_post_types' ) ) {
 		update_option( 'wpm_post_types', array( 'page', 'post' ) );
+	}
+	if ( false === get_option( 'wpm_template_map' ) ) {
+		update_option( 'wpm_template_map', array() );
 	}
 }
 

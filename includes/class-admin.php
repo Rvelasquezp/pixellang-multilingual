@@ -51,10 +51,14 @@ class WPM_Admin {
 		wp_enqueue_script(
 			'wpm-admin',
 			WPM_URL . 'admin/js/admin.js',
-			array( 'jquery' ),
+			array( 'jquery', 'wp-api-fetch' ),
 			WPM_VERSION,
 			true
 		);
+		wp_localize_script( 'wpm-admin', 'wpApiSettings', array(
+			'root'  => esc_url_raw( rest_url() ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+		) );
 	}
 
 	public function render_settings_page() {

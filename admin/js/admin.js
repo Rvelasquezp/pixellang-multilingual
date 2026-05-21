@@ -128,6 +128,54 @@ jQuery( function ( $ ) {
 	} );
 
 	// =========================================================================
+	// TEMPLATES — repair (add missing wp_theme taxonomy)
+	// =========================================================================
+	$( '#wpm-repair-templates' ).on( 'click', function () {
+		var $btn    = $( this );
+		var $status = $( '#wpm-repair-status' );
+		$btn.prop( 'disabled', true ).text( '🔧 Repairing…' );
+		$status.text( '' );
+
+		wp.apiFetch( {
+			path:   '/wpm/v1/template-repair',
+			method: 'POST',
+		} ).then( function ( res ) {
+			$btn.prop( 'disabled', false ).text( '🔧 Repair Template Parts' );
+			if ( res.fixed && res.fixed.length ) {
+				$status.css( 'color', '#0a6e3b' ).text( '✅ Fixed: ' + res.fixed.join( ', ' ) );
+			} else {
+				$status.css( 'color', '#0a6e3b' ).text( '✅ All good — nothing to repair.' );
+			}
+		} ).catch( function () {
+			$btn.prop( 'disabled', false ).text( '🔧 Repair Template Parts' );
+			$status.css( 'color', '#b32d2e' ).text( '❌ Error.' );
+		} );
+	} );
+
+	// =========================================================================
+	// TEMPLATES — remove group via AJAX
+	// =========================================================================
+	$( document ).on( 'click', '.wpm-remove-template-group', function () {
+		var $btn  = $( this );
+		var group = $btn.data( 'group' );
+		if ( ! group ) return;
+		if ( ! confirm( 'Remove template group "' + group + '"? The template parts themselves will not be deleted.' ) ) return;
+
+		$btn.prop( 'disabled', true ).text( '…' );
+
+		wp.apiFetch( {
+			path:   '/wpm/v1/template-group-remove',
+			method: 'POST',
+			data:   { group: group },
+		} ).then( function () {
+			$btn.closest( 'tr' ).fadeOut( 300, function () { $( this ).remove(); } );
+		} ).catch( function () {
+			$btn.prop( 'disabled', false ).text( '✕' );
+			alert( 'Error removing group.' );
+		} );
+	} );
+
+	// =========================================================================
 	// Utility
 	// =========================================================================
 	function escHtml( str ) {
