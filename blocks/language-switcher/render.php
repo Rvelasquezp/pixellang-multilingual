@@ -1,51 +1,75 @@
 <?php
+/**
+ * Language Switcher block markup.
+ *
+ * Class names (.wpm-lang-list, .wpm-lang-item, .wpm-active, .wpm-lang-link,
+ * .wpm-lang-current) are unchanged since 1.0 because themes style them.
+ *
+ * @package PixelLang_Multilingual
+ *
+ * @var array $attributes Block attributes.
+ */
+
 defined( 'ABSPATH' ) || exit;
 
-$manager     = WPM_Language_Manager::instance();
-$url_handler = WPM_Url_Handler::instance();
+$wpm_manager = WPM_Language_Manager::instance();
+$wpm_urls    = WPM_Url_Handler::instance();
+$wpm_current = $wpm_manager->get_current();
+$wpm_style   = isset( $attributes['style'] ) && in_array( $attributes['style'], array( 'flags', 'text', 'dropdown' ), true ) ? $attributes['style'] : 'flags';
+$wpm_hide    = ! empty( $attributes['hideCurrent'] );
+$wpm_strict  = ! empty( $attributes['hideMissing'] );
 
-$languages  = $manager->get_all();
-$current    = $manager->get_current();
-$style      = isset( $attributes['style'] )     ? $attributes['style']     : 'flags';
-$show_label = isset( $attributes['showLabel'] ) ? $attributes['showLabel'] : true;
-$align_class = ! empty( $attributes['align'] ) ? 'align' . $attributes['align'] : '';
+// One entry per language: url '' means "no translation" when hideMissing is on.
+$wpm_items = array();
+foreach ( $wpm_manager->get_all() as $wpm_slug => $wpm_cfg ) {
+	$wpm_is_current = $wpm_slug === $wpm_current;
+	$wpm_url        = $wpm_is_current ? '' : $wpm_urls->get_language_url( $wpm_slug, ! $wpm_strict );
+	if ( ( $wpm_is_current && $wpm_hide ) || ( ! $wpm_is_current && ! $wpm_url ) ) {
+		continue;
+	}
+	$wpm_items[ $wpm_slug ] = array(
+		'label'    => $wpm_cfg['label'],
+		'hreflang' => $wpm_manager->get_hreflang( $wpm_slug ),
+		'url'      => $wpm_url,
+		'current'  => $wpm_is_current,
+	);
+}
+if ( ! $wpm_items ) {
+	return;
+}
+
+$wpm_wrapper = get_block_wrapper_attributes(
+	array(
+		'class'      => 'wpm-language-switcher wpm-style-' . $wpm_style,
+		'aria-label' => __( 'Language', 'pixellang-multilingual' ),
+	)
+);
 ?>
-<div <?php echo get_block_wrapper_attributes( array( 'class' => 'wpm-language-switcher wpm-style-' . esc_attr( $style ) . ' ' . esc_attr( $align_class ) ) ); ?>>
-
-	<?php if ( 'dropdown' === $style ) : ?>
-
-		<select onchange="window.location.href=this.value" aria-label="<?php esc_attr_e( 'Select language', 'wp-multilingual' ); ?>">
-			<?php foreach ( $languages as $slug => $cfg ) : ?>
-				<option value="<?php echo esc_url( $url_handler->switch_url( $slug ) ); ?>"
-					<?php selected( $slug, $current ); ?>>
-					<?php echo esc_html( isset( $cfg['label'] ) ? $cfg['label'] : $slug  ); ?>
-				</option>
+<nav <?php echo $wpm_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by get_block_wrapper_attributes(). ?>>
+	<?php if ( 'dropdown' === $wpm_style ) : ?>
+		<?php $wpm_select_id = wp_unique_id( 'wpm-switcher-' ); ?>
+		<label class="screen-reader-text" for="<?php echo esc_attr( $wpm_select_id ); ?>"><?php esc_html_e( 'Choose a language', 'pixellang-multilingual' ); ?></label>
+		<select id="<?php echo esc_attr( $wpm_select_id ); ?>" data-wpm-switch>
+			<?php foreach ( $wpm_items as $wpm_slug => $wpm_item ) : ?>
+				<option value="<?php echo esc_url( $wpm_item['url'] ); ?>" lang="<?php echo esc_attr( $wpm_item['hreflang'] ); ?>" <?php selected( $wpm_item['current'] ); ?>><?php echo esc_html( $wpm_item['label'] ); ?></option>
 			<?php endforeach; ?>
 		</select>
-
 	<?php else : ?>
-
 		<ul class="wpm-lang-list">
-			<?php foreach ( $languages as $slug => $cfg ) :
-				$is_active = ( $slug === $current );
-				$label     = isset( $cfg['label'] ) ? $cfg['label'] : $slug ;
-				$url       = $url_handler->switch_url( $slug );
-			?>
-				<li class="wpm-lang-item<?php echo $is_active ? ' wpm-active' : ''; ?>">
-					<?php if ( $is_active ) : ?>
-						<span class="wpm-lang-current" aria-current="true">
-							<?php echo esc_html( $slug  ); ?>
-						</span>
+			<?php
+			foreach ( $wpm_items as $wpm_slug => $wpm_item ) :
+				$wpm_text = 'text' === $wpm_style ? $wpm_item['label'] : $wpm_slug;
+				// Codes get a full name, starting with the visible text (WCAG 2.5.3).
+				$wpm_aria = 'text' === $wpm_style ? '' : ' aria-label="' . esc_attr( sprintf( '%1$s (%2$s)', $wpm_slug, $wpm_item['label'] ) ) . '"';
+				?>
+				<li class="wpm-lang-item<?php echo $wpm_item['current'] ? ' wpm-active' : ''; ?>">
+					<?php if ( $wpm_item['current'] ) : ?>
+						<span class="wpm-lang-current" aria-current="true" lang="<?php echo esc_attr( $wpm_item['hreflang'] ); ?>"<?php echo $wpm_aria; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>><?php echo esc_html( $wpm_text ); ?></span>
 					<?php else : ?>
-						<a href="<?php echo esc_url( $url ); ?>" hreflang="<?php echo esc_attr( $slug ); ?>"
-							rel="alternate" class="wpm-lang-link">
-							<?php echo esc_html(  $slug  ); ?>
-						</a>
+						<a class="wpm-lang-link" href="<?php echo esc_url( $wpm_item['url'] ); ?>" hreflang="<?php echo esc_attr( $wpm_item['hreflang'] ); ?>" lang="<?php echo esc_attr( $wpm_item['hreflang'] ); ?>"<?php echo $wpm_aria; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>><?php echo esc_html( $wpm_text ); ?></a>
 					<?php endif; ?>
 				</li>
 			<?php endforeach; ?>
 		</ul>
-
 	<?php endif; ?>
-
-</div>
+</nav>

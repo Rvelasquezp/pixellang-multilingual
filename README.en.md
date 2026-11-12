@@ -1,243 +1,80 @@
-# WP Multilingual — Agence Pixel
+# PixelLang Multilingual (Agence Pixel)
 
-A WordPress multilingual plugin built from scratch to manage multi-language sites without relying on WPML or paid plugins.
+Multilingual plugin for WordPress with no dependencies (no WPML, no WooCommerce, no paid plugin). Works with block (FSE) and classic themes.
 
----
+Versions: [Español](README.md) · [Français](README.fr.md)
 
 ## Features
 
-- Automatic language detection via URL, cookie, and browser
-- Automatic swap of navigation menus and Gravity Forms per language
-- Automatic SEO `hreflang` tags in the `<head>`
-- Admin panel with a visual selector for 48 languages with flags
-- Meta box in the page editor to assign a language and link translations
-- Panel in the Site Editor to assign a language to each navigation menu
-- Columns in the page list: Language and Translations with an Edit button
-- Gutenberg block `Language Switcher` (3 styles: list, flags, dropdown)
-
----
+- **Languages**: catalog of 48 languages plus custom ones (fr-ca, pt-br…), switcher order, name, WordPress locale, default language.
+- **Linked translations** of pages, posts, custom post types and taxonomy terms.
+- **One-click translation**: draft copy (content, custom fields, featured image, translated terms, translated parent), linked and opened in the editor.
+- **Language from the URL**: a translated page always shows in its language; `<html lang>` and theme strings follow.
+- **Menus**: Navigation blocks per language (block themes) and menu locations per language (classic themes).
+- **Template parts** (header, footer…) with one version per language, managed in the Site Editor.
+- **Forms**: Contact Form 7 and Gravity Forms, through form groups.
+- **SEO**: `hreflang` tags with clean permalinks and `x-default`.
+- **Language Switcher block**: codes, names or dropdown; options to hide the current language or languages without translation.
+- **Admin**: dashboard (coverage, site health), translations table with a "missing" filter, language columns and filter in lists, "Set language" bulk action, Quick Edit, maintenance tools.
+- **WPML compatibility**: answers `wpml_current_language`, `wpml_default_language`, `wpml_active_languages`, `wpml_object_id` and `wpml_element_language_code` when WPML is not active.
+- Interface in English and French (fr_FR, fr_CA).
 
 ## Requirements
 
-- WordPress 6.0+
-- PHP 7.0+
-- (Optional) Gravity Forms for per-language form swapping
+WordPress 6.4+ (tested on 7.1.4), PHP 7.4+ (linted on 7.4, 8.0, 8.3).
 
----
+## Getting started
 
-## Installation
+1. Activate the plugin: **PixelLang** menu in the admin.
+2. **Languages**: add, order, pick the default language.
+3. **Settings > Content**: enable the content types and taxonomies to translate.
+4. **Tools > Assign the default language** for existing content.
+5. In the editor, the **Language & translations** box sets the language and links or creates translations (saved immediately).
+6. **Settings > Menus**: one menu per language. In the Site Editor, each template part has a **Languages** panel.
+7. Insert the **Language Switcher** block in the header.
 
-1. Copy the `pixellang-multilingual` folder to `/wp-content/plugins/`
-2. Activate the plugin in **WP Admin → Plugins**
-3. Go to **WP Admin → Multilingual** to configure languages
-
----
-
-## Initial Setup
-
-### 1. Add Languages
-
-Go to **Multilingual → Languages**:
-- In the right column, search for a language and click **+ Add**
-- Mark which language is the **Default** (shown when no cookie or browser preference is detected)
-- Save with **Save Settings**
-
-### 2. Assign Navigation Menus
-
-Edit each navigation menu in **Appearance → Editor → Navigation**:
-- The **🌐 Menu Language** panel appears in the sidebar
-- Select the corresponding language → saved automatically
-
-### 3. Assign Language to Pages
-
-When editing any page in the block editor:
-- The **🌐 Language & Translations** panel appears in the sidebar
-- Select the language for that page
-- Link the equivalent pages in other languages using the dropdowns
-
-### 4. Assign Forms (optional)
-
-Go to **Multilingual → Gravity Forms**:
-- Enter the Gravity Form ID for each language
-
----
-
-## File Structure
+## How the language is chosen
 
 ```
-pixellang-multilingual/
-├── wp-multilingual.php                  # Main bootstrap
-├── includes/
-│   ├── languages-data.php               # List of 48 available languages
-│   ├── class-language-manager.php       # Language and page map management in DB
-│   ├── class-url-handler.php            # Language detection and redirects
-│   ├── class-content-switcher.php       # Menu and Gravity Forms swap
-│   ├── class-hreflang.php               # Automatic SEO hreflang tags
-│   ├── class-admin.php                  # WP Admin settings page
-│   ├── class-meta-box.php               # Meta box in page and menu editors
-│   └── class-admin-columns.php          # Language and Translations columns
-├── admin/
-│   ├── views/settings-page.php          # HTML view of the settings page
-│   ├── css/admin.css                    # Admin panel styles
-│   ├── css/meta-box.css                 # Meta box styles
-│   ├── js/admin.js                      # Admin panel JS
-│   ├── js/meta-box.js                   # Page meta box JS
-│   └── js/nav-panel.js                  # Gutenberg panel for menus (Site Editor)
-├── blocks/
-│   └── language-switcher/
-│       ├── block.json                   # Gutenberg block definition
-│       ├── render.php                   # PHP block renderer
-│       └── style.css                    # Language switcher styles
-└── languages/                           # Translation files (.po / .mo)
+1. ?set_lang=xx      explicit choice: cookie + redirect to the translation of the referring page
+2. The content       a post or term with a language shows in that language
+3. wpm_lang cookie   last language seen or chosen
+4. Browser           Accept-Language, by preference (optional)
+5. Default language
 ```
 
----
+On a static front page, visitors of another language are sent to the front page of their language (optional, on by default). The admin always keeps the user's own language.
 
-## How It Works
+## Data
 
-### Language Detection Flow
+No custom table. Languages: option `wpm_languages`; types: `wpm_post_types`; 1.1 settings: `wpm_options`; menus: `wpm_menus`; template parts: `wpm_template_map`; language of a post or term: meta `_wpm_language`; translation group (`lang => id`, on every member): meta `_wpm_translations`.
 
-Every time a visitor loads a page:
+**1.0 migration**: on the first 1.1 load, groups of the `wpm_page_map` option become `_wpm_translations` meta (the first group containing a post wins, like 1.0). Empty, missing, duplicate, mixed-type or contradictory entries are skipped and listed in **Tools**. The `wpm_page_map` option is kept unchanged.
 
-```
-1. Is ?set_lang=fr in the URL?     → switch language + save cookie + redirect
-2. Does cookie wpm_lang exist?     → use that language
-3. Does browser send Accept-Language? → use the best available match
-4. None of the above               → use the Default language
-```
-
-### Where Data Is Stored
-
-The plugin does not create new tables — it uses WordPress's standard tables:
-
-| Data | Table | Key |
-|---|---|---|
-| Active languages | `wp_options` | `wpm_languages` |
-| Menu IDs per language | `wp_options` | `wpm_menus` |
-| Form IDs per language | `wp_options` | `wpm_forms` |
-| Page translation groups | `wp_options` | `wpm_page_map` |
-| Language of each page/post | `wp_postmeta` | `_wpm_language` |
-
----
-
-## REST API
-
-The plugin exposes a custom endpoint to save menu language from the Site Editor:
-
-```
-POST /wp-json/wpm/v1/nav-language
-```
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|---|---|---|
-| `nav_id` | integer | wp_navigation post ID |
-| `lang` | string | Language slug (fr, en, es…) |
-
-**Requires:** authenticated user with `edit_posts` capability.
-
----
-
-## Language Switcher Block
-
-Insert the **Language Switcher** block from the block editor anywhere in your theme.
-
-**Attributes:**
-
-| Attribute | Type | Default | Options |
-|---|---|---|---|
-| `style` | string | `flags` | `flags`, `text`, `dropdown` |
-| `showLabel` | boolean | `true` | — |
-| `align` | string | — | `left`, `center`, `right` |
-
----
-
-## Development
-
-### Adding a New Language to the List
-
-Edit `includes/languages-data.php` and add an entry to the array:
+## Theme API
 
 ```php
-'xx' => array(
-    'label'   => 'Native name',
-    'locale'  => 'xx_XX',
-    'flag'    => '🏳️',
-    'english' => 'Name in English',
-),
+$lang = WPM_Language_Manager::instance()->get_current(); // 1.0 API, unchanged
+$lang = wpm_current_language();
+$id   = wpm_get_post_translation( get_the_ID(), 'en' );
+$url  = wpm_get_language_url( 'en' );
+$lang = apply_filters( 'wpml_current_language', null );  // existing WPML code
 ```
 
-### Getting the current language in PHP
+Filters: `wpm_available_languages`, `wpm_hreflang_alternates`, `wpm_translation_skip_meta`. Action: `wpm_translation_created`.
 
-You can get the active language slug (`fr`, `en`, `es`…) from any PHP file in your theme or plugin:
+## Block
 
-```php
-$lang = WPM_Language_Manager::instance()->get_current();
-// Returns: 'fr', 'en', 'es', etc.
+`wp-multilingual/language-switcher`: `style` (`flags` codes, `text` names, `dropdown`), `hideCurrent`, `hideMissing`, plus alignment, color, typography and spacing. Classes `.wpm-lang-list`, `.wpm-lang-item`, `.wpm-active`, `.wpm-lang-link`, `.wpm-lang-current` are kept. The PixelLang theme look lives in `themes/pixellang/assets/css/language-switcher.css`.
+
+## Tests
+
+```bash
+wp eval-file wp-content/plugins/pixellang-multilingual/tests/integration.php --exec='define("WP_ADMIN", true);'
 ```
 
-**In `functions.php` or AJAX functions:**
+They run in one SQL transaction rolled back at the end: no data is left behind.
 
-```php
-function my_function() {
-    $lang = WPM_Language_Manager::instance()->get_current();
-    // use $lang...
-}
-```
+## Page cache
 
-**Filter a WP_Query by language** (to show only posts in the active language):
-
-```php
-$lang = WPM_Language_Manager::instance()->get_current();
-
-$args = array(
-    'post_type'  => 'equipe',
-    'meta_query' => array(
-        array(
-            'key'   => '_wpm_language',
-            'value' => $lang,
-        ),
-    ),
-);
-$query = new WP_Query($args);
-```
-
-> The `_wpm_language` meta is assigned to each post from the editor (meta box) or via Quick Edit in the list table.
-
-**In AJAX functions** (`wp_ajax_*`) the `wpm_lang` cookie travels with the request, so `get_current()` returns the correct language automatically:
-
-```php
-add_action('wp_ajax_nopriv_my_action', function() {
-    $lang = WPM_Language_Manager::instance()->get_current();
-    $args = array(
-        'post_type'  => 'my_cpt',
-        'meta_query' => array(
-            array( 'key' => '_wpm_language', 'value' => $lang ),
-        ),
-    );
-    $query = new WP_Query($args);
-    // ...
-    wp_die();
-});
-```
-
-### Available Hooks
-
-```php
-// Modify the detected language before it is applied
-add_filter( 'wpm_detected_language', function( $lang ) {
-    return $lang;
-});
-```
-
----
-
-## Author
-
-**Ricardo Velasquez — Agence Pixel**
-
-- 🌐 Web: [ingcloud.ca](https://ingcloud.ca)
-- 🐙 GitHub: [github.com/Rvelasquezp/pixellang-multilingual](https://github.com/Rvelasquezp/pixellang-multilingual)
-
-Built with Claude Code.
+Translated pages have their own URL, so page caches serve the right language. Only pages without a language (static front page with redirect, archives, search) depend on the `wpm_lang` cookie.

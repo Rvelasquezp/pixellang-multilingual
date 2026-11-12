@@ -1,14 +1,52 @@
 <?php
+/**
+ * Admin screens: Dashboard, Languages, Translations, Settings, Tools.
+ *
+ * Each screen section posts to its own admin-post.php action with its own
+ * nonce, so saving one section never touches the options of another (1.0
+ * used a single options.php form that rewrote every option at once).
+ *
+ * @package PixelLang_Multilingual
+ */
+
 defined( 'ABSPATH' ) || exit;
 
 class WPM_Admin {
 
 	private static $instance = null;
 
+	const CAP = 'manage_options';
+
+	/**
+	 * Hook suffixes of the plugin screens.
+	 *
+	 * @var string[]
+	 */
+	private $hooks = array();
+
 	private function __construct() {
-		add_action( 'admin_menu',            array( $this, 'register_menu' ) );
-		add_action( 'admin_init',            array( $this, 'register_settings' ) );
+		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_post_wpm_save_languages', array( $this, 'handle_save_languages' ) );
+		add_action( 'admin_post_wpm_save_settings', array( $this, 'handle_save_settings' ) );
+		add_action( 'admin_post_wpm_create_translation', array( $this, 'handle_create_translation' ) );
+		add_action( 'admin_post_wpm_tools', array( $this, 'handle_tools' ) );
+		add_filter( 'admin_body_class', array( $this, 'body_class' ) );
+		add_action( 'admin_notices', array( $this, 'editor_notice' ) );
+	}
+
+	/**
+	 * Confirmation shown in the editor after a translation draft was created.
+	 */
+	public function editor_notice() {
+		global $pagenow;
+		if ( 'post.php' !== $pagenow || empty( $_GET['wpm_notice'] ) || 'created' !== $_GET['wpm_notice'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+		printf(
+			'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+			esc_html__( 'Translation draft created from the original content. Translate it, then publish.', 'pixellang-multilingual' )
+		);
 	}
 
 	public static function instance() {
@@ -18,147 +56,403 @@ class WPM_Admin {
 		return self::$instance;
 	}
 
+	/**
+	 * Screens: slug => [ menu label, capability, view file, icon ].
+	 *
+	 * @return array
+	 */
+	public static function screens() {
+		return array(
+			'wp-multilingual'  => array( __( 'Dashboard', 'pixellang-multilingual' ), 'edit_others_posts', 'overview', 'dashboard' ),
+			'wpm-languages'    => array( __( 'Languages', 'pixellang-multilingual' ), self::CAP, 'languages', 'globe' ),
+			'wpm-translations' => array( __( 'Translations', 'pixellang-multilingual' ), 'edit_others_posts', 'translations', 'files' ),
+			'wpm-settings'     => array( __( 'Settings', 'pixellang-multilingual' ), self::CAP, 'settings', 'settings' ),
+			'wpm-tools'        => array( __( 'Tools', 'pixellang-multilingual' ), self::CAP, 'tools', 'tools' ),
+		);
+	}
+
 	public function register_menu() {
-		add_menu_page(
-			__( 'WP Multilingual', 'wp-multilingual' ),
-			__( 'Multilingual', 'wp-multilingual' ),
-			'manage_options',
+		$icon = 'data:image/svg+xml;base64,' . base64_encode( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Menu icon data URI.
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9"/><path d="M8.5 3v2"/><path d="M11 5c-.8 3.6-3.4 6.6-7 8"/><path d="M6 9c1 2 2.8 3.6 5 4.5"/><path d="M12 21l4.5-10 4.5 10"/><path d="M13.6 17.5h5.8"/></svg>'
+		);
+		$this->hooks[] = add_menu_page(
+			__( 'PixelLang Multilingual', 'pixellang-multilingual' ),
+			__( 'PixelLang', 'pixellang-multilingual' ),
+			'edit_others_posts',
 			'wp-multilingual',
-			array( $this, 'render_settings_page' ),
-			'dashicons-translation',
+			array( $this, 'render_screen' ),
+			$icon,
 			80
 		);
-	}
-
-	public function register_settings() {
-		register_setting( 'wpm_settings', 'wpm_languages',   array( 'sanitize_callback' => array( $this, 'sanitize_languages' ) ) );
-		register_setting( 'wpm_settings', 'wpm_menus',       array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
-		register_setting( 'wpm_settings', 'wpm_forms',       array( 'sanitize_callback' => array( $this, 'sanitize_id_map' ) ) );
-		register_setting( 'wpm_settings', 'wpm_page_map',    array( 'sanitize_callback' => array( $this, 'sanitize_page_map' ) ) );
-		register_setting( 'wpm_settings', 'wpm_post_types',  array( 'sanitize_callback' => array( $this, 'sanitize_post_types' ) ) );
-	}
-
-	public function enqueue_assets( $hook ) {
-		if ( 'toplevel_page_wp-multilingual' !== $hook ) {
-			return;
+		foreach ( self::screens() as $slug => $screen ) {
+			$this->hooks[] = add_submenu_page( 'wp-multilingual', $screen[0] . ' ‹ PixelLang Multilingual', $screen[0], $screen[1], $slug, array( $this, 'render_screen' ) );
 		}
-		wp_enqueue_style(
-			'wpm-admin',
-			WPM_URL . 'admin/css/admin.css',
-			array(),
-			WPM_VERSION
-		);
-		wp_enqueue_script(
-			'wpm-admin',
-			WPM_URL . 'admin/js/admin.js',
-			array( 'jquery', 'wp-api-fetch' ),
-			WPM_VERSION,
-			true
-		);
-		wp_localize_script( 'wpm-admin', 'wpApiSettings', array(
-			'root'  => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' ),
-		) );
-	}
-
-	public function render_settings_page() {
-		require_once WPM_DIR . 'admin/views/settings-page.php';
-	}
-
-	public function sanitize_languages( $input ) {
-		if ( ! is_array( $input ) ) {
-			return array();
-		}
-		$clean       = array();
-		$has_default = false;
-		foreach ( $input as $slug => $cfg ) {
-			$slug = sanitize_key( $slug );
-			if ( ! $slug ) {
-				continue;
-			}
-			$clean[ $slug ] = array(
-				'label'   => sanitize_text_field( isset( $cfg['label'] )  ? $cfg['label']  : $slug ),
-				'locale'  => sanitize_text_field( isset( $cfg['locale'] ) ? $cfg['locale'] : '' ),
-				'default' => ! empty( $cfg['default'] ),
-			);
-			if ( $clean[ $slug ]['default'] ) {
-				$has_default = true;
-			}
-		}
-		if ( ! $has_default && ! empty( $clean ) ) {
-			$keys = array_keys( $clean );
-			$clean[ $keys[0] ]['default'] = true;
-		}
-		return $clean;
-	}
-
-	public function sanitize_id_map( $input ) {
-		if ( ! is_array( $input ) ) {
-			return array();
-		}
-		$clean = array();
-		foreach ( $input as $slug => $id ) {
-			$clean[ sanitize_key( $slug ) ] = absint( $id );
-		}
-		return $clean;
-	}
-
-	public function sanitize_page_map( $input ) {
-		if ( ! is_array( $input ) ) {
-			return array();
-		}
-		$clean = array();
-		foreach ( $input as $group_key => $group ) {
-			if ( ! is_array( $group ) ) {
-				continue;
-			}
-			$clean_group = array();
-			foreach ( $group as $slug => $pid ) {
-				$clean_group[ sanitize_key( $slug ) ] = absint( $pid );
-			}
-			$clean[ sanitize_key( $group_key ) ] = $clean_group;
-		}
-		return $clean;
-	}
-
-	public function sanitize_post_types( $input ) {
-		if ( ! is_array( $input ) ) {
-			return array( 'page', 'post' );
-		}
-		$allowed = array_keys( $this->get_translatable_post_types() );
-		$clean   = array();
-		foreach ( $input as $type ) {
-			$type = sanitize_key( $type );
-			if ( in_array( $type, $allowed, true ) ) {
-				$clean[] = $type;
-			}
-		}
-		// page and post are always included.
-		foreach ( array( 'page', 'post' ) as $required ) {
-			if ( ! in_array( $required, $clean, true ) ) {
-				$clean[] = $required;
-			}
-		}
-		return $clean;
 	}
 
 	/**
-	 * Returns all public post types that can be enabled for translation.
-	 * Excludes internal WP types.
+	 * Current plugin screen slug, or ''.
+	 *
+	 * @return string
 	 */
-	public static function get_translatable_post_types() {
-		$excluded = array( 'attachment', 'revision', 'nav_menu_item', 'custom_css',
-		                   'customize_changeset', 'oembed_cache', 'user_request',
-		                   'wp_block', 'wp_template', 'wp_template_part',
-		                   'wp_global_styles', 'wp_navigation', 'wp_font_face', 'wp_font_family' );
+	public static function current_screen() {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( self::screens()[ $page ] ) ? $page : '';
+	}
 
-		$types  = get_post_types( array( 'show_ui' => true ), 'objects' );
-		$result = array();
-		foreach ( $types as $slug => $obj ) {
-			if ( ! in_array( $slug, $excluded, true ) ) {
-				$result[ $slug ] = $obj;
-			}
+	public function body_class( $classes ) {
+		return self::current_screen() ? $classes . ' wpm-admin-screen' : $classes;
+	}
+
+	public function enqueue_assets( $hook ) {
+		if ( ! in_array( $hook, $this->hooks, true ) ) {
+			return;
 		}
-		return $result;
+		wp_enqueue_style( 'wpm-admin', WPM_URL . 'admin/css/admin.css', array(), WPM_VERSION );
+		wp_enqueue_script( 'wpm-admin', WPM_URL . 'admin/js/admin.js', array( 'wp-api-fetch', 'wp-i18n' ), WPM_VERSION, true );
+		wp_set_script_translations( 'wpm-admin', 'pixellang-multilingual', WPM_DIR . 'languages' );
+	}
+
+	public function render_screen() {
+		$slug    = self::current_screen();
+		$screens = self::screens();
+		if ( ! $slug || ! current_user_can( $screens[ $slug ][1] ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'pixellang-multilingual' ) );
+		}
+		$view = $screens[ $slug ][2];
+		include WPM_DIR . 'admin/views/layout-header.php';
+		include WPM_DIR . 'admin/views/' . $view . '.php';
+		include WPM_DIR . 'admin/views/layout-footer.php';
+	}
+
+	// ---------------------------------------------------------------------
+	// Reusable UI pieces
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Language chip: code badge, optionally with the language name.
+	 *
+	 * @param string $slug       Language code.
+	 * @param bool   $with_label Show the name next to the code.
+	 * @param bool   $echo       Echo (true) or return.
+	 * @return string
+	 */
+	public static function language_chip( $slug, $with_label = false, $echo = true ) {
+		$label = WPM_Language_Manager::instance()->get_label( $slug );
+		$html  = sprintf(
+			'<span class="wpm-chip"><span class="wpm-chip__code"%s>%s</span>%s</span>',
+			$with_label ? ' aria-hidden="true"' : ' title="' . esc_attr( $label ) . '"',
+			esc_html( strtoupper( $slug ) ),
+			$with_label ? '<span class="wpm-chip__label">' . esc_html( $label ) . '</span>' : '<span class="screen-reader-text">' . esc_html( $label ) . '</span>'
+		);
+		if ( $echo ) {
+			echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+		}
+		return $html;
+	}
+
+	/**
+	 * Translated label of a post status.
+	 *
+	 * @param string $status Post status.
+	 * @return string
+	 */
+	public static function status_label( $status ) {
+		$labels = array(
+			'publish' => __( 'Published', 'pixellang-multilingual' ),
+			'draft'   => __( 'Draft', 'pixellang-multilingual' ),
+			'pending' => __( 'Pending', 'pixellang-multilingual' ),
+			'future'  => __( 'Scheduled', 'pixellang-multilingual' ),
+			'private' => __( 'Private', 'pixellang-multilingual' ),
+			'trash'   => __( 'Trash', 'pixellang-multilingual' ),
+		);
+		return isset( $labels[ $status ] ) ? $labels[ $status ] : (string) $status;
+	}
+
+	/**
+	 * Status badge of a post.
+	 *
+	 * @param string $status Post status.
+	 */
+	public static function status_badge( $status ) {
+		$tone = 'publish' === $status ? 'success' : ( 'trash' === $status ? 'danger' : 'neutral' );
+		printf( '<span class="wpm-badge wpm-badge--%s">%s</span>', esc_attr( $tone ), esc_html( self::status_label( $status ) ) );
+	}
+
+	/**
+	 * Notice block (success, warning, error, info).
+	 *
+	 * @param string $type    Tone.
+	 * @param string $message Message (plain text).
+	 * @param string $action  Optional HTML of an action link (already escaped).
+	 */
+	public static function notice( $type, $message, $action = '' ) {
+		$icons = array(
+			'success' => 'check-circle',
+			'warning' => 'alert',
+			'error'   => 'alert',
+			'info'    => 'info',
+		);
+		printf(
+			'<div class="wpm-notice wpm-notice--%1$s" role="%2$s">%3$s<p>%4$s</p>%5$s</div>',
+			esc_attr( $type ),
+			'error' === $type ? 'alert' : 'status',
+			WPM_Icons::get( isset( $icons[ $type ] ) ? $icons[ $type ] : 'info', 20 ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG.
+			esc_html( $message ),
+			wp_kses_post( $action )
+		);
+	}
+
+	/**
+	 * Empty state with an optional call to action.
+	 *
+	 * @param string $icon    Icon name.
+	 * @param string $title   Title.
+	 * @param string $text    Explanation.
+	 * @param string $url     Action URL.
+	 * @param string $label   Action label.
+	 */
+	public static function empty_state( $icon, $title, $text, $url = '', $label = '' ) {
+		echo '<div class="wpm-empty">';
+		WPM_Icons::render( $icon, 28, 'wpm-empty__icon' );
+		printf( '<h3 class="wpm-empty__title">%s</h3><p class="wpm-empty__text">%s</p>', esc_html( $title ), esc_html( $text ) );
+		if ( $url ) {
+			printf( '<a class="wpm-btn wpm-btn--primary" href="%s">%s</a>', esc_url( $url ), esc_html( $label ) );
+		}
+		echo '</div>';
+	}
+
+	/**
+	 * URL of a plugin screen.
+	 *
+	 * @param string $slug Screen slug.
+	 * @param array  $args Extra query args.
+	 * @return string
+	 */
+	public static function url( $slug, $args = array() ) {
+		return add_query_arg( array_merge( array( 'page' => $slug ), $args ), admin_url( 'admin.php' ) );
+	}
+
+	/**
+	 * Nonce-protected URL that creates a translation draft.
+	 *
+	 * @param int    $post_id Source post.
+	 * @param string $lang    Target language.
+	 * @return string
+	 */
+	public static function create_translation_url( $post_id, $lang ) {
+		return wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => 'wpm_create_translation',
+					'post'   => (int) $post_id,
+					'lang'   => $lang,
+				),
+				admin_url( 'admin-post.php' )
+			),
+			'wpm_create_translation_' . (int) $post_id . '_' . $lang
+		);
+	}
+
+	/**
+	 * Redirects back to a screen with a notice code.
+	 *
+	 * @param string $slug   Screen slug.
+	 * @param string $notice Notice code.
+	 * @param array  $args   Extra args.
+	 */
+	private function back( $slug, $notice, $args = array() ) {
+		wp_safe_redirect( self::url( $slug, array_merge( $args, array( 'wpm_notice' => $notice ) ) ) );
+		exit;
+	}
+
+	/**
+	 * Messages for notice codes passed in the URL.
+	 *
+	 * @return array code => [ type, message ]
+	 */
+	public static function notices() {
+		return array(
+			'saved'          => array( 'success', __( 'Changes saved.', 'pixellang-multilingual' ) ),
+			'languages'      => array( 'success', __( 'Languages saved.', 'pixellang-multilingual' ) ),
+			'no_language'    => array( 'error', __( 'Keep at least one language.', 'pixellang-multilingual' ) ),
+			'stats'          => array( 'success', __( 'Statistics recalculated.', 'pixellang-multilingual' ) ),
+			'assigned'       => array( 'success', __( 'Default language assigned to content that had none.', 'pixellang-multilingual' ) ),
+			'created'        => array( 'success', __( 'Translation draft created.', 'pixellang-multilingual' ) ),
+			'create_failed'  => array( 'error', __( 'The translation could not be created.', 'pixellang-multilingual' ) ),
+		);
+	}
+
+	// ---------------------------------------------------------------------
+	// Handlers
+	// ---------------------------------------------------------------------
+
+	private function verify( $action ) {
+		if ( ! current_user_can( self::CAP ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'pixellang-multilingual' ), 403 );
+		}
+		check_admin_referer( $action );
+	}
+
+	/**
+	 * Languages screen: order, names, locales, default.
+	 */
+	public function handle_save_languages() {
+		$this->verify( 'wpm_save_languages' );
+
+		$catalog = wpm_get_available_languages();
+		$posted  = isset( $_POST['languages'] ) && is_array( $_POST['languages'] ) ? wp_unslash( $_POST['languages'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized per field below.
+		$default = isset( $_POST['default_language'] ) ? sanitize_key( wp_unslash( $_POST['default_language'] ) ) : '';
+
+		$clean = array();
+		foreach ( $posted as $slug => $cfg ) {
+			$slug = sanitize_key( $slug );
+			if ( ! preg_match( '/^[a-z]{2,3}(-[a-z0-9]{2,8})?$/', $slug ) || ! is_array( $cfg ) ) {
+				continue;
+			}
+			$label  = isset( $cfg['label'] ) ? sanitize_text_field( $cfg['label'] ) : '';
+			$locale = isset( $cfg['locale'] ) ? sanitize_text_field( $cfg['locale'] ) : '';
+			if ( ! preg_match( '/^[a-z]{2,3}(_[A-Z]{2})?(_[a-z0-9]+)?$/', $locale ) ) {
+				$locale = isset( $catalog[ $slug ] ) ? $catalog[ $slug ]['locale'] : '';
+			}
+			$clean[ $slug ] = array(
+				'label'   => '' !== $label ? $label : ( isset( $catalog[ $slug ] ) ? $catalog[ $slug ]['label'] : strtoupper( $slug ) ),
+				'locale'  => $locale,
+				'default' => $slug === $default,
+			);
+		}
+
+		if ( ! $clean ) {
+			$this->back( 'wpm-languages', 'no_language' );
+		}
+		if ( ! isset( $clean[ $default ] ) ) {
+			$first                      = array_key_first( $clean );
+			$clean[ $first ]['default'] = true;
+		}
+
+		WPM_Language_Manager::instance()->save_languages( $clean );
+		WPM_Translations::flush_stats();
+		$this->back( 'wpm-languages', 'languages' );
+	}
+
+	/**
+	 * Settings screen: one section per form.
+	 */
+	public function handle_save_settings() {
+		$this->verify( 'wpm_save_settings' );
+		$section = isset( $_POST['section'] ) ? sanitize_key( wp_unslash( $_POST['section'] ) ) : '';
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by WPM_Settings::sanitize().
+		switch ( $section ) {
+			case 'content':
+				$types   = isset( $_POST['post_types'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['post_types'] ) ) : array();
+				$allowed = array_keys( WPM_Settings::get_translatable_post_types() );
+				$types   = array_values( array_unique( array_merge( array( 'page', 'post' ), array_intersect( $types, $allowed ) ) ) );
+				update_option( 'wpm_post_types', $types );
+				WPM_Settings::update( array( 'taxonomies' => isset( $_POST['taxonomies'] ) ? (array) wp_unslash( $_POST['taxonomies'] ) : array() ) );
+				WPM_Translations::flush_stats();
+				break;
+
+			case 'behavior':
+				WPM_Settings::update(
+					array(
+						'browser_detection' => ! empty( $_POST['browser_detection'] ),
+						'front_redirect'    => ! empty( $_POST['front_redirect'] ),
+						'filter_queries'    => ! empty( $_POST['filter_queries'] ),
+						'hreflang'          => ! empty( $_POST['hreflang'] ),
+						'cookie_days'       => isset( $_POST['cookie_days'] ) ? absint( $_POST['cookie_days'] ) : 30,
+					)
+				);
+				break;
+
+			case 'menus':
+				$navs = isset( $_POST['nav_menus'] ) ? (array) wp_unslash( $_POST['nav_menus'] ) : array();
+				$menu = array();
+				foreach ( $navs as $lang => $nav_id ) {
+					$lang   = sanitize_key( $lang );
+					$nav_id = absint( $nav_id );
+					if ( $nav_id && WPM_Language_Manager::instance()->is_valid( $lang ) && 'wp_navigation' === get_post_type( $nav_id ) && ! in_array( $nav_id, $menu, true ) ) {
+						$menu[ $lang ] = $nav_id;
+					}
+				}
+				update_option( 'wpm_menus', $menu );
+				WPM_Settings::update( array( 'menu_locations' => isset( $_POST['menu_locations'] ) ? (array) wp_unslash( $_POST['menu_locations'] ) : array() ) );
+				break;
+
+			case 'forms':
+				$groups = isset( $_POST['form_groups'] ) ? array_values( (array) wp_unslash( $_POST['form_groups'] ) ) : array();
+				WPM_Settings::update( array( 'form_groups' => $groups ) );
+				break;
+
+			default:
+				wp_die( esc_html__( 'Unknown settings section.', 'pixellang-multilingual' ), 400 );
+		}
+		// phpcs:enable
+		$this->back( 'wpm-settings', 'saved', array( 'tab' => $section ) );
+	}
+
+	/**
+	 * Creates a translation draft, then opens it in the editor.
+	 */
+	public function handle_create_translation() {
+		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked below.
+		$lang    = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		check_admin_referer( 'wpm_create_translation_' . $post_id . '_' . $lang );
+
+		$post = get_post( $post_id );
+		$type = $post ? get_post_type_object( $post->post_type ) : null;
+		if ( ! $post || ! $type || ! current_user_can( 'edit_post', $post_id ) || ! current_user_can( $type->cap->create_posts ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to translate this content.', 'pixellang-multilingual' ), 403 );
+		}
+
+		$result = WPM_Translations::create_post_translation( $post_id, $lang );
+		if ( is_wp_error( $result ) ) {
+			wp_die( esc_html( $result->get_error_message() ), esc_html__( 'Translation', 'pixellang-multilingual' ), array( 'back_link' => true ) );
+		}
+		wp_safe_redirect( add_query_arg( 'wpm_notice', 'created', get_edit_post_link( $result, 'raw' ) ) );
+		exit;
+	}
+
+	/**
+	 * Tools screen actions.
+	 */
+	public function handle_tools() {
+		$this->verify( 'wpm_tools' );
+		$task = isset( $_POST['task'] ) ? sanitize_key( wp_unslash( $_POST['task'] ) ) : '';
+
+		if ( 'recount' === $task ) {
+			WPM_Translations::flush_stats();
+			$this->back( 'wpm-tools', 'stats' );
+		}
+
+		if ( 'assign_default' === $task ) {
+			$types = isset( $_POST['post_types'] ) ? array_intersect( array_map( 'sanitize_key', (array) wp_unslash( $_POST['post_types'] ) ), WPM_Settings::get_post_types() ) : array();
+			$lang  = WPM_Language_Manager::instance()->get_default();
+			if ( $types ) {
+				$ids = get_posts(
+					array(
+						'post_type'        => array_values( $types ),
+						'post_status'      => array( 'publish', 'draft', 'pending', 'future', 'private' ),
+						'posts_per_page'   => -1,
+						'fields'           => 'ids',
+						'suppress_filters' => true,
+						'no_found_rows'    => true,
+						'meta_query'       => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							array(
+								'key'     => WPM_Translations::META_LANG,
+								'compare' => 'NOT EXISTS',
+							),
+						),
+					)
+				);
+				foreach ( $ids as $id ) {
+					if ( current_user_can( 'edit_post', $id ) ) {
+						update_post_meta( $id, WPM_Translations::META_LANG, $lang );
+					}
+				}
+				WPM_Translations::flush_stats();
+			}
+			$this->back( 'wpm-tools', 'assigned' );
+		}
+
+		wp_die( esc_html__( 'Unknown task.', 'pixellang-multilingual' ), 400 );
 	}
 }

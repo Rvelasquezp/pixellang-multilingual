@@ -1,126 +1,98 @@
-/* global wp, wpmNavData */
+/**
+ * Site Editor: language of a Navigation menu (wp_navigation).
+ */
+/* global wp */
 ( function () {
-	if ( ! wp || ! wp.plugins || ! wp.element || ! wp.data || ! wp.components || ! wp.apiFetch ) {
+	'use strict';
+	if ( ! window.wp || ! wp.plugins || ! wp.element || ! wp.data || ! wp.components || ! wp.apiFetch ) {
 		return;
 	}
-
-	var registerPlugin = wp.plugins.registerPlugin;
-	var el             = wp.element.createElement;
-	var useState       = wp.element.useState;
-	var useSelect      = wp.data.useSelect;
-	var SelectControl  = wp.components.SelectControl;
-	var Spinner        = wp.components.Spinner;
-
-	var PluginDocumentSettingPanel =
-		( wp.editor   && wp.editor.PluginDocumentSettingPanel )  ||
-		( wp.editPost && wp.editPost.PluginDocumentSettingPanel ) ||
-		null;
-
+	var el = wp.element.createElement;
+	var useState = wp.element.useState;
+	var useSelect = wp.data.useSelect;
+	var __ = wp.i18n.__;
+	var sprintf = wp.i18n.sprintf;
+	var SelectControl = wp.components.SelectControl;
+	var Notice = wp.components.Notice;
+	var Spinner = wp.components.Spinner;
+	var PluginDocumentSettingPanel = ( wp.editor && wp.editor.PluginDocumentSettingPanel ) || ( wp.editPost && wp.editPost.PluginDocumentSettingPanel );
 	if ( ! PluginDocumentSettingPanel ) {
-		console.warn( '[WP Multilingual] PluginDocumentSettingPanel not found.' );
 		return;
 	}
+	var data = window.wpmNavData || { languages: {}, menus: {} };
 
-	function WpmNavPanel() {
-		// All hooks unconditionally at the top.
-		var postType = useSelect( function ( select ) {
-			var store = select( 'core/editor' );
-			return store ? store.getCurrentPostType() : null;
+	function langOf( menus, id ) {
+		var found = '';
+		Object.keys( menus ).forEach( function ( slug ) {
+			if ( String( menus[ slug ] ) === String( id ) ) {
+				found = slug;
+			}
 		} );
+		return found;
+	}
 
-		var postId = useSelect( function ( select ) {
-			var store = select( 'core/editor' );
-			return store ? store.getCurrentPostId() : null;
-		} );
+	function NavLanguagePanel() {
+		var post = useSelect( function ( select ) {
+			var editor = select( 'core/editor' );
+			return editor ? { type: editor.getCurrentPostType(), id: editor.getCurrentPostId() } : {};
+		}, [] );
+		var menusState = useState( data.menus || {} );
+		var statusState = useState( '' );
+		var menus = menusState[ 0 ];
+		var status = statusState[ 0 ];
 
-		var saving = useSelect( function ( select ) {
-			var store = select( 'core/editor' );
-			return store ? store.isSavingPost() : false;
-		} );
-
-		var status  = useState( '' );       // '' | 'saving' | 'saved' | 'error'
-		var setStatus = status[ 1 ];
-		var statusVal = status[ 0 ];
-
-		// Determine initial language from wpmNavData (set by PHP at page load).
-		var initialLang = ( wpmNavData && wpmNavData.current_lang ) ? wpmNavData.current_lang : '';
-		var selected    = useState( initialLang );
-		var setSelected = selected[ 1 ];
-		var selectedVal = selected[ 0 ];
-
-		if ( postType !== 'wp_navigation' ) {
+		if ( post.type !== 'wp_navigation' ) {
 			return null;
 		}
-
-		var options = [ { label: '— not assigned —', value: '' } ];
-		if ( wpmNavData && wpmNavData.languages ) {
-			Object.keys( wpmNavData.languages ).forEach( function ( slug ) {
-				var lang  = wpmNavData.languages[ slug ];
-				var taken = lang.taken_by && String( lang.taken_by ) !== String( postId );
-				options.push( {
-					label:    lang.flag + ' ' + lang.label + ( taken ? ' (' + lang.taken_title + ')' : '' ),
-					value:    slug,
-					disabled: taken,
-				} );
+		var current = langOf( menus, post.id );
+		var options = [ { label: __( 'Not assigned', 'pixellang-multilingual' ), value: '' } ];
+		Object.keys( data.languages ).forEach( function ( slug ) {
+			var taken = menus[ slug ] && String( menus[ slug ] ) !== String( post.id );
+			options.push( {
+				/* translators: placeholders: number. */
+				label: data.languages[ slug ].label + ( taken ? ' · ' + sprintf( __( 'used by #%d', 'pixellang-multilingual' ), menus[ slug ] ) : '' ),
+				value: slug,
 			} );
-		}
+		} );
 
 		function onChange( value ) {
-			setSelected( value );
-			setStatus( 'saving' );
-
-			wp.apiFetch( {
-				path:   '/wpm/v1/nav-language',
-				method: 'POST',
-				data:   { nav_id: postId, lang: value },
-			} ).then( function () {
-				setStatus( 'saved' );
-				setTimeout( function () { setStatus( '' ); }, 2500 );
-			} ).catch( function ( err ) {
-				console.error( '[WP Multilingual] Failed to save nav language:', err );
-				setStatus( 'error' );
-			} );
+			statusState[ 1 ]( 'saving' );
+			wp.apiFetch( { path: '/wpm/v1/nav-language', method: 'POST', data: { nav_id: post.id, lang: value } } )
+				.then( function ( response ) {
+					menusState[ 1 ]( response.menus || {} );
+					statusState[ 1 ]( 'saved' );
+				} )
+				.catch( function () {
+					statusState[ 1 ]( 'error' );
+				} );
 		}
 
-		var statusEl = null;
-		if ( statusVal === 'saving' ) {
-			statusEl = el( 'p', { style: { fontSize: '12px', margin: '8px 0 0', display: 'flex', alignItems: 'center', gap: '6px' } },
-				el( Spinner, { style: { margin: 0 } } ), 'Saving…'
-			);
-		} else if ( statusVal === 'saved' ) {
-			statusEl = el( 'p', { style: { color: '#0a6e3b', fontSize: '12px', margin: '8px 0 0', fontWeight: '500' } },
-				'✅ Saved.'
-			);
-		} else if ( statusVal === 'error' ) {
-			statusEl = el( 'p', { style: { color: '#b32d2e', fontSize: '12px', margin: '8px 0 0' } },
-				'❌ Error saving. Check console.'
-			);
-		} else if ( selectedVal ) {
-			var langLabel = wpmNavData.languages[ selectedVal ]
-				? wpmNavData.languages[ selectedVal ].flag + ' ' + wpmNavData.languages[ selectedVal ].label
-				: selectedVal;
-			statusEl = el( 'p', { style: { color: '#0a6e3b', fontSize: '12px', margin: '8px 0 0', fontWeight: '500' } },
-				'✅ ' + langLabel + ' menu.'
-			);
-		} else {
-			statusEl = el( 'p', { style: { color: '#757575', fontSize: '12px', margin: '8px 0 0' } },
-				'Select a language to assign this menu.'
-			);
+		var feedback = null;
+		if ( status === 'saving' ) {
+			feedback = el( 'p', { className: 'wpm-panel-status' }, el( Spinner ), __( 'Saving…', 'pixellang-multilingual' ) );
+		} else if ( status === 'error' ) {
+			feedback = el( Notice, { status: 'error', isDismissible: false }, __( 'The language could not be saved.', 'pixellang-multilingual' ) );
+		} else if ( current ) {
+			feedback = el( 'p', { className: 'components-base-control__help' },
+				/* translators: placeholders: language or content name. */
+				sprintf( __( 'Navigation blocks showing a menu of another language display this one for %s visitors.', 'pixellang-multilingual' ), data.languages[ current ] ? data.languages[ current ].label : current ) );
 		}
 
 		return el(
 			PluginDocumentSettingPanel,
-			{ name: 'wpm-nav-language-panel', title: '🌐 Menu Language', initialOpen: true },
+			{ name: 'wpm-nav-language-panel', title: __( 'Language', 'pixellang-multilingual' ), initialOpen: true },
 			el( SelectControl, {
-				label:                   'This menu is for:',
-				value:                   selectedVal,
-				options:                 options,
-				onChange:                onChange,
+				label: __( 'This menu is for', 'pixellang-multilingual' ),
+				value: current,
+				options: options,
+				onChange: onChange,
+				disabled: status === 'saving',
 				__nextHasNoMarginBottom: true,
+				__next40pxDefaultSize: true,
 			} ),
-			statusEl
+			feedback
 		);
 	}
 
-	registerPlugin( 'wpm-nav-language', { render: WpmNavPanel } );
-} )();
+	wp.plugins.registerPlugin( 'wpm-nav-language', { render: NavLanguagePanel } );
+}() );

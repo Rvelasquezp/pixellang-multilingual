@@ -1,33 +1,33 @@
-/* global wp, wpmTemplateData */
+/**
+ * Site Editor: language versions of a template part.
+ */
+/* global wp */
 ( function () {
-	if ( ! wp || ! wp.plugins || ! wp.element || ! wp.data || ! wp.components || ! wp.apiFetch ) {
+	'use strict';
+	if ( ! window.wp || ! wp.plugins || ! wp.element || ! wp.data || ! wp.components || ! wp.apiFetch ) {
 		return;
 	}
-
-	var registerPlugin = wp.plugins.registerPlugin;
-	var el             = wp.element.createElement;
-	var useState       = wp.element.useState;
-	var useSelect      = wp.data.useSelect;
-	var SelectControl  = wp.components.SelectControl;
-	var Button         = wp.components.Button;
-	var Spinner        = wp.components.Spinner;
-
-	var PluginDocumentSettingPanel =
-		( wp.editor   && wp.editor.PluginDocumentSettingPanel )  ||
-		( wp.editPost && wp.editPost.PluginDocumentSettingPanel ) ||
-		null;
-
+	var el = wp.element.createElement;
+	var useState = wp.element.useState;
+	var useSelect = wp.data.useSelect;
+	var __ = wp.i18n.__;
+	var sprintf = wp.i18n.sprintf;
+	var SelectControl = wp.components.SelectControl;
+	var Button = wp.components.Button;
+	var Notice = wp.components.Notice;
+	var Spinner = wp.components.Spinner;
+	var PluginDocumentSettingPanel = ( wp.editor && wp.editor.PluginDocumentSettingPanel ) || ( wp.editPost && wp.editPost.PluginDocumentSettingPanel );
 	if ( ! PluginDocumentSettingPanel ) {
 		return;
 	}
+	var data = window.wpmTemplateData || { languages: {}, template_map: {}, assignments: {} };
 
 	/**
-	 * Derive the group name from a template slug.
-	 * Strips known language suffixes: footer-en → footer, header-fr → header.
+	 * Group of a part: its slug without a language suffix (footer-en → footer).
 	 */
-	function deriveGroup( slug, languages ) {
+	function deriveGroup( slug ) {
 		var base = slug;
-		Object.keys( languages ).forEach( function ( lang ) {
+		Object.keys( data.languages ).forEach( function ( lang ) {
 			var suffix = '-' + lang;
 			if ( base.slice( -suffix.length ) === suffix ) {
 				base = base.slice( 0, -suffix.length );
@@ -36,199 +36,123 @@
 		return base;
 	}
 
-	function WpmTemplatePanel() {
-		var postType = useSelect( function ( select ) {
-			var store = select( 'core/editor' );
-			return store ? store.getCurrentPostType() : null;
-		} );
+	function editUrl( slug ) {
+		return data.editBase + '?p=' + encodeURIComponent( '/wp_template_part/' + data.theme + '//' + slug ) + '&canvas=edit';
+	}
 
-		var currentPost = useSelect( function ( select ) {
-			var store = select( 'core/editor' );
-			return store ? store.getCurrentPost() : null;
-		} );
+	function TemplateLanguagePanel() {
+		var post = useSelect( function ( select ) {
+			var editor = select( 'core/editor' );
+			if ( ! editor ) {
+				return {};
+			}
+			var current = editor.getCurrentPost() || {};
+			return { type: editor.getCurrentPostType(), id: current.wp_id || 0, slug: current.slug || '' };
+		}, [] );
+		var mapState = useState( data.template_map || {} );
+		var langState = useState( null );
+		var statusState = useState( '' );
+		var busyState = useState( '' );
 
-		// All hooks must run before early returns.
-		var statusState    = useState( '' );
-		var status         = statusState[0];
-		var setStatus      = statusState[1];
-
-		var mapState       = useState( ( wpmTemplateData && wpmTemplateData.template_map ) ? wpmTemplateData.template_map : {} );
-		var templateMap    = mapState[0];
-		var setTemplateMap = mapState[1];
-
-		var dupState       = useState( '' );
-		var duplicating    = dupState[0];
-		var setDuplicating = dupState[1];
-
-		var langState      = useState( null ); // null = not yet initialised
-		var selectedLang   = langState[0];
-		var setSelectedLang = langState[1];
-
-		if ( postType !== 'wp_template_part' ) {
+		if ( post.type !== 'wp_template_part' ) {
 			return null;
 		}
-
-		var numericId = ( currentPost && currentPost.wp_id ) ? currentPost.wp_id : 0;
-
-		if ( ! numericId ) {
-			return el(
-				PluginDocumentSettingPanel,
-				{ name: 'wpm-template-language-panel', title: '🌐 Template Languages', initialOpen: true },
-				el( 'p', { style: { fontSize: '12px', color: '#757575', margin: 0 } },
-					'Save this template part first, then assign a language.'
-				)
-			);
+		var panel = function () {
+			return el.apply( null, [ PluginDocumentSettingPanel, { name: 'wpm-template-language-panel', title: __( 'Languages', 'pixellang-multilingual' ), initialOpen: true } ].concat( Array.prototype.slice.call( arguments ) ) );
+		};
+		if ( ! post.id ) {
+			return panel( el( 'p', { className: 'components-base-control__help' }, __( 'Save this template part once, then assign its language.', 'pixellang-multilingual' ) ) );
 		}
 
-		var languages = ( wpmTemplateData && wpmTemplateData.languages ) ? wpmTemplateData.languages : {};
-		var theme     = ( wpmTemplateData && wpmTemplateData.theme )      ? wpmTemplateData.theme      : '';
+		var group = deriveGroup( post.slug );
+		var saved = data.assignments[ post.id ] ? data.assignments[ post.id ].lang : '';
+		var active = langState[ 0 ] !== null ? langState[ 0 ] : saved;
+		var versions = mapState[ 0 ][ group ] || {};
+		var status = statusState[ 0 ];
 
-		// Derive group from the template's own slug — no manual input needed.
-		var postSlug = ( currentPost && currentPost.slug ) ? currentPost.slug : '';
-		var group    = deriveGroup( postSlug, languages );
-
-		// Initialise selectedLang from assignments on first render.
-		var assignments   = ( wpmTemplateData && wpmTemplateData.assignments ) ? wpmTemplateData.assignments : {};
-		var savedLang     = ( numericId && assignments[ numericId ] ) ? assignments[ numericId ].lang : '';
-		var activeLang    = ( selectedLang !== null ) ? selectedLang : savedLang;
-
-		var langOptions = [ { label: '— not assigned —', value: '' } ];
-		Object.keys( languages ).forEach( function ( slug ) {
-			langOptions.push( {
-				label: languages[ slug ].flag + ' ' + languages[ slug ].label,
-				value: slug,
-			} );
+		var options = [ { label: __( 'Not assigned', 'pixellang-multilingual' ), value: '' } ];
+		Object.keys( data.languages ).forEach( function ( slug ) {
+			options.push( { label: data.languages[ slug ].label, value: slug } );
 		} );
 
-		function saveAssignment( lang ) {
-			if ( ! lang || ! group || ! numericId ) {
+		function assign( lang ) {
+			langState[ 1 ]( lang );
+			if ( ! lang ) {
 				return;
 			}
-			setStatus( 'saving' );
-			wp.apiFetch( {
-				path:   '/wpm/v1/template-language',
-				method: 'POST',
-				data:   { template_id: numericId, lang: lang, group: group },
-			} ).then( function ( res ) {
-				setStatus( 'saved' );
-				var newMap = Object.assign( {}, templateMap );
-				newMap[ group ] = res.group;
-				setTemplateMap( newMap );
-				setTimeout( function () { setStatus( '' ); }, 2500 );
-			} ).catch( function () {
-				setStatus( 'error' );
-			} );
+			statusState[ 1 ]( 'saving' );
+			wp.apiFetch( { path: '/wpm/v1/template-language', method: 'POST', data: { template_id: post.id, lang: lang, group: group } } )
+				.then( function ( response ) {
+					var next = Object.assign( {}, mapState[ 0 ] );
+					next[ group ] = response.group;
+					mapState[ 1 ]( next );
+					statusState[ 1 ]( 'saved' );
+				} )
+				.catch( function () {
+					statusState[ 1 ]( 'error' );
+				} );
 		}
 
 		function createVersion( lang ) {
-			setDuplicating( lang );
-			wp.apiFetch( {
-				path:   '/wpm/v1/template-duplicate',
-				method: 'POST',
-				data:   { template_id: numericId, lang: lang, group: group },
-			} ).then( function ( res ) {
-				setDuplicating( '' );
-				var newMap = Object.assign( {}, templateMap );
-				if ( ! newMap[ group ] ) {
-					newMap[ group ] = {};
-				}
-				newMap[ group ][ lang ] = { id: res.template_id, slug: res.slug };
-				setTemplateMap( newMap );
-				window.location.href = res.edit_url;
-			} ).catch( function () {
-				setDuplicating( '' );
-			} );
+			busyState[ 1 ]( lang );
+			wp.apiFetch( { path: '/wpm/v1/template-duplicate', method: 'POST', data: { template_id: post.id, lang: lang, group: group } } )
+				.then( function ( response ) {
+					window.location.href = response.edit_url;
+				} )
+				.catch( function () {
+					busyState[ 1 ]( '' );
+					statusState[ 1 ]( 'error' );
+				} );
 		}
 
-		// Status row.
-		var statusEl = null;
-		if ( status === 'saving' ) {
-			statusEl = el( 'p', { style: { fontSize: '12px', margin: '8px 0 0', display: 'flex', alignItems: 'center', gap: '6px', color: '#757575' } },
-				el( Spinner, { style: { margin: 0 } } ), 'Saving…'
-			);
-		} else if ( status === 'saved' ) {
-			statusEl = el( 'p', { style: { fontSize: '12px', margin: '8px 0 0', color: '#0a6e3b', fontWeight: '500' } }, '✅ Saved.' );
-		} else if ( status === 'error' ) {
-			statusEl = el( 'p', { style: { fontSize: '12px', margin: '8px 0 0', color: '#b32d2e' } }, '❌ Error saving.' );
-		}
-
-		// Build version rows — all languages.
-		var groupVersions = templateMap[ group ] || {};
-		var versionRows   = [];
-
-		Object.keys( languages ).forEach( function ( slug ) {
-			var lang      = languages[ slug ];
-			var info      = groupVersions[ slug ];
-			var isCurrent = slug === activeLang;
-			var editUrl   = info
-				? ( '/wp-admin/site-editor.php?p=' + encodeURIComponent( '/wp_template_part/' + theme + '//' + info.slug ) + '&canvas=edit' )
-				: null;
-
-			var actionEl;
-			if ( isCurrent ) {
-				actionEl = el( 'span', { style: { fontSize: '11px', color: '#0a6e3b', fontWeight: '600' } }, '← Current' );
-			} else if ( info && editUrl ) {
-				actionEl = el( Button, { variant: 'link', href: editUrl, style: { fontSize: '12px' } }, 'Edit →' );
-			} else if ( duplicating === slug ) {
-				actionEl = el( Spinner, { style: { margin: 0, width: '16px', height: '16px' } } );
+		var rows = Object.keys( data.languages ).map( function ( slug ) {
+			var info = versions[ slug ];
+			var action;
+			if ( slug === active ) {
+				action = el( 'span', { className: 'wpm-tp-current' }, __( 'This version', 'pixellang-multilingual' ) );
+			} else if ( info ) {
+				action = el( Button, { variant: 'link', href: editUrl( info.slug ) }, __( 'Edit', 'pixellang-multilingual' ) );
+			} else if ( busyState[ 0 ] === slug ) {
+				action = el( Spinner );
 			} else {
-				actionEl = el( Button, {
-					variant: 'primary',
-					style:   { fontSize: '11px', padding: '2px 10px', height: 'auto' },
-					onClick: function () { createVersion( slug ); },
-				}, '+ Create ' + lang.label + ' version' );
-			}
-
-			versionRows.push(
-				el( 'div', {
-					key:   slug,
-					style: {
-						display:         'flex',
-						alignItems:      'center',
-						justifyContent:  'space-between',
-						padding:         isCurrent ? '6px 12px' : '6px 0',
-						margin:          isCurrent ? '0 -12px' : '0',
-						borderTop:       '1px solid #f0f0f0',
-						backgroundColor: isCurrent ? '#f0faf4' : 'transparent',
+				action = el( Button, {
+					variant: 'secondary',
+					size: 'small',
+					disabled: ! active,
+					onClick: function () {
+						createVersion( slug );
 					},
-				},
-				el( 'span', { style: { fontSize: '13px' } }, lang.flag + ' ' + lang.label ),
-				actionEl
-				)
+				}, __( 'Create', 'pixellang-multilingual' ) );
+			}
+			return el( 'li', { key: slug, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', padding: '6px 0', borderTop: '1px solid #e2e8f0', margin: 0 } },
+				el( 'span', null, el( 'code', { style: { marginRight: '8px' } }, slug.toUpperCase() ), data.languages[ slug ].label ),
+				action
 			);
 		} );
 
-		return el(
-			PluginDocumentSettingPanel,
-			{ name: 'wpm-template-language-panel', title: '🌐 Template Languages', initialOpen: true },
+		var feedback = null;
+		if ( status === 'saving' ) {
+			feedback = el( 'p', null, el( Spinner ), __( 'Saving…', 'pixellang-multilingual' ) );
+		} else if ( status === 'error' ) {
+			feedback = el( Notice, { status: 'error', isDismissible: false }, __( 'The change could not be saved.', 'pixellang-multilingual' ) );
+		}
 
+		return panel(
 			el( SelectControl, {
-				label:                   'This template is in:',
-				value:                   activeLang,
-				options:                 langOptions,
-				onChange:                function ( val ) {
-					setSelectedLang( val );
-					saveAssignment( val );
-				},
+				label: __( 'This template part is in', 'pixellang-multilingual' ),
+				value: active,
+				options: options,
+				onChange: assign,
 				__nextHasNoMarginBottom: true,
+				__next40pxDefaultSize: true,
 			} ),
-
-			el( 'p', { style: { fontSize: '11px', color: '#999', margin: '4px 0 0' } },
-				'Group: ' + group
-			),
-
-			statusEl,
-
-			versionRows.length > 0
-				? el( 'div', { style: { marginTop: '16px' } },
-					el( 'p', { style: { fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#757575', margin: '0 0 4px' } },
-						'All versions'
-					),
-					versionRows
-				)
-				: null
+			/* translators: placeholders: language or content name. */
+			el( 'p', { className: 'components-base-control__help' }, sprintf( __( 'Group: %s', 'pixellang-multilingual' ), group ) ),
+			feedback,
+			active ? null : el( 'p', { className: 'components-base-control__help' }, __( 'Assign a language to create the other versions.', 'pixellang-multilingual' ) ),
+			el( 'ul', { style: { margin: '12px 0 0', padding: 0, listStyle: 'none' } }, rows )
 		);
 	}
 
-	registerPlugin( 'wpm-template-language', { render: WpmTemplatePanel } );
-} )();
+	wp.plugins.registerPlugin( 'wpm-template-language', { render: TemplateLanguagePanel } );
+}() );

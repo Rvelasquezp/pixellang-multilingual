@@ -2,28 +2,54 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "wp-multilingual/language-switcher",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"title": "Language Switcher",
 	"category": "widgets",
 	"icon": "translation",
-	"description": "Displays a language switcher for WP Multilingual.",
-	"textdomain": "wp-multilingual",
+	"description": "Links to the current page in the other languages of the site.",
+	"keywords": [ "language", "multilingual", "translation", "langue" ],
+	"textdomain": "pixellang-multilingual",
 	"editorScript": "file:./editor.js",
+	"viewScript": "file:./view.js",
 	"style": "file:./style.css",
 	"attributes": {
 		"style": {
 			"type": "string",
 			"default": "flags",
-			"enum": ["flags", "text", "dropdown"]
+			"enum": [ "flags", "text", "dropdown" ]
 		},
 		"showLabel": {
 			"type": "boolean",
 			"default": true
+		},
+		"hideCurrent": {
+			"type": "boolean",
+			"default": false
+		},
+		"hideMissing": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {
 		"html": false,
-		"align": ["left", "center", "right"]
+		"align": [ "left", "center", "right" ],
+		"color": {
+			"text": true,
+			"link": true,
+			"background": false
+		},
+		"typography": {
+			"fontSize": true,
+			"__experimentalFontFamily": true,
+			"__experimentalTextTransform": true,
+			"__experimentalLetterSpacing": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		}
 	},
-	"render": "render.php"
+	"render": "file:./render.php"
 }

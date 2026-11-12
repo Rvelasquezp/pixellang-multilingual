@@ -1,0 +1,1264 @@
+# Copyright (C) 2026 Agence Pixel
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: PixelLang Multilingual 1.1.0\n"
+"Report-Msgid-Bugs-To: https://agencepixel.ca\n"
+"Last-Translator: Agence Pixel\n"
+"Language-Team: Agence Pixel\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-12T22:45:42+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: pixellang-multilingual\n"
+
+#. Plugin Name of the plugin
+#: wp-multilingual.php
+#: includes/class-admin.php:79
+msgid "PixelLang Multilingual"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wp-multilingual.php
+msgid "https://github.com/Rvelasquezp/pixellang-multilingual"
+msgstr ""
+
+#. Description of the plugin
+#: wp-multilingual.php
+msgid "Multilingual WordPress without lock-in: languages, linked translations of posts, pages, custom post types and terms, language-aware menus, template parts and forms, hreflang and a language switcher block."
+msgstr ""
+
+#. Author of the plugin
+#: wp-multilingual.php
+msgid "Agence Pixel"
+msgstr ""
+
+#. Author URI of the plugin
+#: wp-multilingual.php
+msgid "https://agencepixel.ca"
+msgstr ""
+
+#: admin/views/languages.php:32
+#: admin/views/languages.php:133
+msgid "Name"
+msgstr ""
+
+#: admin/views/languages.php:36
+msgid "Locale"
+msgstr ""
+
+#: admin/views/languages.php:42
+#: admin/views/overview.php:61
+#: admin/views/settings.php:226
+msgid "Default"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/languages.php:45
+#, php-format
+msgid "Move %s up"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/languages.php:46
+#, php-format
+msgid "Move %s down"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/languages.php:47
+#, php-format
+msgid "Remove %s"
+msgstr ""
+
+#: admin/views/languages.php:55
+#: admin/views/overview.php:44
+#: includes/class-admin.php:67
+#: admin/js/template-panel.js:61
+msgid "Languages"
+msgstr ""
+
+#: admin/views/languages.php:56
+msgid "The order below is the order of the language switcher. The default language is used for visitors without a preference and for the x-default hreflang."
+msgstr ""
+
+#: admin/views/languages.php:65
+msgid "Active languages"
+msgstr ""
+
+#: admin/views/languages.php:77
+msgid "No language yet. Add one from the catalog."
+msgstr ""
+
+#: admin/views/languages.php:94
+msgid "Removing a language keeps its content and links: they come back if you add the language again."
+msgstr ""
+
+#: admin/views/languages.php:95
+msgid "Save languages"
+msgstr ""
+
+#: admin/views/languages.php:101
+msgid "Add a language"
+msgstr ""
+
+#: admin/views/languages.php:105
+msgid "Search languages"
+msgstr ""
+
+#: admin/views/languages.php:106
+msgid "Search by name or code…"
+msgstr ""
+
+#: admin/views/languages.php:117
+msgid "Add"
+msgstr ""
+
+#: admin/views/languages.php:118
+msgid "Active"
+msgstr ""
+
+#: admin/views/languages.php:122
+msgid "No language matches. Add it as a custom language below."
+msgstr ""
+
+#: admin/views/languages.php:125
+msgid "Custom language"
+msgstr ""
+
+#: admin/views/languages.php:128
+msgid "Code"
+msgstr ""
+
+#: admin/views/languages.php:130
+msgid "Lowercase, as used in URLs: fr, en, pt-br."
+msgstr ""
+
+#: admin/views/languages.php:137
+msgid "WordPress locale"
+msgstr ""
+
+#: admin/views/languages.php:141
+msgid "Add custom language"
+msgstr ""
+
+#: admin/views/layout-header.php:27
+msgid "PixelLang sections"
+msgstr ""
+
+#: admin/views/overview.php:23
+msgid "Start by adding your languages"
+msgstr ""
+
+#: admin/views/overview.php:24
+msgid "Choose the languages of your site and the default one. Everything else builds on them."
+msgstr ""
+
+#: admin/views/overview.php:26
+#: includes/class-meta-box.php:54
+msgid "Add languages"
+msgstr ""
+
+#: admin/views/overview.php:36
+#: includes/class-admin.php:66
+#: wp-multilingual.php:94
+msgid "Dashboard"
+msgstr ""
+
+#: admin/views/overview.php:37
+msgid "How complete each language is, and what needs your attention."
+msgstr ""
+
+#: admin/views/overview.php:40
+msgid "Translate content"
+msgstr ""
+
+#: admin/views/overview.php:66
+msgid "item"
+msgid_plural "items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/overview.php:69
+msgid "Reference language for coverage."
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/overview.php:72
+#, php-format
+msgid "%s coverage"
+msgstr ""
+
+#. translators: 1: percentage, 2: default language name.
+#: admin/views/overview.php:80
+#, php-format
+msgid "%1$d%% of %2$s content translated"
+msgstr ""
+
+#: admin/views/overview.php:89
+msgid "View content"
+msgstr ""
+
+#: admin/views/overview.php:89
+msgid "View missing translations"
+msgstr ""
+
+#: admin/views/overview.php:98
+msgid "Site health"
+msgstr ""
+
+#. translators: %s: number of items.
+#: admin/views/overview.php:107
+#, php-format
+msgid "%s item has no language"
+msgid_plural "%s items have no language"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/overview.php:108
+msgid "All content has a language"
+msgstr ""
+
+#: admin/views/overview.php:109
+#: admin/views/tools.php:28
+msgid "Assign the default language"
+msgstr ""
+
+#. translators: %s: comma-separated language codes.
+#: admin/views/overview.php:128
+#, php-format
+msgid "No navigation menu for: %s"
+msgstr ""
+
+#: admin/views/overview.php:129
+msgid "Each language has its navigation menu"
+msgstr ""
+
+#: admin/views/overview.php:130
+msgid "Assign menus"
+msgstr ""
+
+#: admin/views/overview.php:136
+msgid "hreflang tags are output for translated pages"
+msgstr ""
+
+#: admin/views/overview.php:136
+msgid "hreflang tags are turned off"
+msgstr ""
+
+#: admin/views/overview.php:137
+msgid "Turn on"
+msgstr ""
+
+#. translators: %d: number of template groups.
+#: admin/views/overview.php:146
+#, php-format
+msgid "%d template part has language versions"
+msgid_plural "%d template parts have language versions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/overview.php:147
+#: admin/views/settings.php:357
+msgid "No template part has language versions yet"
+msgstr ""
+
+#: admin/views/overview.php:148
+msgid "Manage"
+msgstr ""
+
+#. translators: 1: number of groups, 2: number of ignored entries.
+#: admin/views/overview.php:157
+#, php-format
+msgid "Version 1.0 links migrated: %1$d groups, %2$d entries ignored"
+msgstr ""
+
+#: admin/views/overview.php:158
+msgid "Details"
+msgstr ""
+
+#: admin/views/overview.php:181
+msgid "Content by type"
+msgstr ""
+
+#: admin/views/overview.php:186
+msgid "Type"
+msgstr ""
+
+#: admin/views/overview.php:190
+#: admin/views/settings.php:309
+msgid "None"
+msgstr ""
+
+#: admin/views/settings.php:11
+#: admin/views/tools.php:110
+#: includes/class-translations-table.php:61
+msgid "Content"
+msgstr ""
+
+#: admin/views/settings.php:12
+msgid "Visitors & SEO"
+msgstr ""
+
+#: admin/views/settings.php:13
+msgid "Menus"
+msgstr ""
+
+#: admin/views/settings.php:14
+msgid "Forms"
+msgstr ""
+
+#: admin/views/settings.php:15
+msgid "Template parts"
+msgstr ""
+
+#: admin/views/settings.php:41
+msgid "Save changes"
+msgstr ""
+
+#: admin/views/settings.php:71
+#: includes/class-admin.php:69
+msgid "Settings"
+msgstr ""
+
+#: admin/views/settings.php:72
+msgid "Each tab saves on its own."
+msgstr ""
+
+#: admin/views/settings.php:77
+msgid "Settings sections"
+msgstr ""
+
+#: admin/views/settings.php:92
+msgid "Translatable content types"
+msgstr ""
+
+#: admin/views/settings.php:94
+msgid "Enabled types get a language, the Translations box in the editor and the language columns. Pages and posts are always enabled."
+msgstr ""
+
+#: admin/views/settings.php:96
+#: admin/views/tools.php:36
+msgid "Content types"
+msgstr ""
+
+#: admin/views/settings.php:108
+msgid "Always on"
+msgstr ""
+
+#: admin/views/settings.php:115
+msgid "Translatable taxonomies"
+msgstr ""
+
+#: admin/views/settings.php:117
+msgid "Terms of enabled taxonomies get a language and can be linked to their translations. When a translation is created, its terms are replaced by their translations."
+msgstr ""
+
+#: admin/views/settings.php:119
+msgid "Taxonomies"
+msgstr ""
+
+#: admin/views/settings.php:135
+msgid "Visitor language"
+msgstr ""
+
+#: admin/views/settings.php:137
+msgid "A translated page always shows in its own language. These options decide the language of pages that have none (home, archives, search)."
+msgstr ""
+
+#: admin/views/settings.php:139
+msgid "Detect the browser language"
+msgstr ""
+
+#: admin/views/settings.php:139
+msgid "On a first visit, use the first browser language that is active on the site."
+msgstr ""
+
+#: admin/views/settings.php:140
+msgid "Send visitors to the home page of their language"
+msgstr ""
+
+#: admin/views/settings.php:140
+msgid "A visitor who chose English and opens the French home page is redirected to the English home page, if it exists."
+msgstr ""
+
+#: admin/views/settings.php:141
+msgid "Filter listings by language"
+msgstr ""
+
+#: admin/views/settings.php:141
+msgid "Blog, archives and search only list content in the current language (and content without language). Leave off if your theme already filters its listings."
+msgstr ""
+
+#: admin/views/settings.php:145
+msgid "Remember the language for"
+msgstr ""
+
+#: admin/views/settings.php:146
+msgid "Lifetime of the wpm_lang cookie, in days (1 to 3650)."
+msgstr ""
+
+#: admin/views/settings.php:150
+msgid "days"
+msgstr ""
+
+#: admin/views/settings.php:155
+msgid "Search engines"
+msgstr ""
+
+#: admin/views/settings.php:157
+msgid "Output hreflang tags"
+msgstr ""
+
+#: admin/views/settings.php:157
+msgid "Tells search engines which page is the translation of which, with x-default on the default language. Turn off only if an SEO plugin already outputs them."
+msgstr ""
+
+#: admin/views/settings.php:177
+msgid "Navigation blocks"
+msgstr ""
+
+#: admin/views/settings.php:179
+msgid "A Navigation block that shows one of these menus displays the menu of the visitor language instead. You can also assign a language from the Site Editor, in the menu settings."
+msgstr ""
+
+#: admin/views/settings.php:186
+msgid "No menu"
+msgstr ""
+
+#: admin/views/settings.php:189
+#: includes/class-meta-box.php:95
+#: admin/js/meta-box.js:106
+#: admin/js/meta-box.js:233
+msgid "(no title)"
+msgstr ""
+
+#: admin/views/settings.php:197
+msgid "This site has no Navigation menu yet."
+msgstr ""
+
+#: admin/views/settings.php:201
+msgid "Classic menu locations"
+msgstr ""
+
+#: admin/views/settings.php:204
+msgid "For classic themes: the menu shown in each location, per language. Leave empty to keep the menu set in Appearance > Menus."
+msgstr ""
+
+#: admin/views/settings.php:213
+msgid "Location"
+msgstr ""
+
+#: admin/views/settings.php:239
+msgid "The active theme registers no classic menu location: menus are handled by Navigation blocks above."
+msgstr ""
+
+#: admin/views/settings.php:266
+msgid "Form translations"
+msgstr ""
+
+#: admin/views/settings.php:268
+msgid "Link the versions of a form: wherever one of them is inserted, visitors see the version of their language."
+msgstr ""
+
+#: admin/views/settings.php:271
+msgid "No supported form plugin"
+msgstr ""
+
+#: admin/views/settings.php:271
+msgid "Activate Contact Form 7 or Gravity Forms to translate forms."
+msgstr ""
+
+#: admin/views/settings.php:285
+msgid "Plugin"
+msgstr ""
+
+#: admin/views/settings.php:289
+#: admin/views/settings.php:367
+msgid "Actions"
+msgstr ""
+
+#: admin/views/settings.php:298
+msgid "Form plugin"
+msgstr ""
+
+#: admin/views/settings.php:318
+msgid "Remove this form group"
+msgstr ""
+
+#: admin/views/settings.php:343
+msgid "No form is linked yet."
+msgstr ""
+
+#: admin/views/settings.php:344
+msgid "Link a form"
+msgstr ""
+
+#: admin/views/settings.php:352
+msgid "Template parts per language"
+msgstr ""
+
+#: admin/views/settings.php:353
+msgid "Open the Site Editor"
+msgstr ""
+
+#: admin/views/settings.php:355
+msgid "Header, footer and other parts can have one version per language. Open a part in the Site Editor: the Languages panel of its settings assigns its language and creates the other versions."
+msgstr ""
+
+#: admin/views/settings.php:357
+msgid "Without versions, every language shares the same header and footer."
+msgstr ""
+
+#: admin/views/settings.php:363
+msgid "Part"
+msgstr ""
+
+#: admin/views/settings.php:381
+msgid "Missing"
+msgstr ""
+
+#. translators: %s: template group.
+#: admin/views/settings.php:387
+#, php-format
+msgid "Stop translating %s"
+msgstr ""
+
+#: admin/views/settings.php:394
+msgid "Unlinking a part only removes its language versions from this list: the template parts themselves are kept."
+msgstr ""
+
+#: admin/views/tools.php:17
+#: includes/class-admin.php:70
+msgid "Tools"
+msgstr ""
+
+#: admin/views/tools.php:18
+msgid "Maintenance tasks. None of them deletes content."
+msgstr ""
+
+#: admin/views/tools.php:24
+msgid "Assign the default language to every selected content that has no language?"
+msgstr ""
+
+#. translators: %s: default language name.
+#: admin/views/tools.php:32
+#, php-format
+msgid "Content without language is set to %s. Useful right after installing the plugin on an existing site."
+msgstr ""
+
+#: admin/views/tools.php:54
+msgid "Assign"
+msgstr ""
+
+#: admin/views/tools.php:61
+msgid "Recalculate statistics"
+msgstr ""
+
+#: admin/views/tools.php:62
+msgid "Counters are cached for one hour and refreshed when content changes. Recalculate them after an import or a direct database change."
+msgstr ""
+
+#: admin/views/tools.php:63
+msgid "Recalculate"
+msgstr ""
+
+#: admin/views/tools.php:68
+msgid "Repair template parts"
+msgstr ""
+
+#: admin/views/tools.php:69
+msgid "Attaches the active theme to template parts that belong to no theme, so the Site Editor lists them again. Parts of other themes are not touched."
+msgstr ""
+
+#: admin/views/tools.php:71
+msgid "Attach the active theme to template parts that have no theme?"
+msgstr ""
+
+#: admin/views/tools.php:71
+msgid "Repair"
+msgstr ""
+
+#: admin/views/tools.php:78
+msgid "Migration from version 1.0"
+msgstr ""
+
+#: admin/views/tools.php:81
+msgid "Nothing was migrated: this site started with version 1.1 or later."
+msgstr ""
+
+#. translators: 1: date, 2: number of source groups, 3: number of migrated groups.
+#: admin/views/tools.php:88
+#, php-format
+msgid "Migrated on %1$s: %2$d groups of the old page map were read and %3$d translation groups were created. The old map (option wpm_page_map) is kept unchanged as a backup."
+msgstr ""
+
+#. translators: %d: number of entries.
+#: admin/views/tools.php:101
+#, php-format
+msgid "%d entry ignored"
+msgid_plural "%d entries ignored"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/tools.php:108
+msgid "Old group"
+msgstr ""
+
+#: admin/views/tools.php:109
+#: blocks/language-switcher/render.php:44
+#: includes/class-admin-columns.php:73
+#: includes/class-admin-columns.php:144
+#: includes/class-admin-columns.php:288
+#: includes/class-term-language.php:64
+#: includes/class-term-language.php:82
+#: includes/class-term-language.php:186
+#: admin/js/nav-panel.js:83
+msgid "Language"
+msgstr ""
+
+#: admin/views/tools.php:111
+msgid "Reason"
+msgstr ""
+
+#: admin/views/tools.php:138
+msgid "System"
+msgstr ""
+
+#: admin/views/tools.php:140
+msgid "Plugin version"
+msgstr ""
+
+#: admin/views/tools.php:141
+msgid "Data version"
+msgstr ""
+
+#: admin/views/tools.php:144
+msgid "Theme"
+msgstr ""
+
+#: admin/views/tools.php:144
+msgid "block theme"
+msgstr ""
+
+#: admin/views/tools.php:144
+msgid "classic theme"
+msgstr ""
+
+#: admin/views/tools.php:145
+msgid "Permalinks"
+msgstr ""
+
+#: admin/views/tools.php:145
+msgid "plain"
+msgstr ""
+
+#: admin/views/translations.php:16
+msgid "Add a second language"
+msgstr ""
+
+#: admin/views/translations.php:17
+msgid "Translations appear here once at least two languages are active."
+msgstr ""
+
+#: admin/views/translations.php:19
+msgid "Manage languages"
+msgstr ""
+
+#: admin/views/translations.php:31
+#: includes/class-admin-columns.php:74
+#: includes/class-admin.php:68
+#: includes/class-meta-box.php:82
+msgid "Translations"
+msgstr ""
+
+#: admin/views/translations.php:32
+msgid "Each row is a content in the source language. Create a missing translation in one click: a draft copy opens in the editor, ready to translate."
+msgstr ""
+
+#: admin/views/translations.php:36
+msgid "Content type"
+msgstr ""
+
+#. translators: %s: number of items.
+#: admin/views/translations.php:56
+#, php-format
+msgid "%s item of this type has no language and is not listed."
+msgid_plural "%s items of this type have no language and are not listed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/translations.php:57
+msgid "Assign languages"
+msgstr ""
+
+#: admin/views/translations.php:67
+msgid "Source language"
+msgstr ""
+
+#: admin/views/translations.php:75
+msgid "Show"
+msgstr ""
+
+#: admin/views/translations.php:77
+msgid "All content"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/translations.php:87
+#, php-format
+msgid "Missing in %s"
+msgstr ""
+
+#: admin/views/translations.php:93
+msgid "Filter"
+msgstr ""
+
+#: admin/views/translations.php:94
+msgid "Search"
+msgstr ""
+
+#: blocks/language-switcher/render.php:51
+msgid "Choose a language"
+msgstr ""
+
+#: includes/class-admin-columns.php:88
+#: includes/class-admin-columns.php:290
+#: includes/class-term-language.php:198
+msgid "Not set"
+msgstr ""
+
+#: includes/class-admin-columns.php:98
+msgid "Assign a language first"
+msgstr ""
+
+#. translators: 1: language, 2: title, 3: status.
+#: includes/class-admin-columns.php:113
+#, php-format
+msgid "%1$s: %2$s (%3$s). Edit"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-admin-columns.php:127
+#, php-format
+msgid "Create the %s translation"
+msgstr ""
+
+#: includes/class-admin-columns.php:159
+#: admin/js/nav-panel.js:48
+#: admin/js/template-panel.js:73
+msgid "Not assigned"
+msgstr ""
+
+#: includes/class-admin-columns.php:173
+msgid "Filter by language"
+msgstr ""
+
+#: includes/class-admin-columns.php:175
+msgid "All languages"
+msgstr ""
+
+#: includes/class-admin-columns.php:179
+msgid "No language"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-admin-columns.php:218
+#, php-format
+msgid "Set language: %s"
+msgstr ""
+
+#. translators: 1: number of items, 2: language name.
+#: includes/class-admin-columns.php:267
+#, php-format
+msgid "%1$d item set to %2$s."
+msgid_plural "%1$d items set to %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-admin.php:48
+#: admin/js/meta-box.js:24
+msgid "Translation draft created from the original content. Translate it, then publish."
+msgstr ""
+
+#: includes/class-admin.php:80
+msgid "PixelLang"
+msgstr ""
+
+#: includes/class-admin.php:119
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: includes/class-admin.php:161
+#: includes/class-meta-box.php:179
+msgid "Published"
+msgstr ""
+
+#: includes/class-admin.php:162
+#: includes/class-meta-box.php:180
+msgid "Draft"
+msgstr ""
+
+#: includes/class-admin.php:163
+#: includes/class-meta-box.php:181
+msgid "Pending"
+msgstr ""
+
+#: includes/class-admin.php:164
+#: includes/class-meta-box.php:182
+msgid "Scheduled"
+msgstr ""
+
+#: includes/class-admin.php:165
+#: includes/class-meta-box.php:183
+msgid "Private"
+msgstr ""
+
+#: includes/class-admin.php:166
+msgid "Trash"
+msgstr ""
+
+#: includes/class-admin.php:275
+msgid "Changes saved."
+msgstr ""
+
+#: includes/class-admin.php:276
+msgid "Languages saved."
+msgstr ""
+
+#: includes/class-admin.php:277
+msgid "Keep at least one language."
+msgstr ""
+
+#: includes/class-admin.php:278
+msgid "Statistics recalculated."
+msgstr ""
+
+#: includes/class-admin.php:279
+msgid "Default language assigned to content that had none."
+msgstr ""
+
+#: includes/class-admin.php:280
+msgid "Translation draft created."
+msgstr ""
+
+#: includes/class-admin.php:281
+msgid "The translation could not be created."
+msgstr ""
+
+#: includes/class-admin.php:291
+msgid "Sorry, you are not allowed to do that."
+msgstr ""
+
+#: includes/class-admin.php:386
+msgid "Unknown settings section."
+msgstr ""
+
+#: includes/class-admin.php:403
+msgid "Sorry, you are not allowed to translate this content."
+msgstr ""
+
+#: includes/class-admin.php:408
+msgid "Translation"
+msgstr ""
+
+#: includes/class-admin.php:456
+msgid "Unknown task."
+msgstr ""
+
+#: includes/class-meta-box.php:33
+msgid "Language & translations"
+msgstr ""
+
+#: includes/class-meta-box.php:52
+msgid "No language is active yet."
+msgstr ""
+
+#: includes/class-meta-box.php:71
+msgid "Language of this content"
+msgstr ""
+
+#: includes/class-meta-box.php:78
+#: includes/class-term-language.php:86
+msgid "No language assigned yet. Saving will assign the selected one."
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-meta-box.php:100
+#, php-format
+msgid "Unlink the %s translation"
+msgstr ""
+
+#: includes/class-meta-box.php:108
+#: includes/class-translations-table.php:211
+#: admin/js/template-panel.js:125
+msgid "Create"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-meta-box.php:114
+#, php-format
+msgid "Link an existing %s content"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-meta-box.php:115
+msgid "Link existing…"
+msgstr ""
+
+#: includes/class-meta-box.php:123
+msgid "Save a draft to create translations from this content."
+msgstr ""
+
+#: includes/class-migration.php:142
+msgid "Content no longer exists"
+msgstr ""
+
+#: includes/class-migration.php:143
+msgid "Language is not active"
+msgstr ""
+
+#: includes/class-migration.php:144
+msgid "Already linked in an earlier group"
+msgstr ""
+
+#: includes/class-migration.php:145
+msgid "Different content type than the group"
+msgstr ""
+
+#: includes/class-migration.php:146
+msgid "Language of the content differs from its slot"
+msgstr ""
+
+#: includes/class-rest.php:152
+msgid "This is not a navigation menu."
+msgstr ""
+
+#: includes/class-rest.php:155
+#: includes/class-rest.php:205
+#: includes/class-translations.php:289
+msgid "Unknown language."
+msgstr ""
+
+#: includes/class-rest.php:199
+#: includes/class-translations.php:286
+msgid "This content cannot be translated."
+msgstr ""
+
+#: includes/class-rest.php:238
+#: includes/class-rest.php:332
+msgid "Invalid request."
+msgstr ""
+
+#: includes/class-rest.php:282
+msgid "Only content of the same type can be linked."
+msgstr ""
+
+#: includes/class-rest.php:285
+msgid "You are not allowed to edit this content."
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-rest.php:292
+#, php-format
+msgid "This content is already in %s."
+msgstr ""
+
+#: includes/class-template-switcher.php:164
+msgid "Unknown template group."
+msgstr ""
+
+#: includes/class-template-switcher.php:178
+#: includes/class-template-switcher.php:213
+msgid "Invalid template part."
+msgstr ""
+
+#. translators: 1: template part title, 2: language code.
+#: includes/class-template-switcher.php:257
+#, php-format
+msgctxt "template part title with language"
+msgid "%1$s (%2$s)"
+msgstr ""
+
+#: includes/class-term-language.php:66
+msgid "Link translations after creating the term, from its edit screen."
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-term-language.php:113
+#, php-format
+msgid "Translation (%s)"
+msgstr ""
+
+#: includes/class-term-language.php:119
+msgid "No translation"
+msgstr ""
+
+#: includes/class-translations-table.php:62
+msgid "Status"
+msgstr ""
+
+#: includes/class-translations-table.php:146
+msgid "Nothing is missing here: every item has this translation."
+msgstr ""
+
+#: includes/class-translations-table.php:148
+msgid "No content in this language yet."
+msgstr ""
+
+#: includes/class-translations-table.php:164
+msgid "View"
+msgstr ""
+
+#. translators: 1: language name, 2: content title.
+#: includes/class-translations-table.php:209
+#, php-format
+msgid "Create the %1$s translation of “%2$s”"
+msgstr ""
+
+#: includes/class-translations.php:298
+msgid "The content is already in this language."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:125
+#, js-format
+msgid "%s is now the default language."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:137
+#, js-format
+msgid "%s is already active."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:153
+#, js-format
+msgid "%s added. Save to apply."
+msgstr ""
+
+#. translators: placeholders: language or content name, number.
+#: admin/js/admin.js:168
+#, js-format
+msgid "%1$s has %2$d items. They keep their language and links, but stop showing as a language of the site until you add it again. Remove it?"
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:176
+#, js-format
+msgid "%s removed. Save to apply."
+msgstr ""
+
+#: admin/js/admin.js:267
+msgid "The code must be 2 or 3 lowercase letters, optionally followed by a dash and a region (pt-br)."
+msgstr ""
+
+#: admin/js/admin.js:269
+msgid "Give the language a name."
+msgstr ""
+
+#: admin/js/admin.js:271
+msgid "The locale looks like fr_CA or pt_BR."
+msgstr ""
+
+#: admin/js/admin.js:331
+msgid "Form group removed. Save to apply."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:344
+#, js-format
+msgid "Stop translating “%s”? The template parts themselves are kept."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/admin.js:352
+#, js-format
+msgid "“%s” is no longer translated."
+msgstr ""
+
+#: admin/js/admin.js:356
+#: admin/js/template-panel.js:137
+msgid "The change could not be saved."
+msgstr ""
+
+#: admin/js/admin.js:372
+msgid "Nothing to repair: every template part has a theme."
+msgstr ""
+
+#. translators: %s: comma-separated template part slugs.
+#: admin/js/admin.js:375
+#, js-format
+msgid "Repaired: %s"
+msgstr ""
+
+#: admin/js/admin.js:382
+msgid "The repair failed."
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/js/meta-box.js:53
+#, js-format
+msgid "This content already has a %s translation. Changing its language will unlink it from all its translations. Continue?"
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/meta-box.js:84
+#, js-format
+msgid "Language saved: %s."
+msgstr ""
+
+#: admin/js/meta-box.js:90
+#: admin/js/nav-panel.js:74
+msgid "The language could not be saved."
+msgstr ""
+
+#. translators: placeholders: language or content name, language or content name.
+#: admin/js/meta-box.js:151
+#, js-format
+msgid "%1$s linked as the %2$s translation."
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/meta-box.js:155
+#, js-format
+msgid "%s translation unlinked."
+msgstr ""
+
+#: admin/js/meta-box.js:160
+msgid "The link could not be saved."
+msgstr ""
+
+#: admin/js/meta-box.js:239
+msgid "no language"
+msgstr ""
+
+#: admin/js/meta-box.js:242
+msgid "already linked"
+msgstr ""
+
+#: admin/js/meta-box.js:282
+msgid "No matching content."
+msgstr ""
+
+#. translators: placeholders: number.
+#: admin/js/meta-box.js:284
+#, js-format
+msgid "%d results"
+msgstr ""
+
+#: admin/js/meta-box.js:288
+msgid "Search failed. Try again."
+msgstr ""
+
+#. translators: placeholders: number.
+#: admin/js/nav-panel.js:53
+#, js-format
+msgid "used by #%d"
+msgstr ""
+
+#: admin/js/nav-panel.js:72
+#: admin/js/template-panel.js:135
+msgid "Saving…"
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/nav-panel.js:78
+#, js-format
+msgid "Navigation blocks showing a menu of another language display this one for %s visitors."
+msgstr ""
+
+#: admin/js/nav-panel.js:85
+msgid "This menu is for"
+msgstr ""
+
+#: admin/js/template-panel.js:64
+msgid "Save this template part once, then assign its language."
+msgstr ""
+
+#: admin/js/template-panel.js:112
+msgid "This version"
+msgstr ""
+
+#: admin/js/template-panel.js:114
+msgid "Edit"
+msgstr ""
+
+#: admin/js/template-panel.js:142
+msgid "This template part is in"
+msgstr ""
+
+#. translators: placeholders: language or content name.
+#: admin/js/template-panel.js:150
+#, js-format
+msgid "Group: %s"
+msgstr ""
+
+#: admin/js/template-panel.js:152
+msgid "Assign a language to create the other versions."
+msgstr ""
+
+#: blocks/language-switcher/editor.js:29
+msgid "Display"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:31
+msgid "Style"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:34
+msgid "Codes (FR · EN)"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:35
+msgid "Language names"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:36
+msgid "Dropdown"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:45
+msgid "Hide the current language"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:53
+msgid "Hide languages without translation"
+msgstr ""
+
+#: blocks/language-switcher/editor.js:54
+msgid "Otherwise they link to the home page of that language."
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block title"
+msgid "Language Switcher"
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block description"
+msgid "Links to the current page in the other languages of the site."
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block keyword"
+msgid "language"
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block keyword"
+msgid "multilingual"
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block keyword"
+msgid "translation"
+msgstr ""
+
+#: blocks/language-switcher/block.json
+msgctxt "block keyword"
+msgid "langue"
+msgstr ""
