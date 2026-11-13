@@ -73,6 +73,12 @@ Translates texts of themes, plugins and templates without editing their files (m
 - **Automatic placement** (Settings > Language switcher), like WPML: in a menu (takes the menu's look, mobile included), floating (bottom corner, light or dark) or block only.
 - Existing blocks keep their look.
 
+## License (1.5)
+
+- For Agence Pixel clients only: each site needs a signed key for its domain (License screen or `wp pixellang license activate <key>`).
+- Without a valid key the public site keeps working; the plugin screens are locked and the admin shows a notice.
+- Development sites (.local, .test, localhost) need no key.
+
 ## Theme API
 
 ```php

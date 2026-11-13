@@ -73,6 +73,12 @@ Traduit les textes des thèmes, extensions et modèles sans modifier leurs fichi
 - **Placement automatique** (Réglages > Sélecteur de langue), comme WPML : dans un menu (prend l'apparence du menu, aussi sur mobile), flottant (coin inférieur, clair ou foncé) ou bloc seulement.
 - Les blocs existants gardent leur apparence.
 
+## Licence (1.5)
+
+- Réservé aux clients d'Agence Pixel : chaque site a besoin d'une clé signée pour son domaine (écran Licence ou `wp pixellang license activate <clé>`).
+- Sans clé valide, le site public continue de fonctionner ; les écrans de l'extension sont verrouillés et l'administration affiche un avis.
+- Les sites de développement (.local, .test, localhost) n'ont pas besoin de clé.
+
 ## API pour les thèmes
 
 ```php

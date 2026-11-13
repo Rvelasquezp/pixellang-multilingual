@@ -497,6 +497,68 @@ try {
 	WPM_Settings::flush();
 	wpm_assert( 'menu' === WPM_Settings::get( 'switcher_placement' ) && array( $nfr ) === WPM_Settings::get( 'switcher_menus' ) && ! WPM_Settings::get( 'switcher_hide_current' ), 'settings screen saves the switcher section' );
 
+	echo "License (1.5)\n";
+	$kp     = sodium_crypto_sign_keypair();
+	$secret = sodium_crypto_sign_secretkey( $kp );
+	$pub    = base64_encode( sodium_crypto_sign_publickey( $kp ) );
+	$use_test_key = function () use ( $pub ) {
+		return $pub;
+	};
+	add_filter( 'wpm_license_public_key', $use_test_key );
+	$issue = function ( $domains, $expires = null ) use ( $secret ) {
+		$b64  = function ( $d ) {
+			return rtrim( strtr( base64_encode( $d ), '+/', '-_' ), '=' );
+		};
+		$body = 'PXL1.' . $b64( wp_json_encode( array( 'c' => 'Client test', 'd' => $domains, 'e' => $expires, 'i' => '2026-11-13', 'n' => 'abc' ) ) );
+		return $body . '.' . $b64( sodium_crypto_sign_detached( $body, $secret ) );
+	};
+	$live = function ( $dev ) {
+		return false;
+	};
+	add_filter( 'wpm_license_is_dev_host', $live );
+	$host = WPM_License::site_host();
+	WPM_License::save( '' );
+	wpm_assert( 'missing' === WPM_License::status()['state'] && ! WPM_License::is_active(), 'no key on a live site: locked' );
+	wpm_assert( is_wp_error( WPM_License::save( 'PXL1.abc.def' ) ) && 'missing' === WPM_License::status()['state'], 'malformed key refused, nothing stored' );
+	$good = $issue( array( $host ), gmdate( 'Y-m-d', time() + 400 * DAY_IN_SECONDS ) );
+	wpm_assert( true === WPM_License::save( $good ) && 'valid' === WPM_License::status()['state'] && WPM_License::is_active(), 'key for this domain: active' );
+	$parts  = explode( '.', $good );
+	$forged = $parts[0] . '.' . rtrim( strtr( base64_encode( str_replace( $host, 'evil.example', base64_decode( strtr( $parts[1], '-_', '+/' ) ) ) ), '+/', '-_' ), '=' ) . '.' . $parts[2];
+	wpm_assert( null === WPM_License::decode( $forged ), 'payload changed after signing: refused' );
+	remove_filter( 'wpm_license_public_key', $use_test_key );
+	WPM_License::flush();
+	wpm_assert( null === WPM_License::decode( $good ), 'a key signed by another private key is refused by the real public key' );
+	add_filter( 'wpm_license_public_key', $use_test_key );
+	WPM_License::save( $issue( array( $host ), gmdate( 'Y-m-d', time() + 5 * DAY_IN_SECONDS ) ) );
+	wpm_assert( 'expiring' === WPM_License::status()['state'] && WPM_License::is_active(), 'expires within 30 days: active with a warning' );
+	WPM_License::save( $issue( array( $host ), '2020-01-01' ) );
+	wpm_assert( 'expired' === WPM_License::status()['state'] && ! WPM_License::is_active(), 'expired key: locked' );
+	WPM_License::save( $issue( array( 'other-client.ca' ) ) );
+	wpm_assert( 'domain' === WPM_License::status()['state'] && ! WPM_License::is_active(), 'key of another domain: locked' );
+	WPM_License::save( $issue( array( $host ) ) );
+	wpm_assert( 'valid' === WPM_License::status()['state'] && null === WPM_License::status()['days'], 'key without expiry' );
+	wpm_assert( WPM_License::host_matches( 'shop.client.com', array( '*.client.com' ) ) && WPM_License::host_matches( 'client.com', array( '*.client.com' ) ) && WPM_License::host_matches( 'client.com', array( 'www.client.com' ) ) && ! WPM_License::host_matches( 'notclient.com', array( '*.client.com' ) ) && ! WPM_License::host_matches( 'client.com.evil.net', array( 'client.com' ) ), 'domain matching (www, wildcard, look-alikes)' );
+	remove_filter( 'wpm_license_is_dev_host', $live );
+	wpm_assert( WPM_License::is_dev_host( 'site.local' ) && WPM_License::is_dev_host( 'localhost' ) && WPM_License::is_dev_host( 'x.test' ) && ! WPM_License::is_dev_host( 'client.com' ), 'development hosts need no key' );
+
+	// Locked screens and forms, public site untouched.
+	add_filter( 'wpm_license_is_dev_host', $live );
+	WPM_License::save( '' );
+	add_filter( 'wp_redirect', $catch );
+	$r = $run( 'handle_save_settings', array( 'section' => 'behavior', 'cookie_days' => '45', 'hreflang' => '1' ), 'wpm_save_settings' );
+	remove_filter( 'wp_redirect', $catch );
+	WPM_Settings::flush();
+	wpm_assert( false !== strpos( $r, 'wpm_notice=license_locked' ) && 45 !== WPM_Settings::get( 'cookie_days' ), 'settings forms refused without a license' );
+	ob_start();
+	WPM_License::admin_notice();
+	wpm_assert( false !== strpos( ob_get_clean(), 'notice-error' ), 'admin notice without a license' );
+	wpm_visit( array( 'page_id' => $hf ), 'fr' );
+	WPM_Language_Manager::instance()->set_current( 'fr' );
+	wpm_assert( '' !== WPM_Switcher::render( array() ) && WPM_Hreflang::instance()->get_alternates(), 'public site keeps its switcher and hreflang without a license' );
+	remove_filter( 'wpm_license_is_dev_host', $live );
+	remove_filter( 'wpm_license_public_key', $use_test_key );
+	WPM_License::save( '' );
+
 	echo "String Translation: registry\n";
 	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );
 	$a2 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'b.php:9' ) );

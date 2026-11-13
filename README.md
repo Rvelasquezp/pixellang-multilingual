@@ -97,6 +97,25 @@ Página sin traducción: el idioma enlaza a su portada; un idioma sin la página
 
 Compatibilidad: el atributo `style` (flags/text/dropdown) de la 1.0 chocaba con los estilos de bloque de WordPress; ya no se declara, pero el valor guardado se sigue leyendo (`$block->parsed_block`), así que los bloques existentes no cambian. Clases 1.0 conservadas. Filtro `wpm_switcher_items`.
 
+## Licencia (1.5)
+
+PixelLang Multilingual es solo para clientes de Agence Pixel. Cada sitio necesita una **clave firmada** por Pixel para su dominio (pantalla *Licence* o `wp pixellang license activate <clave>`).
+
+- **Sin clave válida** (falta, no es válida, otro dominio o vencida): el sitio público sigue funcionando en todos sus idiomas; las pantallas del plugin se bloquean (salvo *Licence*), los formularios de ajustes no guardan y el admin muestra un aviso. El editor de contenido sigue funcionando.
+- **Sitios de desarrollo** (`localhost`, `*.local`, `*.test`, `*.localhost`): no necesitan clave.
+- **Aviso** 30 días antes del vencimiento.
+
+**Emitir una clave** (solo Pixel). Hace falta la clave privada de firma en `~/.pixellang/license-signing.key` (nunca en el repo; copia en LastPass):
+
+```bash
+php bin/license-key.php --client="Centre le CAP" --domain=centrelecap.ca --expires=2027-12-31
+php bin/license-key.php --check=PXL1.xxx.yyy
+```
+
+`client.com` cubre también `www.client.com`; `*.client.com` cubre sus subdominios; varios `--domain` posibles (por ejemplo el de staging de WP Engine). Sin `--expires`, la clave no vence.
+
+Formato `PXL1.<datos base64url>.<firma Ed25519>`: el plugin solo contiene la clave pública (`WPM_License::PUBLIC_KEY`), así que puede verificar una clave sin servidor pero no crearla. Si se pierde la clave privada hay que generar un par nuevo, cambiar la clave pública del plugin y volver a emitir las claves. Es un freno, no un DRM: el plugin es código PHP GPL.
+
 ## API para temas
 
 ```php

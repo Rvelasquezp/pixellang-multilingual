@@ -58,6 +58,7 @@ class WPM_Strings_Admin {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'pixellang-multilingual' ), 403 );
 		}
 		check_admin_referer( 'wpm_strings' );
+		WPM_Admin::require_license();
 		$task = isset( $_POST['task'] ) ? sanitize_key( wp_unslash( $_POST['task'] ) ) : '';
 
 		switch ( $task ) {

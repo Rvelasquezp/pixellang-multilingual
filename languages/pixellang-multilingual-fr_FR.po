@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: PixelLang Multilingual 1.4.0\n"
+"Project-Id-Version: PixelLang Multilingual 1.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pixellang-"
 "multilingual\n"
-"POT-Creation-Date: 2026-11-13T15:41:41+00:00\n"
+"POT-Creation-Date: 2026-11-13T17:05:09+00:00\n"
 "PO-Revision-Date: 2026-11-12 19:30-0500\n"
 "Last-Translator: Agence Pixel\n"
 "Language-Team: Agence Pixel\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Domain: pixellang-multilingual\n"
 
 #. Plugin Name of the plugin
-#: wp-multilingual.php includes/class-admin.php:78
+#: wp-multilingual.php includes/class-admin.php:79
 msgid "PixelLang Multilingual"
 msgstr "PixelLang Multilingual"
 
@@ -87,7 +87,7 @@ msgstr "Retirer %s"
 
 #: admin/views/languages.php:55 admin/views/overview.php:53
 #: includes/class-admin.php:67 admin/js/template-panel.js:61
-#: blocks/language-switcher/editor.js:175
+#: blocks/language-switcher/editor.js:203
 msgid "Languages"
 msgstr "Langues"
 
@@ -135,7 +135,7 @@ msgstr "Rechercher par nom ou code…"
 msgid "Add"
 msgstr "Ajouter"
 
-#: admin/views/languages.php:118
+#: admin/views/languages.php:118 includes/class-license.php:264
 msgid "Active"
 msgstr "Active"
 
@@ -169,6 +169,76 @@ msgstr "Ajouter la langue personnalisée"
 msgid "PixelLang sections"
 msgstr "Sections de PixelLang"
 
+#: admin/views/license.php:27 includes/class-admin.php:72
+msgid "License"
+msgstr "Licence"
+
+#: admin/views/license.php:28
+msgid ""
+"PixelLang Multilingual is reserved for Agence Pixel clients. Each site gets "
+"a key for its domain."
+msgstr ""
+"PixelLang Multilingual est réservé aux clients d'Agence Pixel. Chaque site "
+"reçoit une clé pour son domaine."
+
+#: admin/views/license.php:42
+msgid "This site"
+msgstr "Ce site"
+
+#: admin/views/license.php:47
+msgid "Client"
+msgstr "Client"
+
+#: admin/views/license.php:51
+msgid "Domains"
+msgstr "Domaines"
+
+#: admin/views/license.php:55
+msgid "Expires"
+msgstr "Expire le"
+
+#: admin/views/license.php:56
+msgid "Never"
+msgstr "Jamais"
+
+#: admin/views/license.php:66
+msgid "Replace the license key"
+msgstr "Remplacer la clé de licence"
+
+#: admin/views/license.php:66 admin/views/locked.php:15
+msgid "Add the license key"
+msgstr "Ajouter la clé de licence"
+
+#: admin/views/license.php:70
+msgid "Current key:"
+msgstr "Clé actuelle :"
+
+#: admin/views/license.php:75
+msgid "License key"
+msgstr "Clé de licence"
+
+#: admin/views/license.php:78
+msgid ""
+"Agence Pixel sends the key with the site. It is checked on this server, "
+"nothing is sent anywhere. Development sites (.local, .test, localhost) need "
+"no key."
+msgstr ""
+"Agence Pixel envoie la clé avec le site. Elle est vérifiée sur ce serveur, "
+"rien n'est envoyé ailleurs. Les sites de développement (.local, .test, "
+"localhost) n'ont pas besoin de clé."
+
+#: admin/views/license.php:81
+msgid "Remove the key"
+msgstr "Retirer la clé"
+
+#: admin/views/license.php:85
+msgid "Save the key"
+msgstr "Enregistrer la clé"
+
+#: admin/views/locked.php:12
+msgid "A license is needed to change these settings"
+msgstr "Une licence est nécessaire pour modifier ces réglages"
+
 #: admin/views/overview.php:23
 msgid "Start by adding your languages"
 msgstr "Commencez par ajouter vos langues"
@@ -186,7 +256,7 @@ msgid "Add languages"
 msgstr "Ajouter des langues"
 
 #: admin/views/overview.php:45 includes/class-admin.php:66
-#: wp-multilingual.php:107
+#: wp-multilingual.php:109
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
@@ -333,7 +403,7 @@ msgid "Type"
 msgstr "Type"
 
 #: admin/views/overview.php:222 admin/views/settings.php:499
-#: blocks/language-switcher/editor.js:113
+#: blocks/language-switcher/editor.js:141
 msgid "None"
 msgstr "Aucune"
 
@@ -627,7 +697,7 @@ msgstr "Emplacements de menu classiques"
 msgid "This site has no menu yet."
 msgstr "Ce site n'a pas encore de menu."
 
-#: admin/views/settings.php:291 blocks/language-switcher/editor.js:98
+#: admin/views/settings.php:291 blocks/language-switcher/editor.js:126
 msgid "Show languages as"
 msgstr "Afficher les langues en"
 
@@ -637,15 +707,15 @@ msgstr ""
 "Les codes gardent le menu compact ; les noms sont plus clairs pour les "
 "visiteurs."
 
-#: admin/views/settings.php:295 blocks/language-switcher/editor.js:101
+#: admin/views/settings.php:295 blocks/language-switcher/editor.js:129
 msgid "Codes (EN)"
 msgstr "Codes (EN)"
 
-#: admin/views/settings.php:296 blocks/language-switcher/editor.js:102
+#: admin/views/settings.php:296 blocks/language-switcher/editor.js:130
 msgid "Names (English)"
 msgstr "Noms (English)"
 
-#: admin/views/settings.php:299 blocks/language-switcher/editor.js:177
+#: admin/views/settings.php:299 blocks/language-switcher/editor.js:205
 msgid "Hide the current language"
 msgstr "Masquer la langue courante"
 
@@ -678,11 +748,11 @@ msgstr "Apparence"
 msgid "Pick the one that stands out from your pages."
 msgstr "Choisissez celle qui ressort le mieux sur vos pages."
 
-#: admin/views/settings.php:322 blocks/language-switcher/editor.js:164
+#: admin/views/settings.php:322 blocks/language-switcher/editor.js:192
 msgid "Light"
 msgstr "Clair"
 
-#: admin/views/settings.php:323 blocks/language-switcher/editor.js:165
+#: admin/views/settings.php:323 blocks/language-switcher/editor.js:193
 msgid "Dark"
 msgstr "Foncé"
 
@@ -698,19 +768,19 @@ msgstr ""
 "Choisissez-les dans les réglages du bloc, avec couleurs, typographie, "
 "bordure et espacements. Aperçu avec les langues de ce site :"
 
-#: admin/views/settings.php:335 blocks/language-switcher/editor.js:28
+#: admin/views/settings.php:335 blocks/language-switcher/editor.js:52
 msgid "Minimal"
 msgstr "Minimal"
 
-#: admin/views/settings.php:336 blocks/language-switcher/editor.js:29
+#: admin/views/settings.php:336 blocks/language-switcher/editor.js:53
 msgid "Segmented"
 msgstr "Segmenté"
 
-#: admin/views/settings.php:337 blocks/language-switcher/editor.js:30
+#: admin/views/settings.php:337 blocks/language-switcher/editor.js:54
 msgid "Dropdown"
 msgstr "Menu déroulant"
 
-#: admin/views/settings.php:338 blocks/language-switcher/editor.js:31
+#: admin/views/settings.php:338 blocks/language-switcher/editor.js:55
 msgid "Select"
 msgstr "Liste native"
 
@@ -777,12 +847,12 @@ msgid "Activate Contact Form 7 or Gravity Forms to translate forms."
 msgstr "Activez Contact Form 7 ou Gravity Forms pour traduire les formulaires."
 
 #: admin/views/settings.php:475 admin/views/strings.php:27
-#: includes/class-strings-admin.php:206
+#: includes/class-strings-admin.php:207
 msgid "Plugin"
 msgstr "Extension"
 
 #: admin/views/settings.php:479 admin/views/settings.php:557
-#: includes/class-strings-admin.php:166
+#: includes/class-strings-admin.php:167
 msgid "Actions"
 msgstr "Actions"
 
@@ -857,16 +927,16 @@ msgstr ""
 "réactivez l’extension pour les créer."
 
 #: admin/views/strings.php:26 admin/views/tools.php:144
-#: includes/class-strings-admin.php:205
+#: includes/class-strings-admin.php:206
 msgid "Theme"
 msgstr "Thème"
 
-#: admin/views/strings.php:29 includes/class-strings-admin.php:208
+#: admin/views/strings.php:29 includes/class-strings-admin.php:209
 msgid "Manual"
 msgstr "Manuelle"
 
 #: admin/views/strings.php:30 admin/views/strings.php:174
-#: includes/class-strings-admin.php:209
+#: includes/class-strings-admin.php:210
 msgid "HTML text"
 msgstr "Texte HTML"
 
@@ -977,7 +1047,7 @@ msgid "Original text (exact)"
 msgstr "Texte original (exact)"
 
 #: admin/views/strings.php:129 admin/views/strings.php:170
-#: includes/class-strings-admin.php:215
+#: includes/class-strings-admin.php:216
 msgid "Text domain"
 msgstr "Domaine de texte"
 
@@ -1046,7 +1116,7 @@ msgstr ""
 msgid "Language of texts found in code"
 msgstr "Langue des textes trouvés dans le code"
 
-#: admin/views/strings.php:216 includes/class-strings-admin.php:282
+#: admin/views/strings.php:216 includes/class-strings-admin.php:283
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -1152,7 +1222,7 @@ msgstr "Ancien groupe"
 
 #: admin/views/tools.php:109 includes/class-admin-columns.php:73
 #: includes/class-admin-columns.php:155 includes/class-admin-columns.php:321
-#: includes/class-switcher.php:174 includes/class-term-language.php:64
+#: includes/class-switcher.php:207 includes/class-term-language.php:64
 #: includes/class-term-language.php:82 includes/class-term-language.php:186
 #: admin/js/nav-panel.js:83
 msgid "Language"
@@ -1338,90 +1408,90 @@ msgstr ""
 "Brouillon de traduction créé à partir du contenu original. Traduisez-le, "
 "puis publiez."
 
-#: includes/class-admin.php:79
+#: includes/class-admin.php:80
 msgid "PixelLang"
 msgstr "PixelLang"
 
-#: includes/class-admin.php:121
+#: includes/class-admin.php:122 includes/class-license.php:330
 msgid "Sorry, you are not allowed to access this page."
 msgstr "Désolé, vous n’avez pas l’autorisation d’accéder à cette page."
 
-#: includes/class-admin.php:163 includes/class-meta-box.php:237
+#: includes/class-admin.php:168 includes/class-meta-box.php:237
 msgid "Published"
 msgstr "Publié"
 
-#: includes/class-admin.php:164 includes/class-meta-box.php:238
+#: includes/class-admin.php:169 includes/class-meta-box.php:238
 msgid "Draft"
 msgstr "Brouillon"
 
-#: includes/class-admin.php:165 includes/class-meta-box.php:239
+#: includes/class-admin.php:170 includes/class-meta-box.php:239
 msgid "Pending"
 msgstr "En attente"
 
-#: includes/class-admin.php:166 includes/class-meta-box.php:240
+#: includes/class-admin.php:171 includes/class-meta-box.php:240
 msgid "Scheduled"
 msgstr "Planifié"
 
-#: includes/class-admin.php:167 includes/class-meta-box.php:241
+#: includes/class-admin.php:172 includes/class-meta-box.php:241
 msgid "Private"
 msgstr "Privé"
 
-#: includes/class-admin.php:168
+#: includes/class-admin.php:173
 msgid "Trash"
 msgstr "Corbeille"
 
-#: includes/class-admin.php:277
+#: includes/class-admin.php:282
 msgid "Changes saved."
 msgstr "Modifications enregistrées."
 
-#: includes/class-admin.php:278
+#: includes/class-admin.php:283
 msgid "Languages saved."
 msgstr "Langues enregistrées."
 
-#: includes/class-admin.php:279
+#: includes/class-admin.php:284
 msgid "Keep at least one language."
 msgstr "Gardez au moins une langue."
 
-#: includes/class-admin.php:280
+#: includes/class-admin.php:285
 msgid "Statistics recalculated."
 msgstr "Statistiques recalculées."
 
-#: includes/class-admin.php:281
+#: includes/class-admin.php:286
 msgid "Default language assigned to content that had none."
 msgstr "Langue par défaut attribuée au contenu qui n’en avait pas."
 
-#: includes/class-admin.php:282
+#: includes/class-admin.php:287
 msgid "Translation draft created."
 msgstr "Brouillon de traduction créé."
 
-#: includes/class-admin.php:283
+#: includes/class-admin.php:288
 msgid "The translation could not be created."
 msgstr "La traduction n’a pas pu être créée."
 
-#: includes/class-admin.php:284
+#: includes/class-admin.php:289
 msgid "String registered. Add its translations below."
 msgstr "Chaîne enregistrée. Ajoutez ses traductions ci-dessous."
 
-#: includes/class-admin.php:285
+#: includes/class-admin.php:290
 msgid "This string was already registered: it is shown below."
 msgstr "Cette chaîne était déjà enregistrée : elle est affichée ci-dessous."
 
-#: includes/class-admin.php:286
+#: includes/class-admin.php:291
 msgid ""
 "Enter the original text, and a text domain for a theme or plugin string."
 msgstr ""
 "Saisissez le texte original et, pour une chaîne de thème ou d’extension, son "
 "domaine de texte."
 
-#: includes/class-admin.php:287
+#: includes/class-admin.php:292
 msgid "Scan finished."
 msgstr "Analyse terminée."
 
-#: includes/class-admin.php:288
+#: includes/class-admin.php:293
 msgid "This theme or plugin could not be scanned."
 msgstr "Ce thème ou cette extension n’a pas pu être analysé."
 
-#: includes/class-admin.php:289
+#: includes/class-admin.php:294
 msgid ""
 "Discovery is on for 30 minutes. Browse your site while logged in: the "
 "strings used on each page are registered."
@@ -1429,31 +1499,51 @@ msgstr ""
 "Le mode découverte est actif pendant 30 minutes. Parcourez votre site en "
 "restant connecté : les chaînes utilisées sur chaque page sont enregistrées."
 
-#: includes/class-admin.php:290
+#: includes/class-admin.php:295
 msgid "Discovery is off."
 msgstr "Le mode découverte est désactivé."
 
-#: includes/class-admin.php:291
+#: includes/class-admin.php:296
 msgid "Selected strings deleted."
 msgstr "Chaînes sélectionnées supprimées."
 
-#: includes/class-admin.php:301 includes/class-strings-admin.php:58
+#: includes/class-admin.php:297
+msgid "License key saved."
+msgstr "Clé de licence enregistrée."
+
+#: includes/class-admin.php:298
+msgid "License key removed."
+msgstr "Clé de licence retirée."
+
+#: includes/class-admin.php:299 includes/class-license.php:249
+msgid ""
+"This license key is not valid. Copy it again exactly as Agence Pixel sent it."
+msgstr ""
+"Cette clé de licence n'est pas valide. Copiez-la de nouveau exactement comme "
+"Agence Pixel l'a envoyée."
+
+#: includes/class-admin.php:300
+msgid "Add a valid license key to change the PixelLang settings."
+msgstr ""
+"Ajoutez une clé de licence valide pour modifier les réglages de PixelLang."
+
+#: includes/class-admin.php:310 includes/class-strings-admin.php:58
 msgid "Sorry, you are not allowed to do that."
 msgstr "Désolé, vous n’avez pas l’autorisation de faire cela."
 
-#: includes/class-admin.php:411
+#: includes/class-admin.php:432
 msgid "Unknown settings section."
 msgstr "Section de réglages inconnue."
 
-#: includes/class-admin.php:428
+#: includes/class-admin.php:449
 msgid "Sorry, you are not allowed to translate this content."
 msgstr "Désolé, vous n’avez pas l’autorisation de traduire ce contenu."
 
-#: includes/class-admin.php:433
+#: includes/class-admin.php:454
 msgid "Translation"
 msgstr "Traduction"
 
-#: includes/class-admin.php:481 includes/class-strings-admin.php:123
+#: includes/class-admin.php:502 includes/class-strings-admin.php:124
 msgid "Unknown task."
 msgstr "Tâche inconnue."
 
@@ -1468,6 +1558,99 @@ msgstr "Fermer"
 #: includes/class-language-banner.php:126
 msgid "Language suggestion"
 msgstr "Suggestion de langue"
+
+#: includes/class-license.php:265
+msgid "Expires soon"
+msgstr "Expire bientôt"
+
+#: includes/class-license.php:266
+msgid "Development site"
+msgstr "Site de développement"
+
+#: includes/class-license.php:267
+msgid "No license"
+msgstr "Aucune licence"
+
+#: includes/class-license.php:268
+msgid "Invalid key"
+msgstr "Clé non valide"
+
+#: includes/class-license.php:269
+msgid "Other domain"
+msgstr "Autre domaine"
+
+#: includes/class-license.php:270
+msgid "Expired"
+msgstr "Expirée"
+
+#: includes/class-license.php:284
+msgid ""
+"PixelLang Multilingual has no license key. The site keeps working in all its "
+"languages, but the plugin settings are locked until a key from Agence Pixel "
+"is added."
+msgstr ""
+"PixelLang Multilingual n'a pas de clé de licence. Le site continue de "
+"fonctionner dans toutes ses langues, mais les réglages de l'extension sont "
+"verrouillés jusqu'à l'ajout d'une clé d'Agence Pixel."
+
+#: includes/class-license.php:286
+msgid ""
+"The PixelLang Multilingual license key is not valid. The site keeps working, "
+"but the plugin settings are locked."
+msgstr ""
+"La clé de licence de PixelLang Multilingual n'est pas valide. Le site "
+"continue de fonctionner, mais les réglages de l'extension sont verrouillés."
+
+#. translators: %s: site domain.
+#: includes/class-license.php:289
+#, php-format
+msgid ""
+"The PixelLang Multilingual license key is not issued for %s. The site keeps "
+"working, but the plugin settings are locked. Ask Agence Pixel for a key for "
+"this domain."
+msgstr ""
+"La clé de licence de PixelLang Multilingual n'a pas été émise pour %s. Le "
+"site continue de fonctionner, mais les réglages de l'extension sont "
+"verrouillés. Demandez à Agence Pixel une clé pour ce domaine."
+
+#: includes/class-license.php:291
+msgid ""
+"The PixelLang Multilingual license has expired. The site keeps working, but "
+"the plugin settings are locked until the license is renewed with Agence "
+"Pixel."
+msgstr ""
+"La licence de PixelLang Multilingual a expiré. Le site continue de "
+"fonctionner, mais les réglages de l'extension sont verrouillés jusqu'au "
+"renouvellement de la licence auprès d'Agence Pixel."
+
+#. translators: %d: number of days.
+#: includes/class-license.php:294
+#, php-format
+msgid ""
+"The PixelLang Multilingual license expires in %d day. Contact Agence Pixel "
+"to renew it."
+msgid_plural ""
+"The PixelLang Multilingual license expires in %d days. Contact Agence Pixel "
+"to renew it."
+msgstr[0] "La licence de PixelLang Multilingual expire dans %d jour. Contactez Agence Pixel pour la renouveler."
+msgstr[1] "La licence de PixelLang Multilingual expire dans %d jours. Contactez Agence Pixel pour la renouveler."
+
+#: includes/class-license.php:296
+msgid ""
+"No license key is needed on a development site (.local, .test, localhost). "
+"The key of the live site is checked on its own domain."
+msgstr ""
+"Aucune clé de licence n'est nécessaire sur un site de développement "
+"(.local, .test, localhost). La clé du site en ligne est vérifiée sur son "
+"propre domaine."
+
+#: includes/class-license.php:298
+msgid "PixelLang Multilingual is licensed for this site."
+msgstr "PixelLang Multilingual est sous licence pour ce site."
+
+#: includes/class-license.php:321
+msgid "Manage the license"
+msgstr "Gérer la licence"
 
 #: includes/class-meta-box.php:33
 msgid "Language & translations"
@@ -1629,15 +1812,15 @@ msgstr "extension"
 msgid "Unknown theme or plugin."
 msgstr "Thème ou extension inconnu."
 
-#: includes/class-strings-admin.php:161
+#: includes/class-strings-admin.php:162
 msgid "Original text"
 msgstr "Texte original"
 
-#: includes/class-strings-admin.php:175
+#: includes/class-strings-admin.php:176
 msgid "Delete"
 msgstr "Supprimer"
 
-#: includes/class-strings-admin.php:192
+#: includes/class-strings-admin.php:193
 msgid ""
 "No string matches. Scan your theme, turn on discovery or register a string "
 "manually."
@@ -1645,20 +1828,20 @@ msgstr ""
 "Aucune chaîne ne correspond. Analysez votre thème, activez le mode "
 "découverte ou enregistrez une chaîne manuellement."
 
-#: includes/class-strings-admin.php:199
+#: includes/class-strings-admin.php:200
 msgid "Select this string"
 msgstr "Sélectionner cette chaîne"
 
-#: includes/class-strings-admin.php:218
+#: includes/class-strings-admin.php:219
 msgid "Context"
 msgstr "Contexte"
 
-#: includes/class-strings-admin.php:224 includes/class-strings-admin.php:271
+#: includes/class-strings-admin.php:225 includes/class-strings-admin.php:272
 msgid "Plural"
 msgstr "Pluriel"
 
 #. translators: %d: number of places.
-#: includes/class-strings-admin.php:231
+#: includes/class-strings-admin.php:232
 #, php-format
 msgid "Used in %d place"
 msgid_plural "Used in %d places"
@@ -1666,32 +1849,32 @@ msgstr[0] "Utilisée à %d endroit"
 msgstr[1] "Utilisée à %d endroits"
 
 #. translators: %s: language name.
-#: includes/class-strings-admin.php:256
+#: includes/class-strings-admin.php:257
 #, php-format
 msgid "%s translation"
 msgstr "Traduction %s"
 
-#: includes/class-strings-admin.php:262
+#: includes/class-strings-admin.php:263
 msgid "Original language: leave empty to keep the original"
 msgstr "Langue d’origine : laissez vide pour garder l’original"
 
-#: includes/class-strings-admin.php:262
+#: includes/class-strings-admin.php:263
 msgid "Not translated yet"
 msgstr "Pas encore traduite"
 
 #. translators: %s: language name.
-#: includes/class-strings-admin.php:270
+#: includes/class-strings-admin.php:271
 #, php-format
 msgid "%s plural translation"
 msgstr "Traduction %s au pluriel"
 
 #. translators: %s: string.
-#: includes/class-strings-admin.php:283
+#: includes/class-strings-admin.php:284
 #, php-format
 msgid "Delete the string “%s”"
 msgstr "Supprimer la chaîne « %s »"
 
-#: includes/class-strings-admin.php:305
+#: includes/class-strings-admin.php:306
 msgid "Delete selected"
 msgstr "Supprimer la sélection"
 
@@ -1699,16 +1882,16 @@ msgstr "Supprimer la sélection"
 msgid "The original text is empty."
 msgstr "Le texte original est vide."
 
-#: includes/class-switcher.php:262
+#: includes/class-switcher.php:295
 msgid "Choose a language"
 msgstr "Choisir une langue"
 
-#: includes/class-switcher.php:295
+#: includes/class-switcher.php:328
 msgid ", change language"
 msgstr ", changer de langue"
 
 #. translators: %s: name of the current language.
-#: includes/class-switcher.php:297
+#: includes/class-switcher.php:330
 #, php-format
 msgid " (%s), change language"
 msgstr " (%s), changer de langue"
@@ -1989,96 +2172,96 @@ msgstr "Groupe : %s"
 msgid "Assign a language to create the other versions."
 msgstr "Attribuez une langue pour créer les autres versions."
 
-#: blocks/language-switcher/editor.js:51 blocks/language-switcher/editor.js:85
+#: blocks/language-switcher/editor.js:75 blocks/language-switcher/editor.js:109
 msgid "Design"
 msgstr "Design"
 
-#: blocks/language-switcher/editor.js:103
+#: blocks/language-switcher/editor.js:131
 msgid "Names and codes"
 msgstr "Noms et codes"
 
-#: blocks/language-switcher/editor.js:110
+#: blocks/language-switcher/editor.js:138
 msgid "Separator"
 msgstr "Séparateur"
 
-#: blocks/language-switcher/editor.js:114
+#: blocks/language-switcher/editor.js:142
 msgid "Slash (FR / EN)"
 msgstr "Barre oblique (FR / EN)"
 
-#: blocks/language-switcher/editor.js:115
+#: blocks/language-switcher/editor.js:143
 msgid "Bar (FR | EN)"
 msgstr "Barre verticale (FR | EN)"
 
-#: blocks/language-switcher/editor.js:116
+#: blocks/language-switcher/editor.js:144
 msgid "Dot (FR · EN)"
 msgstr "Point (FR · EN)"
 
-#: blocks/language-switcher/editor.js:123
+#: blocks/language-switcher/editor.js:151
 msgid "Size"
 msgstr "Taille"
 
-#: blocks/language-switcher/editor.js:124
+#: blocks/language-switcher/editor.js:152
 msgid "Or set a font size in the Styles tab."
 msgstr "Ou choisissez une taille de police dans l'onglet Styles."
 
-#: blocks/language-switcher/editor.js:127
+#: blocks/language-switcher/editor.js:155
 msgid "Inherit from the theme"
 msgstr "Celle du thème"
 
-#: blocks/language-switcher/editor.js:128
+#: blocks/language-switcher/editor.js:156
 msgid "Small"
 msgstr "Petite"
 
-#: blocks/language-switcher/editor.js:129
+#: blocks/language-switcher/editor.js:157
 msgid "Medium"
 msgstr "Moyenne"
 
-#: blocks/language-switcher/editor.js:130
+#: blocks/language-switcher/editor.js:158
 msgid "Large"
 msgstr "Grande"
 
-#: blocks/language-switcher/editor.js:137
+#: blocks/language-switcher/editor.js:165
 msgid "Show a globe icon"
 msgstr "Afficher une icône de globe"
 
-#: blocks/language-switcher/editor.js:147
+#: blocks/language-switcher/editor.js:175
 msgid "Dropdown panel"
 msgstr "Panneau déroulant"
 
-#: blocks/language-switcher/editor.js:149
+#: blocks/language-switcher/editor.js:177
 msgid "Open toward"
 msgstr "Ouvrir vers"
 
-#: blocks/language-switcher/editor.js:150
+#: blocks/language-switcher/editor.js:178
 msgid "The panel opens upward by itself when there is no room below."
 msgstr ""
 "Le panneau s'ouvre vers le haut tout seul quand la place manque en dessous."
 
-#: blocks/language-switcher/editor.js:153
+#: blocks/language-switcher/editor.js:181
 msgid "The left (switcher on the right of the page)"
 msgstr "La gauche (sélecteur à droite de la page)"
 
-#: blocks/language-switcher/editor.js:154
+#: blocks/language-switcher/editor.js:182
 msgid "The right (switcher on the left of the page)"
 msgstr "La droite (sélecteur à gauche de la page)"
 
-#: blocks/language-switcher/editor.js:161
+#: blocks/language-switcher/editor.js:189
 msgid "Panel appearance"
 msgstr "Apparence du panneau"
 
-#: blocks/language-switcher/editor.js:178
+#: blocks/language-switcher/editor.js:206
 msgid "It stays on the button."
 msgstr "Elle reste affichée sur le bouton."
 
-#: blocks/language-switcher/editor.js:185
+#: blocks/language-switcher/editor.js:213
 msgid "Hide languages without translation"
 msgstr "Masquer les langues sans traduction"
 
-#: blocks/language-switcher/editor.js:186
+#: blocks/language-switcher/editor.js:214
 msgid "Otherwise they link to the home page of that language."
 msgstr "Sinon, elles mènent à l’accueil de cette langue."
 
-#: blocks/language-switcher/editor.js:206
+#: blocks/language-switcher/editor.js:233
 msgid "Language switcher: add a second language to see it."
 msgstr "Sélecteur de langue : ajoutez une deuxième langue pour le voir."
 

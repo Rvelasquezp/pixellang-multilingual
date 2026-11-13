@@ -69,6 +69,7 @@ class WPM_Admin {
 			'wpm-strings'      => array( __( 'String Translation', 'pixellang-multilingual' ), WPM_Strings_Admin::capability(), 'strings', 'type' ),
 			'wpm-settings'     => array( __( 'Settings', 'pixellang-multilingual' ), self::CAP, 'settings', 'settings' ),
 			'wpm-tools'        => array( __( 'Tools', 'pixellang-multilingual' ), self::CAP, 'tools', 'tools' ),
+			'wpm-license'      => array( __( 'License', 'pixellang-multilingual' ), 'manage_options', 'license', 'shield' ),
 		);
 	}
 
@@ -121,6 +122,10 @@ class WPM_Admin {
 			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'pixellang-multilingual' ) );
 		}
 		$view = $screens[ $slug ][2];
+		// Without a valid license only the License screen opens.
+		if ( 'wpm-license' !== $slug && ! WPM_License::is_active() ) {
+			$view = 'locked';
+		}
 		include WPM_DIR . 'admin/views/layout-header.php';
 		include WPM_DIR . 'admin/views/' . $view . '.php';
 		include WPM_DIR . 'admin/views/layout-footer.php';
@@ -289,6 +294,10 @@ class WPM_Admin {
 			'discovery_on'   => array( 'success', __( 'Discovery is on for 30 minutes. Browse your site while logged in: the strings used on each page are registered.', 'pixellang-multilingual' ) ),
 			'discovery_off'  => array( 'success', __( 'Discovery is off.', 'pixellang-multilingual' ) ),
 			'strings_deleted' => array( 'success', __( 'Selected strings deleted.', 'pixellang-multilingual' ) ),
+			'license_saved'   => array( 'success', __( 'License key saved.', 'pixellang-multilingual' ) ),
+			'license_removed' => array( 'success', __( 'License key removed.', 'pixellang-multilingual' ) ),
+			'license_invalid' => array( 'error', __( 'This license key is not valid. Copy it again exactly as Agence Pixel sent it.', 'pixellang-multilingual' ) ),
+			'license_locked'  => array( 'error', __( 'Add a valid license key to change the PixelLang settings.', 'pixellang-multilingual' ) ),
 		);
 	}
 
@@ -301,6 +310,18 @@ class WPM_Admin {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'pixellang-multilingual' ), 403 );
 		}
 		check_admin_referer( $action );
+		self::require_license();
+	}
+
+	/**
+	 * Settings forms are refused without a valid license (the screens are
+	 * locked too; this covers forms posted from an old page).
+	 */
+	public static function require_license() {
+		if ( ! WPM_License::is_active() ) {
+			wp_safe_redirect( self::url( 'wpm-license', array( 'wpm_notice' => 'license_locked' ) ) );
+			exit;
+		}
 	}
 
 	/**
