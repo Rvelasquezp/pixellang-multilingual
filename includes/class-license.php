@@ -2,7 +2,8 @@
 /**
  * License key: PixelLang Multilingual is for Agence Pixel clients only.
  *
- * A key is issued by Pixel (bin/license-key.php) and signed with Pixel's
+ * A key is issued by Pixel with a private tool kept outside the plugin
+ * (~/.pixellang/license-key.php on Pixel's computer) and signed with Pixel's
  * private Ed25519 key, which never leaves Pixel. The plugin only holds the
  * public key, so it can check a key offline (no license server) but cannot
  * create one. Format:

@@ -105,11 +105,11 @@ PixelLang Multilingual es solo para clientes de Agence Pixel. Cada sitio necesit
 - **Sitios de desarrollo** (`localhost`, `*.local`, `*.test`, `*.localhost`): no necesitan clave.
 - **Aviso** 30 días antes del vencimiento.
 
-**Emitir una clave** (solo Pixel). Hace falta la clave privada de firma en `~/.pixellang/license-signing.key` (nunca en el repo; copia en LastPass):
+**Emitir una clave** (solo Pixel). La herramienta y la clave privada de firma viven fuera del plugin, en `~/.pixellang/` (`license-key.php`, `license-signing.key`, `license-public.key`); nunca van al repo ni a los clientes:
 
 ```bash
-php bin/license-key.php --client="Centre le CAP" --domain=centrelecap.ca --expires=2027-12-31
-php bin/license-key.php --check=PXL1.xxx.yyy
+php ~/.pixellang/license-key.php --client="Centre le CAP" --domain=centrelecap.ca --expires=2027-12-31
+php ~/.pixellang/license-key.php --check=PXL1.xxx.yyy
 ```
 
 `client.com` cubre también `www.client.com`; `*.client.com` cubre sus subdominios; varios `--domain` posibles (por ejemplo el de staging de WP Engine). Sin `--expires`, la clave no vence.
