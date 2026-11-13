@@ -45,6 +45,11 @@ require_once WPM_DIR . 'includes/class-slugs.php';
 require_once WPM_DIR . 'includes/class-sitemaps.php';
 require_once WPM_DIR . 'includes/class-language-banner.php';
 
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once WPM_DIR . 'includes/class-cli.php';
+	WPM_CLI::init();
+}
+
 if ( is_admin() ) {
 	require_once WPM_DIR . 'includes/class-icons.php';
 	require_once WPM_DIR . 'includes/class-admin.php';

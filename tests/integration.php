@@ -666,6 +666,18 @@ try {
 	update_option( 'show_on_front', $fp_before[0] );
 	update_option( 'page_on_front', $fp_before[1] );
 
+	echo "WP-CLI status (1.6)\n";
+	if ( class_exists( 'WPM_CLI' ) ) {
+		$before_missing = WPM_CLI::count_missing( 'post', 'en' );
+		$lonely         = wpm_post( 'Article seul', 'fr', 'post' );
+		wpm_assert( $before_missing + 1 === WPM_CLI::count_missing( 'post', 'en' ), 'status counts default-language content without a translation' );
+		$lonely_en = wpm_post( 'Lonely post', 'en', 'post' );
+		WPM_Translations::link( 'post', array( 'fr' => $lonely, 'en' => $lonely_en ) );
+		wpm_assert( $before_missing === WPM_CLI::count_missing( 'post', 'en' ), 'a linked translation is no longer missing' );
+		$d = WPM_CLI::data();
+		wpm_assert( isset( $d['license']['state'], $d['languages'][0]['home'], $d['totals']['missing'], $d['settings']['switcher'] ) && WPM_VERSION === $d['version'], 'status data: license, languages with home pages, totals, settings' );
+	}
+
 	echo "String Translation: registry\n";
 	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );
 	$a2 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'b.php:9' ) );

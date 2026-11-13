@@ -107,6 +107,14 @@ La portada del idioma por defecto está en la raíz del sitio (`/`); la de cada 
 - **Imágenes**: campos «Texte alternatif (English)» y «Légende (English)» por idioma en la ventana de medios y en la pantalla del medio (meta `_wpm_media`). En el sitio público se aplican a todo lo que lee la Biblioteca: `_wp_attachment_image_alt` (imagen destacada, `wp_get_attachment_image()` de los temas, Open Graph) y `wp_get_attachment_caption()`. Los bloques Imagen de una página guardan su propio texto: se traducen en la página traducida.
 - **Slugs de URL** (Réglages > URL): para los tipos de contenido y taxonomías públicos y traducibles con base propia, un slug por idioma (`/projets/` → `/projects/`). Permalinks, enlaces de términos y de archivos usan el slug del idioma; reglas de reescritura para cada slug (ficha, archivo y paginación, términos); una URL con la base de otro idioma redirige con 301; en un archivo, la base decide el idioma. Las reglas se regeneran en la petición siguiente al cambio.
 
+## WP-CLI
+
+```bash
+wp pixellang status              # licencia, idiomas y sus portadas, contenido por idioma, traducciones que faltan o desactualizadas, ajustes
+wp pixellang status --format=json
+wp pixellang license status|activate <clave>|remove
+```
+
 ## Licencia (1.5)
 
 PixelLang Multilingual es solo para clientes de Agence Pixel. Cada sitio necesita una **clave firmada** por Pixel para su dominio (pantalla *Licence* o `wp pixellang license activate <clave>`).

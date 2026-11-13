@@ -79,6 +79,11 @@ Translates texts of themes, plugins and templates without editing their files (m
 - Alternative text and caption of images per language, in the Media Library.
 - Translated URL slugs for content types and taxonomies (`/projets/` → `/projects/`), with a 301 redirect from the other base.
 
+## WP-CLI
+
+- `wp pixellang status`: license, languages and their home pages, content per language, missing or outdated translations (`--format=json` too).
+- `wp pixellang license status|activate <key>|remove`.
+
 ## License (1.5)
 
 - For Agence Pixel clients only: each site needs a signed key for its domain (License screen or `wp pixellang license activate <key>`).
