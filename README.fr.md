@@ -67,6 +67,12 @@ Traduit les textes des thèmes, extensions et modèles sans modifier leurs fichi
 - **Plans de site multilingues** : chaque URL traduite des plans de site WordPress, Yoast SEO et Rank Math liste ses traductions (`xhtml:link hreflang`, `x-default`). `og:locale` suit la langue de la page avec Yoast SEO et Rank Math.
 - **Bannière de suggestion de langue** : au lieu de rediriger selon le navigateur, la page reste affichée et une bannière, écrite dans la langue du visiteur, propose sa traduction. Compatible avec les caches de page et les moteurs de recherche. Réglage : Visiteurs et SEO > Langue du navigateur.
 
+## Sélecteur de langue (1.4)
+
+- **Bloc Sélecteur de langue** en quatre designs (minimal, segmenté, menu déroulant, liste native), choisis dans une grille visuelle des réglages du bloc, avec codes, noms ou les deux, taille, icône de globe, couleurs, typographie, bordure et espacements. Accessible au clavier (Échap, flèches), zones tactiles de 44 px.
+- **Placement automatique** (Réglages > Sélecteur de langue), comme WPML : dans un menu (prend l'apparence du menu, aussi sur mobile), flottant (coin inférieur, clair ou foncé) ou bloc seulement.
+- Les blocs existants gardent leur apparence.
+
 ## API pour les thèmes
 
 ```php

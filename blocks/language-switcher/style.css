@@ -1,13 +1,39 @@
 /*
- * Language Switcher block: neutral base styles. Colors and fonts come from
- * the theme or the block settings; themes can target the classes below.
+ * Language Switcher block. Sizes in px and em, never rem: some themes set
+ * html { font-size: 62.5% }.
+ *
+ * Language Switcher block. Text color and fonts come from the theme or the
+ * block settings (currentColor); only the dropdown panel has its own
+ * surface, light or dark. Themes can restyle it with the custom properties
+ * below or the 1.0 classes (.wpm-lang-list, .wpm-lang-item, .wpm-active,
+ * .wpm-lang-link, .wpm-lang-current).
  */
 
 .wpm-language-switcher {
+	--wpm-sw-radius: 999px;
+	--wpm-sw-line: color-mix(in srgb, currentColor 22%, transparent);
+	--wpm-sw-line-strong: color-mix(in srgb, currentColor 45%, transparent);
+	--wpm-sw-tint: color-mix(in srgb, currentColor 6%, transparent);
+	--wpm-sw-tint-strong: color-mix(in srgb, currentColor 12%, transparent);
+	--wpm-sw-panel-bg: #fff;
+	--wpm-sw-panel-fg: #0f172a;
+	--wpm-sw-panel-muted: #475569;
+	--wpm-sw-panel-line: rgba(15, 23, 42, 0.12);
+	--wpm-sw-panel-hover: rgba(15, 23, 42, 0.06);
+	--wpm-sw-panel-shadow: 0 14px 34px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.06);
+
 	display: flex;
+	gap: 0.5em;
 	align-items: center;
+	box-sizing: border-box;
 	width: 100%;
 	max-width: fit-content;
+}
+
+.wpm-language-switcher *,
+.wpm-language-switcher *::before,
+.wpm-language-switcher *::after {
+	box-sizing: border-box;
 }
 
 .wpm-language-switcher.aligncenter {
@@ -18,6 +44,24 @@
 .wpm-language-switcher.alignright {
 	justify-content: flex-end;
 	max-width: none;
+}
+
+.wpm-language-switcher.wpm-size-small {
+	font-size: 14px;
+}
+
+.wpm-language-switcher.wpm-size-medium {
+	font-size: 16px;
+}
+
+.wpm-language-switcher.wpm-size-large {
+	font-size: 18px;
+}
+
+.wpm-switcher-icon {
+	flex: none;
+	width: 1.15em;
+	height: 1.15em;
 }
 
 .wpm-lang-list {
@@ -40,41 +84,391 @@
 	display: block;
 	color: inherit;
 	text-decoration: none;
-	transition: opacity 0.2s ease;
-}
-
-.wpm-lang-link:hover {
-	opacity: 0.7;
-}
-
-.wpm-lang-link:focus-visible {
-	outline: 2px solid currentColor;
-	outline-offset: 3px;
+	cursor: pointer;
+	transition: opacity 0.2s ease, background-color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
 .wpm-lang-current {
 	font-weight: 600;
 }
 
-.wpm-style-flags .wpm-lang-link,
-.wpm-style-flags .wpm-lang-current {
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+.wpm-language-switcher :is(a, button, select):focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
 }
 
+/* Codes: uppercase with a little tracking (1.0 "flags" style too). */
+.wpm-display-code :is(.wpm-lang-link, .wpm-lang-current),
+.wpm-style-flags :is(.wpm-lang-link, .wpm-lang-current),
+.wpm-lang-code {
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.wpm-display-both .wpm-lang-list .wpm-lang-code {
+	margin-left: 0.45em;
+	font-size: 0.75em;
+	opacity: 0.75;
+}
+
+/* --------------------------------------------------------------------------
+   Minimal: inline links, current language underlined.
+   -------------------------------------------------------------------------- */
+
+.wpm-design-minimal :is(.wpm-lang-link, .wpm-lang-current) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 0.15em;
+}
+
+.wpm-design-minimal .wpm-lang-current {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.4em;
+}
+
+.wpm-design-minimal .wpm-lang-link:hover {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.4em;
+}
+
+.wpm-design-minimal[class*="wpm-sep-"] .wpm-lang-list {
+	gap: 0.15em;
+}
+
+.wpm-design-minimal[class*="wpm-sep-"] .wpm-lang-item + .wpm-lang-item::before {
+	margin-right: 0.15em;
+	opacity: 0.45;
+}
+
+.wpm-sep-slash .wpm-lang-item + .wpm-lang-item::before {
+	content: "/" / "";
+}
+
+.wpm-sep-pipe .wpm-lang-item + .wpm-lang-item::before {
+	content: "|" / "";
+}
+
+.wpm-sep-dot .wpm-lang-item + .wpm-lang-item::before {
+	content: "·" / "";
+}
+
+/* --------------------------------------------------------------------------
+   Segmented: pill group, current language highlighted.
+   -------------------------------------------------------------------------- */
+
+.wpm-design-segmented .wpm-lang-list {
+	flex-wrap: nowrap;
+	gap: 2px;
+	padding: 3px;
+	border: 1px solid var(--wpm-sw-line);
+	border-radius: var(--wpm-sw-radius);
+}
+
+.wpm-design-segmented :is(.wpm-lang-link, .wpm-lang-current) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 38px;
+	padding: 0 0.9em;
+	border-radius: var(--wpm-sw-radius);
+}
+
+.wpm-design-segmented .wpm-lang-current {
+	background: var(--wpm-sw-tint-strong);
+}
+
+.wpm-design-segmented .wpm-lang-link:hover {
+	background: var(--wpm-sw-tint);
+}
+
+.wpm-design-segmented .wpm-lang-link:focus-visible {
+	outline-offset: -2px;
+}
+
+/* --------------------------------------------------------------------------
+   Dropdown: button + panel (disclosure, see view.js).
+   -------------------------------------------------------------------------- */
+
+.wpm-dd {
+	position: relative;
+	display: inline-flex;
+}
+
+.wpm-dd__toggle {
+	display: inline-flex;
+	gap: 0.45em;
+	align-items: center;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 0.85em;
+	border: 1px solid var(--wpm-sw-line);
+	border-radius: var(--wpm-sw-radius);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.wpm-dd__toggle:hover,
+.wpm-dd.is-open .wpm-dd__toggle {
+	border-color: var(--wpm-sw-line-strong);
+	background: var(--wpm-sw-tint);
+}
+
+.wpm-dd__current {
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.wpm-display-name .wpm-dd__current {
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+.wpm-dd__chevron {
+	flex: none;
+	width: 1em;
+	height: 1em;
+	transition: transform 0.2s ease;
+}
+
+.wpm-dd.is-open .wpm-dd__chevron {
+	transform: rotate(180deg);
+}
+
+.wpm-language-switcher .wpm-dd__menu {
+	position: absolute;
+	z-index: 1000;
+	top: calc(100% + 8px);
+	right: 0;
+	display: none;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 2px;
+	align-items: stretch;
+	min-width: 12em;
+	margin: 0;
+	padding: 6px;
+	border: 1px solid var(--wpm-sw-panel-line);
+	border-radius: 12px;
+	background: var(--wpm-sw-panel-bg);
+	box-shadow: var(--wpm-sw-panel-shadow);
+	color: var(--wpm-sw-panel-fg);
+	font-size: 0.9375em;
+	text-align: left;
+	transform-origin: top right;
+}
+
+.wpm-dd--left .wpm-dd__menu {
+	right: auto;
+	left: 0;
+	transform-origin: top left;
+}
+
+.wpm-dd.is-up .wpm-dd__menu {
+	top: auto;
+	bottom: calc(100% + 8px);
+	transform-origin: bottom right;
+}
+
+.wpm-dd.is-open .wpm-dd__menu,
+.wpm-dd:not(.is-ready):focus-within .wpm-dd__menu {
+	display: flex;
+}
+
+.wpm-dd.is-open .wpm-dd__menu {
+	animation: wpm-dd-in 0.16s ease-out;
+}
+
+@keyframes wpm-dd-in {
+
+	from {
+		opacity: 0;
+		transform: translateY(-4px) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-item,
+.wpm-language-switcher .wpm-dd__menu .wpm-active {
+	display: block;
+}
+
+.wpm-language-switcher .wpm-dd__menu :is(.wpm-lang-link, .wpm-lang-current) {
+	display: flex;
+	gap: 0.75em;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 0.75em;
+	border-radius: 8px;
+	color: var(--wpm-sw-panel-fg);
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: 500;
+	text-decoration: none;
+	text-transform: none;
+	letter-spacing: normal;
+	white-space: nowrap;
+	opacity: 1;
+	transform: none;
+}
+
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-current {
+	font-weight: 600;
+}
+
+/* Room for the check mark on every row: the codes stay in one column. */
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-link {
+	padding-right: calc(1.5em + 1.05em);
+}
+
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-link:hover,
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-link:focus-visible {
+	background: var(--wpm-sw-panel-hover);
+}
+
+.wpm-language-switcher .wpm-dd__menu .wpm-lang-link:focus-visible {
+	outline: 2px solid var(--wpm-sw-panel-fg);
+	outline-offset: -2px;
+}
+
+.wpm-dd__menu .wpm-lang-name {
+	flex: 1 1 auto;
+}
+
+.wpm-dd__menu .wpm-lang-code {
+	padding: 2px 6px;
+	border: 1px solid var(--wpm-sw-panel-line);
+	border-radius: 6px;
+	color: var(--wpm-sw-panel-muted);
+	font-size: 0.75em;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.wpm-dd__check {
+	flex: none;
+	width: 1.05em;
+	height: 1.05em;
+}
+
+.wpm-dd--dark,
+.wpm-floating--dark {
+	--wpm-sw-panel-bg: #0f172a;
+	--wpm-sw-panel-fg: #f8fafc;
+	--wpm-sw-panel-muted: #cbd5e1;
+	--wpm-sw-panel-line: rgba(248, 250, 252, 0.16);
+	--wpm-sw-panel-hover: rgba(248, 250, 252, 0.1);
+	--wpm-sw-panel-shadow: 0 14px 34px rgba(2, 6, 23, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Select (1.0 "dropdown" style).
+   -------------------------------------------------------------------------- */
+
+.wpm-design-select select,
 .wpm-style-dropdown select {
-	min-height: 2.5em;
+	min-height: 44px;
 	padding: 0.25em 2em 0.25em 0.75em;
-	border: 1px solid currentColor;
-	border-radius: 4px;
+	border: 1px solid var(--wpm-sw-line-strong);
+	border-radius: 8px;
 	background-color: transparent;
 	color: inherit;
 	font: inherit;
 	cursor: pointer;
 }
 
+/* --------------------------------------------------------------------------
+   Floating (Settings > Language switcher > Floating).
+   -------------------------------------------------------------------------- */
+
+.wpm-language-switcher.wpm-floating {
+	position: fixed;
+	z-index: 9980;
+	right: 16px;
+	bottom: 16px;
+	width: auto;
+	max-width: none;
+	color: var(--wpm-sw-panel-fg);
+	font-size: 15px;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.wpm-language-switcher.wpm-floating--left {
+	right: auto;
+	left: 16px;
+}
+
+.wpm-floating .wpm-dd__toggle {
+	border-color: var(--wpm-sw-panel-line);
+	background: var(--wpm-sw-panel-bg);
+	box-shadow: var(--wpm-sw-panel-shadow);
+}
+
+.wpm-floating .wpm-dd__toggle:hover,
+.wpm-floating .wpm-dd.is-open .wpm-dd__toggle {
+	border-color: var(--wpm-sw-panel-line);
+	background: var(--wpm-sw-panel-bg);
+}
+
+.wpm-floating .wpm-dd__menu {
+	top: auto;
+	bottom: calc(100% + 8px);
+	transform-origin: bottom right;
+}
+
+/* The suggestion banner already offers the translation: no double prompt. */
+.wpm-banner.is-visible ~ .wpm-floating {
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+}
+
+@media print {
+
+	.wpm-floating {
+		display: none;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.wpm-lang-link {
+
+	.wpm-lang-link,
+	.wpm-dd__toggle,
+	.wpm-dd__chevron,
+	.wpm-floating {
 		transition: none;
 	}
+
+	.wpm-dd.is-open .wpm-dd__menu {
+		animation: none;
+	}
+}
+
+/* Text for screen readers only (themes do not always define the class). */
+.wpm-language-switcher .screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	border: 0;
+	white-space: nowrap;
+	word-wrap: normal;
 }

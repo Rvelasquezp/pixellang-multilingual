@@ -16,7 +16,7 @@ Versiones: [Français](README.fr.md) · [English](README.en.md)
 - **SEO**: etiquetas `hreflang` con permalinks limpios y `x-default`, alternativas `xhtml:link` en los sitemaps XML (WordPress, Yoast SEO, Rank Math) y `og:locale` / `og:locale:alternate`.
 - **Traducciones desactualizadas**: cuando cambia el texto del original, sus traducciones se marcan "À mettre à jour" en el editor, las listas, la tabla de traducciones y el tablero, con enlace a los cambios (revisiones) y acción "Marcar como al día" (individual o masiva).
 - **Banner de sugerencia de idioma**: en vez de redirigir según el navegador, propone la traducción de la página en el idioma del visitante; compatible con caché de página y buscadores.
-- **Bloque Language Switcher**: códigos, nombres o lista desplegable; opciones para ocultar el idioma actual o los idiomas sin traducción.
+- **Selector de idioma**: bloque con 4 diseños y opciones de diseño, y colocación automática en un menú o flotante, como WPML (ver "Selector de idioma (1.4)").
 - **Administración**: tablero (cobertura por idioma, estado del sitio), tabla de traducciones con filtro "faltantes", columnas y filtro por idioma en las listas, acción masiva "Definir el idioma", edición rápida, herramientas de mantenimiento.
 - **Compatibilidad WPML**: responde a `wpml_current_language`, `wpml_default_language`, `wpml_active_languages`, `wpml_object_id` y `wpml_element_language_code` cuando WPML no está activo.
 - Interfaz en inglés, francés (fr_FR y fr_CA).
@@ -86,6 +86,16 @@ Traduce los textos de temas, plugins y plantillas sin modificar sus archivos (me
 **Sitemaps.** El renderer de los sitemaps de WordPress se sustituye por una subclase que añade `<xhtml:link rel="alternate" hreflang>` a cada URL traducida (mismas reglas que las etiquetas `hreflang`: solo traducciones publicadas, al menos dos idiomas, `x-default`). Con Yoast SEO o Rank Math se usan sus filtros `*sitemap_entry` / `*sitemap_url`. Se desactiva junto con la opción hreflang o con el filtro `wpm_sitemap_alternates`.
 
 **Banner.** Ajustes > Visiteurs et SEO > Langue du navigateur: `banner` (recomendado, por defecto en instalaciones nuevas), `redirect` (comportamiento 1.2) u `off`. El servidor imprime las traducciones de la página con sus textos ya en cada idioma; `assets/js/banner.js` elige según `navigator.languages`. No vuelve a mostrarse cuando el visitante lo cierra, lo sigue o usa un selector de idioma (`localStorage`). Colores personalizables con las variables `--wpm-banner-*`. Filtro `wpm_banner_suggestions`.
+
+## Selector de idioma (1.4)
+
+**Bloque Language Switcher** con cuatro diseños, elegidos en una cuadrícula visual de los ajustes del bloque: *Minimal* (enlaces, idioma actual subrayado, separador opcional), *Segmented* (grupo de píldoras), *Dropdown* (botón con globo + panel claro u oscuro, patrón *disclosure*: Escape, flechas, Inicio/Fin, se abre hacia arriba si no hay sitio) y *Select* (lista nativa). Opciones: códigos, nombres o ambos, tamaño, icono de globo, ocultar el idioma actual o los idiomas sin traducción; colores, tipografía, borde y espacios desde la pestaña Estilos. Zonas táctiles de 44 px, foco visible, nombres accesibles que empiezan por el texto visible (WCAG 2.5.3). Tamaños en px/em (temas con `html { font-size: 62.5% }`).
+
+**Colocación automática** (Réglages > Sélecteur de langue), como WPML: *Dans un menu* (los idiomas son los últimos elementos de los bloques Navigation o ubicaciones de menú clásicas elegidos, con el aspecto del menú, también en el menú móvil; un menú con versiones por idioma lo recibe en todas), *Flottant* (desplegable fijo abajo a la derecha o a la izquierda, claro u oscuro; se oculta mientras el banner de sugerencia está visible) o *Bloc seulement*.
+
+Página sin traducción: el idioma enlaza a su portada; un idioma sin la página ni portada traducida no se muestra (nunca lleva a contenido en otro idioma; filtro `wpm_language_has_home`).
+
+Compatibilidad: el atributo `style` (flags/text/dropdown) de la 1.0 chocaba con los estilos de bloque de WordPress; ya no se declara, pero el valor guardado se sigue leyendo (`$block->parsed_block`), así que los bloques existentes no cambian. Clases 1.0 conservadas. Filtro `wpm_switcher_items`.
 
 ## API para temas
 

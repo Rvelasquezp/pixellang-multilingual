@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
 $wpm_tabs = array(
 	'content'   => array( __( 'Content', 'pixellang-multilingual' ), 'files' ),
 	'behavior'  => array( __( 'Visitors & SEO', 'pixellang-multilingual' ), 'globe' ),
+	'switcher'  => array( __( 'Language switcher', 'pixellang-multilingual' ), 'link' ),
 	'menus'     => array( __( 'Menus', 'pixellang-multilingual' ), 'menu' ),
 	'forms'     => array( __( 'Forms', 'pixellang-multilingual' ), 'form' ),
 	'templates' => array( __( 'Template parts', 'pixellang-multilingual' ), 'layout' ),
@@ -191,6 +192,159 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 			);
 			?>
 		</span></p>
+		<?php $wpm_form_close(); ?>
+
+	<?php elseif ( 'switcher' === $wpm_tab ) : ?>
+		<?php
+		$wpm_form_open( 'switcher' );
+		$wpm_place     = (string) WPM_Settings::get( 'switcher_placement' );
+		$wpm_chosen    = array_map( 'intval', (array) WPM_Settings::get( 'switcher_menus' ) );
+		$wpm_locs_on   = (array) WPM_Settings::get( 'switcher_locations' );
+		$wpm_versions  = get_option( 'wpm_menus', array() );
+		$wpm_versions  = is_array( $wpm_versions ) ? array_map( 'intval', $wpm_versions ) : array();
+		$wpm_nav_posts = get_posts(
+			array(
+				'post_type'      => 'wp_navigation',
+				'post_status'    => array( 'publish', 'draft' ),
+				'posts_per_page' => 100,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+				'no_found_rows'  => true,
+			)
+		);
+		$wpm_places = array(
+			'menu'     => array( __( 'In a menu', 'pixellang-multilingual' ), __( 'The languages become the last items of the menus you choose and take their look, on desktop and in the mobile menu. Works with any theme.', 'pixellang-multilingual' ), true ),
+			'floating' => array( __( 'Floating', 'pixellang-multilingual' ), __( 'A compact dropdown fixed in a bottom corner of every page. Useful when the menu has no room left.', 'pixellang-multilingual' ), false ),
+			'none'     => array( __( 'Block only', 'pixellang-multilingual' ), __( 'Nothing is added automatically. Insert the Language Switcher block where you want it (header, footer) and choose its design.', 'pixellang-multilingual' ), false ),
+		);
+		?>
+		<div class="wpm-card__head">
+			<h3 class="wpm-card__title"><?php esc_html_e( 'Where the language switcher appears', 'pixellang-multilingual' ); ?></h3>
+		</div>
+		<p class="wpm-card__intro"><?php esc_html_e( 'Like WPML, the plugin can add the switcher for you. The Language Switcher block stays available in the editor whatever you choose here.', 'pixellang-multilingual' ); ?></p>
+		<fieldset class="wpm-option-grid wpm-option-grid--modes">
+			<legend class="screen-reader-text"><?php esc_html_e( 'Placement', 'pixellang-multilingual' ); ?></legend>
+			<?php foreach ( $wpm_places as $wpm_key => $wpm_p ) : ?>
+				<label class="wpm-option wpm-option--radio wpm-option--place">
+					<input type="radio" name="switcher_placement" value="<?php echo esc_attr( $wpm_key ); ?>" <?php checked( $wpm_place, $wpm_key ); ?> />
+					<span class="wpm-option__body">
+						<span class="wpm-place-mock wpm-place-mock--<?php echo esc_attr( $wpm_key ); ?>" aria-hidden="true">
+							<span class="wpm-place-mock__bar"><i></i><b></b><b></b><b></b><?php echo 'menu' === $wpm_key ? '<em>EN</em>' : ''; ?></span>
+							<?php if ( 'floating' === $wpm_key ) : ?><span class="wpm-place-mock__float">EN</span><?php endif; ?>
+							<?php if ( 'none' === $wpm_key ) : ?><span class="wpm-place-mock__block">FR · EN</span><?php endif; ?>
+						</span>
+						<span class="wpm-option__title">
+							<strong><?php echo esc_html( $wpm_p[0] ); ?></strong>
+							<?php if ( $wpm_p[2] ) : ?>
+								<span class="wpm-badge wpm-badge--success"><?php esc_html_e( 'Recommended', 'pixellang-multilingual' ); ?></span>
+							<?php endif; ?>
+						</span>
+						<span class="wpm-option__help"><?php echo esc_html( $wpm_p[1] ); ?></span>
+					</span>
+				</label>
+			<?php endforeach; ?>
+		</fieldset>
+
+		<div class="wpm-switcher-section" data-place="menu">
+			<div class="wpm-card__head wpm-card__head--section">
+				<h3 class="wpm-card__title"><?php esc_html_e( 'In a menu', 'pixellang-multilingual' ); ?></h3>
+			</div>
+			<?php if ( $wpm_nav_posts ) : ?>
+				<fieldset class="wpm-option-grid">
+					<legend class="wpm-setting__label"><?php esc_html_e( 'Navigation menus', 'pixellang-multilingual' ); ?></legend>
+					<?php
+					foreach ( $wpm_nav_posts as $wpm_nav ) :
+						$wpm_nav_lang = array_search( (int) $wpm_nav->ID, $wpm_versions, true );
+						?>
+						<label class="wpm-option">
+							<input type="checkbox" name="switcher_menus[]" value="<?php echo esc_attr( $wpm_nav->ID ); ?>" <?php checked( in_array( (int) $wpm_nav->ID, $wpm_chosen, true ) ); ?> />
+							<span class="wpm-option__body">
+								<strong><?php echo esc_html( $wpm_nav->post_title ? $wpm_nav->post_title : __( '(no title)', 'pixellang-multilingual' ) ); ?></strong>
+								<code>#<?php echo esc_html( $wpm_nav->ID ); ?></code>
+							</span>
+							<?php
+							if ( $wpm_nav_lang ) {
+								WPM_Admin::language_chip( $wpm_nav_lang );
+							}
+							?>
+						</label>
+					<?php endforeach; ?>
+				</fieldset>
+				<p class="wpm-help"><?php WPM_Icons::render( 'info', 16 ); ?><span><?php esc_html_e( 'A menu that has language versions (Menus tab) gets the switcher in all its versions.', 'pixellang-multilingual' ); ?></span></p>
+			<?php endif; ?>
+			<?php if ( get_registered_nav_menus() ) : ?>
+				<fieldset class="wpm-option-grid">
+					<legend class="wpm-setting__label"><?php esc_html_e( 'Classic menu locations', 'pixellang-multilingual' ); ?></legend>
+					<?php foreach ( get_registered_nav_menus() as $wpm_loc => $wpm_loc_label ) : ?>
+						<label class="wpm-option">
+							<input type="checkbox" name="switcher_locations[]" value="<?php echo esc_attr( $wpm_loc ); ?>" <?php checked( in_array( $wpm_loc, $wpm_locs_on, true ) ); ?> />
+							<span class="wpm-option__body"><strong><?php echo esc_html( $wpm_loc_label ); ?></strong><code><?php echo esc_html( $wpm_loc ); ?></code></span>
+						</label>
+					<?php endforeach; ?>
+				</fieldset>
+			<?php endif; ?>
+			<?php if ( ! $wpm_nav_posts && ! get_registered_nav_menus() ) : ?>
+				<p class="wpm-empty-inline"><?php esc_html_e( 'This site has no menu yet.', 'pixellang-multilingual' ); ?></p>
+			<?php endif; ?>
+			<div class="wpm-setting">
+				<div class="wpm-setting__text">
+					<label class="wpm-setting__label" for="wpm-switcher-display"><?php esc_html_e( 'Show languages as', 'pixellang-multilingual' ); ?></label>
+					<p class="wpm-setting__help" id="wpm-switcher-display-help"><?php esc_html_e( 'Codes keep the menu compact; names are clearer for visitors.', 'pixellang-multilingual' ); ?></p>
+				</div>
+				<select class="wpm-select" id="wpm-switcher-display" name="switcher_display" aria-describedby="wpm-switcher-display-help">
+					<option value="code" <?php selected( WPM_Settings::get( 'switcher_display' ), 'code' ); ?>><?php esc_html_e( 'Codes (EN)', 'pixellang-multilingual' ); ?></option>
+					<option value="name" <?php selected( WPM_Settings::get( 'switcher_display' ), 'name' ); ?>><?php esc_html_e( 'Names (English)', 'pixellang-multilingual' ); ?></option>
+				</select>
+			</div>
+			<?php $wpm_toggle( 'switcher_hide_current', (bool) WPM_Settings::get( 'switcher_hide_current' ), __( 'Hide the current language', 'pixellang-multilingual' ), __( 'Show only the other languages, as most bilingual sites do.', 'pixellang-multilingual' ) ); ?>
+		</div>
+
+		<div class="wpm-switcher-section" data-place="floating">
+			<div class="wpm-card__head wpm-card__head--section">
+				<h3 class="wpm-card__title"><?php esc_html_e( 'Floating', 'pixellang-multilingual' ); ?></h3>
+			</div>
+			<div class="wpm-setting">
+				<div class="wpm-setting__text">
+					<label class="wpm-setting__label" for="wpm-switcher-position"><?php esc_html_e( 'Position', 'pixellang-multilingual' ); ?></label>
+					<p class="wpm-setting__help"><?php esc_html_e( 'The panel opens upward, toward the page.', 'pixellang-multilingual' ); ?></p>
+				</div>
+				<select class="wpm-select" id="wpm-switcher-position" name="switcher_floating_position">
+					<option value="right" <?php selected( WPM_Settings::get( 'switcher_floating_position' ), 'right' ); ?>><?php esc_html_e( 'Bottom right', 'pixellang-multilingual' ); ?></option>
+					<option value="left" <?php selected( WPM_Settings::get( 'switcher_floating_position' ), 'left' ); ?>><?php esc_html_e( 'Bottom left', 'pixellang-multilingual' ); ?></option>
+				</select>
+			</div>
+			<div class="wpm-setting">
+				<div class="wpm-setting__text">
+					<label class="wpm-setting__label" for="wpm-switcher-theme"><?php esc_html_e( 'Appearance', 'pixellang-multilingual' ); ?></label>
+					<p class="wpm-setting__help"><?php esc_html_e( 'Pick the one that stands out from your pages.', 'pixellang-multilingual' ); ?></p>
+				</div>
+				<select class="wpm-select" id="wpm-switcher-theme" name="switcher_floating_theme">
+					<option value="light" <?php selected( WPM_Settings::get( 'switcher_floating_theme' ), 'light' ); ?>><?php esc_html_e( 'Light', 'pixellang-multilingual' ); ?></option>
+					<option value="dark" <?php selected( WPM_Settings::get( 'switcher_floating_theme' ), 'dark' ); ?>><?php esc_html_e( 'Dark', 'pixellang-multilingual' ); ?></option>
+				</select>
+			</div>
+		</div>
+
+		<div class="wpm-card__head wpm-card__head--section">
+			<h3 class="wpm-card__title"><?php esc_html_e( 'Designs of the Language Switcher block', 'pixellang-multilingual' ); ?></h3>
+		</div>
+		<p class="wpm-card__intro"><?php esc_html_e( 'Choose them in the block settings, with colors, typography, border and spacing. Preview with the languages of this site:', 'pixellang-multilingual' ); ?></p>
+		<div class="wpm-design-previews">
+			<?php
+			$wpm_previews = array(
+				'minimal'   => array( __( 'Minimal', 'pixellang-multilingual' ), array( 'design' => 'minimal', 'display' => 'code', 'separator' => 'slash' ) ),
+				'segmented' => array( __( 'Segmented', 'pixellang-multilingual' ), array( 'design' => 'segmented', 'display' => 'code' ) ),
+				'dropdown'  => array( __( 'Dropdown', 'pixellang-multilingual' ), array( 'design' => 'dropdown', 'display' => 'both', 'showIcon' => true, 'menuAlign' => 'left' ) ),
+				'select'    => array( __( 'Select', 'pixellang-multilingual' ), array( 'design' => 'select', 'display' => 'name' ) ),
+			);
+			foreach ( $wpm_previews as $wpm_key => $wpm_prev ) :
+				?>
+				<figure class="wpm-design-preview">
+					<div class="wpm-design-preview__stage"><?php echo WPM_Switcher::render( $wpm_prev[1] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in WPM_Switcher. ?></div>
+					<figcaption><?php echo esc_html( $wpm_prev[0] ); ?></figcaption>
+				</figure>
+			<?php endforeach; ?>
+		</div>
 		<?php $wpm_form_close(); ?>
 
 	<?php elseif ( 'menus' === $wpm_tab ) : ?>

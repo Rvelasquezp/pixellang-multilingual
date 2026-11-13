@@ -2,26 +2,22 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "wp-multilingual/language-switcher",
-	"version": "1.1.0",
+	"version": "1.4.0",
 	"title": "Language Switcher",
 	"category": "widgets",
 	"icon": "translation",
-	"description": "Links to the current page in the other languages of the site.",
-	"keywords": [ "language", "multilingual", "translation", "langue" ],
+	"description": "Links to the current page in the other languages of the site, in four designs: minimal, segmented, dropdown or select.",
+	"keywords": [
+		"language",
+		"multilingual",
+		"translation",
+		"langue"
+	],
 	"textdomain": "pixellang-multilingual",
 	"editorScript": "file:./editor.js",
 	"viewScript": "file:./view.js",
 	"style": "file:./style.css",
 	"attributes": {
-		"style": {
-			"type": "string",
-			"default": "flags",
-			"enum": [ "flags", "text", "dropdown" ]
-		},
-		"showLabel": {
-			"type": "boolean",
-			"default": true
-		},
 		"hideCurrent": {
 			"type": "boolean",
 			"default": false
@@ -29,15 +25,80 @@
 		"hideMissing": {
 			"type": "boolean",
 			"default": false
+		},
+		"design": {
+			"type": "string",
+			"default": "",
+			"enum": [
+				"",
+				"minimal",
+				"segmented",
+				"dropdown",
+				"select"
+			]
+		},
+		"display": {
+			"type": "string",
+			"default": "",
+			"enum": [
+				"",
+				"code",
+				"name",
+				"both"
+			]
+		},
+		"separator": {
+			"type": "string",
+			"default": "none",
+			"enum": [
+				"none",
+				"slash",
+				"pipe",
+				"dot"
+			]
+		},
+		"size": {
+			"type": "string",
+			"default": "",
+			"enum": [
+				"",
+				"small",
+				"medium",
+				"large"
+			]
+		},
+		"showIcon": {
+			"type": "boolean",
+			"default": false
+		},
+		"menuAlign": {
+			"type": "string",
+			"default": "right",
+			"enum": [
+				"left",
+				"right"
+			]
+		},
+		"menuTheme": {
+			"type": "string",
+			"default": "light",
+			"enum": [
+				"light",
+				"dark"
+			]
 		}
 	},
 	"supports": {
 		"html": false,
-		"align": [ "left", "center", "right" ],
+		"align": [
+			"left",
+			"center",
+			"right"
+		],
 		"color": {
 			"text": true,
 			"link": true,
-			"background": false
+			"background": true
 		},
 		"typography": {
 			"fontSize": true,
@@ -49,7 +110,21 @@
 			"margin": true,
 			"padding": true,
 			"blockGap": true
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"width": true,
+			"color": true,
+			"style": true
 		}
 	},
-	"render": "file:./render.php"
+	"render": "file:./render.php",
+	"example": {
+		"attributes": {
+			"design": "dropdown",
+			"display": "both",
+			"showIcon": true
+		}
+	},
+	"editorStyle": "file:./editor.css"
 }

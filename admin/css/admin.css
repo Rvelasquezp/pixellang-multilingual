@@ -1963,3 +1963,134 @@ tr.is-dirty .wpm-str__status::before {
 		width: auto;
 	}
 }
+
+/* --------------------------------------------------------------------------
+   Settings > Language switcher
+   -------------------------------------------------------------------------- */
+
+.wpm-option--place .wpm-option__body {
+	gap: 8px;
+}
+
+.wpm-place-mock {
+	position: relative;
+	display: block;
+	height: 64px;
+	overflow: hidden;
+	border: 1px solid var(--wpm-line);
+	border-radius: var(--wpm-radius-xs);
+	background: var(--wpm-canvas);
+}
+
+.wpm-place-mock__bar {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	height: 20px;
+	padding: 0 8px;
+	border-bottom: 1px solid var(--wpm-line);
+	background: var(--wpm-surface);
+}
+
+.wpm-place-mock__bar i {
+	width: 18px;
+	height: 6px;
+	margin-right: auto;
+	border-radius: 3px;
+	background: var(--wpm-ink);
+}
+
+.wpm-place-mock__bar b {
+	width: 14px;
+	height: 4px;
+	border-radius: 2px;
+	background: var(--wpm-line-strong);
+}
+
+.wpm-place-mock em,
+.wpm-place-mock__float,
+.wpm-place-mock__block {
+	color: var(--wpm-primary-hover);
+	font: 700 9px/1 var(--wpm-mono);
+	font-style: normal;
+	letter-spacing: 0.06em;
+}
+
+.wpm-place-mock__bar em {
+	padding: 2px 4px;
+	border-radius: 3px;
+	background: var(--wpm-primary-soft);
+}
+
+.wpm-place-mock__float {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	padding: 4px 7px;
+	border: 1px solid var(--wpm-line-strong);
+	border-radius: 999px;
+	background: var(--wpm-surface);
+	box-shadow: var(--wpm-shadow);
+}
+
+.wpm-place-mock__block {
+	position: absolute;
+	left: 50%;
+	bottom: 10px;
+	padding: 4px 8px;
+	border: 1px dashed var(--wpm-primary);
+	border-radius: 4px;
+	transform: translateX(-50%);
+}
+
+/* Options of a placement that is not selected stay visible but quieter. */
+.wpm-card:has(input[name="switcher_placement"][value="menu"]:not(:checked)) .wpm-switcher-section[data-place="menu"],
+.wpm-card:has(input[name="switcher_placement"][value="floating"]:not(:checked)) .wpm-switcher-section[data-place="floating"] {
+	opacity: 0.55;
+}
+
+.wpm-switcher-section .wpm-option-grid {
+	margin-bottom: 12px;
+}
+
+.wpm-switcher-section legend.wpm-setting__label {
+	margin-bottom: 8px;
+}
+
+.wpm-design-previews {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 12px;
+	margin: 0;
+}
+
+.wpm-design-preview {
+	margin: 0;
+	border: 1px solid var(--wpm-line);
+	border-radius: var(--wpm-radius-sm);
+	background: var(--wpm-surface);
+}
+
+.wpm-design-preview__stage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 96px;
+	padding: 16px;
+	border-bottom: 1px solid var(--wpm-line);
+	color: var(--wpm-ink);
+	font-size: 14px;
+}
+
+.wpm-design-preview figcaption {
+	padding: 8px 12px;
+	color: var(--wpm-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.wpm-switcher-section .wpm-setting .wpm-select {
+	flex: 0 1 280px;
+	width: 280px;
+	max-width: 100%;
+}

@@ -1,0 +1,141 @@
+/* Language Switcher block: design picker in the block settings. */
+
+.wpm-pick {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.wpm-pick__item {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: stretch;
+	min-height: 84px;
+	padding: 10px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	color: #1e1e1e;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wpm-pick__item:hover {
+	border-color: #949494;
+}
+
+.wpm-pick__item.is-active {
+	border-color: var(--wp-admin-theme-color, #3858e9);
+	box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+}
+
+.wpm-pick__item:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+	outline-offset: 2px;
+}
+
+.wpm-pick__label {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.wpm-pick__mock {
+	display: flex;
+	flex: 1;
+	gap: 6px;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	border-radius: 6px;
+	background: #f6f7f7;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+}
+
+.wpm-pick__mock--minimal b {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
+.wpm-pick__mock--minimal i {
+	color: #757575;
+	font-style: normal;
+	font-weight: 400;
+}
+
+.wpm-pick__mock--segmented {
+	gap: 2px;
+}
+
+.wpm-pick__mock--segmented b,
+.wpm-pick__mock--segmented span {
+	padding: 3px 8px;
+	border-radius: 999px;
+}
+
+.wpm-pick__mock--segmented b {
+	background: #dcdcde;
+}
+
+.wpm-pick__mock--dropdown {
+	position: relative;
+	gap: 4px;
+}
+
+.wpm-pick__mock--dropdown span,
+.wpm-pick__mock--select span {
+	padding: 3px 8px;
+	border: 1px solid #949494;
+	border-radius: 999px;
+}
+
+.wpm-pick__mock--select span {
+	padding-right: 20px;
+	border-radius: 4px;
+	font-weight: 500;
+	letter-spacing: normal;
+}
+
+.wpm-pick__mock--dropdown i,
+.wpm-pick__mock--select i {
+	width: 6px;
+	height: 6px;
+	margin-left: -2px;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: translateY(-2px) rotate(45deg);
+}
+
+.wpm-pick__mock--select i {
+	margin-left: -20px;
+}
+
+.wpm-pick__mock--dropdown em {
+	position: absolute;
+	top: 30px;
+	right: 14px;
+	width: 34px;
+	height: 6px;
+	border-radius: 3px;
+	background: #c3c4c7;
+}
+
+.wpm-switcher-empty {
+	margin: 0;
+	padding: 8px 12px;
+	border: 1px dashed currentColor;
+	border-radius: 4px;
+	font-size: 13px;
+	opacity: 0.7;
+}
+
+/* The preview is not interactive in the editor: keep a pointer cursor off. */
+.wpm-switcher-editor .wpm-language-switcher {
+	pointer-events: none;
+}

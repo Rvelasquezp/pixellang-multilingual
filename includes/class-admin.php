@@ -109,6 +109,9 @@ class WPM_Admin {
 		wp_enqueue_style( 'wpm-admin', WPM_URL . 'admin/css/admin.css', array(), WPM_VERSION );
 		wp_enqueue_script( 'wpm-admin', WPM_URL . 'admin/js/admin.js', array( 'wp-api-fetch', 'wp-i18n' ), WPM_VERSION, true );
 		wp_set_script_translations( 'wpm-admin', 'pixellang-multilingual', WPM_DIR . 'languages' );
+		// Live previews of the switcher designs (Settings > Language switcher).
+		wp_enqueue_style( 'wp-multilingual-language-switcher-style' );
+		wp_enqueue_script( 'wp-multilingual-language-switcher-view-script' );
 	}
 
 	public function render_screen() {
@@ -367,6 +370,20 @@ class WPM_Admin {
 						'filter_queries'    => ! empty( $_POST['filter_queries'] ),
 						'hreflang'          => ! empty( $_POST['hreflang'] ),
 						'cookie_days'       => isset( $_POST['cookie_days'] ) ? absint( $_POST['cookie_days'] ) : 30,
+					)
+				);
+				break;
+
+			case 'switcher':
+				WPM_Settings::update(
+					array(
+						'switcher_placement'         => isset( $_POST['switcher_placement'] ) ? sanitize_key( wp_unslash( $_POST['switcher_placement'] ) ) : 'none',
+						'switcher_menus'             => isset( $_POST['switcher_menus'] ) ? (array) wp_unslash( $_POST['switcher_menus'] ) : array(),
+						'switcher_locations'         => isset( $_POST['switcher_locations'] ) ? (array) wp_unslash( $_POST['switcher_locations'] ) : array(),
+						'switcher_display'           => isset( $_POST['switcher_display'] ) ? sanitize_key( wp_unslash( $_POST['switcher_display'] ) ) : 'code',
+						'switcher_hide_current'      => ! empty( $_POST['switcher_hide_current'] ),
+						'switcher_floating_position' => isset( $_POST['switcher_floating_position'] ) ? sanitize_key( wp_unslash( $_POST['switcher_floating_position'] ) ) : 'right',
+						'switcher_floating_theme'    => isset( $_POST['switcher_floating_theme'] ) ? sanitize_key( wp_unslash( $_POST['switcher_floating_theme'] ) ) : 'light',
 					)
 				);
 				break;

@@ -67,6 +67,12 @@ Translates texts of themes, plugins and templates without editing their files (m
 - **Multilingual sitemaps**: every translated URL of the WordPress, Yoast SEO and Rank Math sitemaps lists its translations (`xhtml:link hreflang`, `x-default`). `og:locale` follows the page language with Yoast SEO and Rank Math.
 - **Language suggestion banner**: instead of redirecting by browser language, the page stays and a banner, written in the visitor's language, offers its translation. Works with page caches and search engines. Setting: Visitors & SEO > Browser language.
 
+## Language switcher (1.4)
+
+- **Language Switcher block** in four designs (minimal, segmented, dropdown, native select), picked from a visual grid in the block settings, with codes, names or both, size, globe icon, colors, typography, border and spacing. Keyboard accessible (Escape, arrows), 44 px touch targets.
+- **Automatic placement** (Settings > Language switcher), like WPML: in a menu (takes the menu's look, mobile included), floating (bottom corner, light or dark) or block only.
+- Existing blocks keep their look.
+
 ## Theme API
 
 ```php

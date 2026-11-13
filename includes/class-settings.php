@@ -41,6 +41,13 @@ class WPM_Settings {
 			'menu_locations'    => array(),
 			'form_groups'       => array(),
 			'strings_source_lang' => 'en',
+			'switcher_placement'  => 'none',
+			'switcher_menus'      => array(),
+			'switcher_locations'  => array(),
+			'switcher_display'    => 'code',
+			'switcher_hide_current' => true,
+			'switcher_floating_position' => 'right',
+			'switcher_floating_theme'    => 'light',
 		);
 	}
 
@@ -102,6 +109,29 @@ class WPM_Settings {
 			case 'filter_queries':
 			case 'hreflang':
 				return (bool) $value;
+
+			case 'switcher_placement':
+				return in_array( $value, array( 'none', 'menu', 'floating' ), true ) ? $value : 'none';
+
+			case 'switcher_menus':
+				return array_values( array_filter( array_map( 'absint', (array) $value ), function ( $id ) {
+					return 'wp_navigation' === get_post_type( $id );
+				} ) );
+
+			case 'switcher_locations':
+				return array_values( array_intersect( array_map( 'sanitize_key', (array) $value ), array_keys( get_registered_nav_menus() ) ) );
+
+			case 'switcher_display':
+				return in_array( $value, array( 'code', 'name' ), true ) ? $value : 'code';
+
+			case 'switcher_hide_current':
+				return (bool) $value;
+
+			case 'switcher_floating_position':
+				return 'left' === $value ? 'left' : 'right';
+
+			case 'switcher_floating_theme':
+				return 'dark' === $value ? 'dark' : 'light';
 
 			case 'browser_mode':
 				return in_array( $value, array( 'banner', 'redirect', 'off' ), true ) ? $value : '';
