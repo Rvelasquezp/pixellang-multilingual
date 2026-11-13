@@ -322,6 +322,10 @@ class WPM_Translations {
 		if ( $source->post_parent ) {
 			$parent = self::get_post_translation( $source->post_parent, $lang );
 		}
+		// A home page lives at /{language code}/ (see sync_front_page()).
+		$front   = (int) get_option( 'page_on_front' );
+		$is_home = 'page' === get_option( 'show_on_front' ) && $front && ( $front === (int) $source->ID || in_array( $front, self::get_post_translations( $source->ID ), true ) );
+		$name    = $is_home ? $lang : ( $source->post_name ? $source->post_name . '-' . $lang : '' );
 
 		$new_id = wp_insert_post(
 			wp_slash(
@@ -331,7 +335,7 @@ class WPM_Translations {
 					'post_title'     => $source->post_title,
 					'post_content'   => $source->post_content,
 					'post_excerpt'   => $source->post_excerpt,
-					'post_name'      => $source->post_name ? $source->post_name . '-' . $lang : '',
+					'post_name'      => $name,
 					'post_parent'    => $parent,
 					'menu_order'     => $source->menu_order,
 					'comment_status' => $source->comment_status,

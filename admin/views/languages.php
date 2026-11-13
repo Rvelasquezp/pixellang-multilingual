@@ -53,7 +53,7 @@ $wpm_row = function ( $slug, $cfg, $default, $count ) {
 <div class="wpm-page-head">
 	<div>
 		<h2 class="wpm-page-head__title"><?php esc_html_e( 'Languages', 'pixellang-multilingual' ); ?></h2>
-		<p class="wpm-page-head__text"><?php esc_html_e( 'The order below is the order of the language switcher. The default language is used for visitors without a preference and for the x-default hreflang.', 'pixellang-multilingual' ); ?></p>
+		<p class="wpm-page-head__text"><?php esc_html_e( 'The order below is the order of the language switcher. The default language is shown at the root of the site (its home page), to visitors without a preference and for the x-default hreflang.', 'pixellang-multilingual' ); ?></p>
 	</div>
 </div>
 

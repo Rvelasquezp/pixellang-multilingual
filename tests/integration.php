@@ -629,6 +629,43 @@ try {
 	wpm_assert( false === get_transient( 'wpm_header_switcher_' . get_stylesheet() ), 'header check forgotten when a template part changes' );
 	WPM_Settings::update( array( 'switcher_placement' => 'none' ) );
 
+	echo "Front page follows the default language (1.6)\n";
+	// Real pages of the site may already use the language slugs: free them (rolled back).
+	$GLOBALS['wpdb']->query( "UPDATE {$GLOBALS['wpdb']->posts} SET post_name = CONCAT( post_name, '-real' ) WHERE post_name IN ( 'fr', 'en', 'es' ) AND post_type = 'page'" );
+	clean_post_cache( 2 );
+	clean_post_cache( 17 );
+	$fp_before = array( get_option( 'show_on_front' ), get_option( 'page_on_front' ) );
+	$h_fr = wpm_post( 'Accueil racine', 'fr' );
+	$h_en = wpm_post( 'Home root', 'en' );
+	WPM_Translations::link( 'post', array( 'fr' => $h_fr, 'en' => $h_en ) );
+	update_option( 'show_on_front', 'page' );
+	update_option( 'page_on_front', $h_fr );
+	$langs_en = $langs;
+	$langs_en['fr']['default'] = false;
+	$langs_en['en']['default'] = true;
+	WPM_Language_Manager::instance()->save_languages( $langs_en );
+	$hash_fr = get_post_meta( $h_fr, '_wpm_content_hash', true );
+	$changed = WPM_Language_Manager::instance()->sync_front_page();
+	wpm_assert( $hash_fr === get_post_meta( $h_fr, '_wpm_content_hash', true ) && WPM_Sync::CURRENT === WPM_Sync::get_status( $h_en ) || WPM_Sync::NONE === WPM_Sync::get_status( $h_en ), 'moving a home page to its language slug never marks translations outdated' );
+	wpm_assert( (int) get_option( 'page_on_front' ) === $h_en && array( $h_fr, $h_en ) === $changed['page_on_front'], 'default language English: the English home page becomes the front page' );
+	wpm_assert( 'fr' === get_post_field( 'post_name', $h_fr ) && home_url( '/fr/' ) === get_permalink( $h_fr ) && home_url( '/' ) === get_permalink( $h_en ), 'the French home page moves to /fr/' );
+	wpm_assert( in_array( 'accueil-racine', get_post_meta( $h_fr, '_wpm_old_slug' ), true ), 'its old slug is kept for a 301 redirect' );
+	$h_es = WPM_Translations::create_post_translation( $h_en, 'es' );
+	wpm_assert( 'es' === get_post_field( 'post_name', $h_es ), 'a new translation of the home page is created at /es/' );
+	wp_update_post( array( 'ID' => $h_es, 'post_status' => 'publish' ) );
+	wpm_assert( home_url( '/es/' ) === get_permalink( $h_es ), 'published Spanish home page at /es/' );
+	WPM_Language_Manager::instance()->save_languages( $langs );
+	WPM_Language_Manager::instance()->sync_front_page();
+	wpm_assert( (int) get_option( 'page_on_front' ) === $h_fr && home_url( '/' ) === get_permalink( $h_fr ) && home_url( '/en/' ) === get_permalink( $h_en ), 'back to French: French home at the root, English home at /en/' );
+	wpm_assert( array() === WPM_Language_Manager::instance()->sync_front_page(), 'nothing to change when the front page is already in the default language' );
+	wp_update_post( array( 'ID' => $h_en, 'post_status' => 'draft' ) );
+	WPM_Language_Manager::instance()->save_languages( $langs_en );
+	WPM_Language_Manager::instance()->sync_front_page();
+	wpm_assert( (int) get_option( 'page_on_front' ) === $h_fr, 'a draft translation never becomes the front page' );
+	WPM_Language_Manager::instance()->save_languages( $langs );
+	update_option( 'show_on_front', $fp_before[0] );
+	update_option( 'page_on_front', $fp_before[1] );
+
 	echo "String Translation: registry\n";
 	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );
 	$a2 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'b.php:9' ) );

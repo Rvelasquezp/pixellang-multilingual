@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: PixelLang Multilingual 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pixellang-"
 "multilingual\n"
-"POT-Creation-Date: 2026-11-13T18:08:13+00:00\n"
+"POT-Creation-Date: 2026-11-13T18:19:08+00:00\n"
 "PO-Revision-Date: 2026-11-12 19:30-0500\n"
 "Last-Translator: Agence Pixel\n"
 "Language-Team: Agence Pixel\n"
@@ -94,10 +94,12 @@ msgstr "Langues"
 #: admin/views/languages.php:56
 msgid ""
 "The order below is the order of the language switcher. The default language "
-"is used for visitors without a preference and for the x-default hreflang."
+"is shown at the root of the site (its home page), to visitors without a "
+"preference and for the x-default hreflang."
 msgstr ""
-"L’ordre ci-dessous est celui du sélecteur de langue. La langue par défaut "
-"sert aux visiteurs sans préférence et au hreflang x-default."
+"L'ordre ci-dessous est celui du sélecteur de langue. La langue par défaut "
+"est affichée à la racine du site (sa page d'accueil), aux visiteurs sans "
+"préférence et pour le hreflang x-default."
 
 #: admin/views/languages.php:65
 msgid "Active languages"
@@ -1567,49 +1569,57 @@ msgid "Languages saved."
 msgstr "Langues enregistrées."
 
 #: includes/class-admin.php:284
+msgid ""
+"Languages saved. The home page of the default language is at the root of the "
+"site, and each other language has its home page at /code/ (for example /fr/)."
+msgstr ""
+"Langues enregistrées. L'accueil de la langue par défaut est à la racine du "
+"site, et chaque autre langue a son accueil à /code/ (par exemple /en/)."
+
+#: includes/class-admin.php:285
 msgid "Keep at least one language."
 msgstr "Gardez au moins une langue."
 
-#: includes/class-admin.php:285
+#: includes/class-admin.php:286
 msgid "Statistics recalculated."
 msgstr "Statistiques recalculées."
 
-#: includes/class-admin.php:286
+#: includes/class-admin.php:287
 msgid "Default language assigned to content that had none."
 msgstr "Langue par défaut attribuée au contenu qui n’en avait pas."
 
-#: includes/class-admin.php:287
+#: includes/class-admin.php:288
 msgid "Translation draft created."
 msgstr "Brouillon de traduction créé."
 
-#: includes/class-admin.php:288
+#: includes/class-admin.php:289
 msgid "The translation could not be created."
 msgstr "La traduction n’a pas pu être créée."
 
-#: includes/class-admin.php:289
+#: includes/class-admin.php:290
 msgid "String registered. Add its translations below."
 msgstr "Chaîne enregistrée. Ajoutez ses traductions ci-dessous."
 
-#: includes/class-admin.php:290
+#: includes/class-admin.php:291
 msgid "This string was already registered: it is shown below."
 msgstr "Cette chaîne était déjà enregistrée : elle est affichée ci-dessous."
 
-#: includes/class-admin.php:291
+#: includes/class-admin.php:292
 msgid ""
 "Enter the original text, and a text domain for a theme or plugin string."
 msgstr ""
 "Saisissez le texte original et, pour une chaîne de thème ou d’extension, son "
 "domaine de texte."
 
-#: includes/class-admin.php:292
+#: includes/class-admin.php:293
 msgid "Scan finished."
 msgstr "Analyse terminée."
 
-#: includes/class-admin.php:293
+#: includes/class-admin.php:294
 msgid "This theme or plugin could not be scanned."
 msgstr "Ce thème ou cette extension n’a pas pu être analysé."
 
-#: includes/class-admin.php:294
+#: includes/class-admin.php:295
 msgid ""
 "Discovery is on for 30 minutes. Browse your site while logged in: the "
 "strings used on each page are registered."
@@ -1617,51 +1627,51 @@ msgstr ""
 "Le mode découverte est actif pendant 30 minutes. Parcourez votre site en "
 "restant connecté : les chaînes utilisées sur chaque page sont enregistrées."
 
-#: includes/class-admin.php:295
+#: includes/class-admin.php:296
 msgid "Discovery is off."
 msgstr "Le mode découverte est désactivé."
 
-#: includes/class-admin.php:296
+#: includes/class-admin.php:297
 msgid "Selected strings deleted."
 msgstr "Chaînes sélectionnées supprimées."
 
-#: includes/class-admin.php:297
+#: includes/class-admin.php:298
 msgid "License key saved."
 msgstr "Clé de licence enregistrée."
 
-#: includes/class-admin.php:298
+#: includes/class-admin.php:299
 msgid "License key removed."
 msgstr "Clé de licence retirée."
 
-#: includes/class-admin.php:299 includes/class-license.php:250
+#: includes/class-admin.php:300 includes/class-license.php:250
 msgid ""
 "This license key is not valid. Copy it again exactly as Agence Pixel sent it."
 msgstr ""
 "Cette clé de licence n'est pas valide. Copiez-la de nouveau exactement comme "
 "Agence Pixel l'a envoyée."
 
-#: includes/class-admin.php:300
+#: includes/class-admin.php:301
 msgid "Add a valid license key to change the PixelLang settings."
 msgstr ""
 "Ajoutez une clé de licence valide pour modifier les réglages de PixelLang."
 
-#: includes/class-admin.php:310 includes/class-strings-admin.php:58
+#: includes/class-admin.php:311 includes/class-strings-admin.php:58
 msgid "Sorry, you are not allowed to do that."
 msgstr "Désolé, vous n’avez pas l’autorisation de faire cela."
 
-#: includes/class-admin.php:440
+#: includes/class-admin.php:443
 msgid "Unknown settings section."
 msgstr "Section de réglages inconnue."
 
-#: includes/class-admin.php:457
+#: includes/class-admin.php:460
 msgid "Sorry, you are not allowed to translate this content."
 msgstr "Désolé, vous n’avez pas l’autorisation de traduire ce contenu."
 
-#: includes/class-admin.php:462
+#: includes/class-admin.php:465
 msgid "Translation"
 msgstr "Traduction"
 
-#: includes/class-admin.php:510 includes/class-strings-admin.php:124
+#: includes/class-admin.php:513 includes/class-strings-admin.php:124
 msgid "Unknown task."
 msgstr "Tâche inconnue."
 

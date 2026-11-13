@@ -28,6 +28,37 @@ class WPM_Url_Handler {
 	private function __construct() {
 		add_action( 'init', array( $this, 'resolve_language' ), 1 );
 		add_action( 'wp', array( $this, 'resolve_content_language' ), 1 );
+		add_action( 'template_redirect', array( $this, 'redirect_old_slug' ), 5 );
+	}
+
+	/**
+	 * 404 on the old address of a home page moved to /{language}/: 301 to it.
+	 */
+	public function redirect_old_slug() {
+		if ( ! is_404() ) {
+			return;
+		}
+		$segment = $this->request_base();
+		$path    = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( '' === $segment || false !== strpos( trim( substr( $path, strpos( $path, $segment ) ), '/' ), '/' ) ) {
+			return;
+		}
+		$ids = get_posts(
+			array(
+				'post_type'        => 'page',
+				'post_status'      => 'publish',
+				'meta_key'         => '_wpm_old_slug', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'       => sanitize_title( $segment ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'fields'           => 'ids',
+				'posts_per_page'   => 1,
+				'no_found_rows'    => true,
+				'suppress_filters' => true,
+			)
+		);
+		if ( $ids ) {
+			wp_safe_redirect( get_permalink( $ids[0] ), 301, 'PixelLang Multilingual' );
+			exit;
+		}
 	}
 
 	public static function instance() {

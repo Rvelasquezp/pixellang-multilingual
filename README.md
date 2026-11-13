@@ -97,6 +97,10 @@ Página sin traducción: el idioma enlaza a su portada; un idioma sin la página
 
 Compatibilidad: el atributo `style` (flags/text/dropdown) de la 1.0 chocaba con los estilos de bloque de WordPress; ya no se declara, pero el valor guardado se sigue leyendo (`$block->parsed_block`), así que los bloques existentes no cambian. Clases 1.0 conservadas. Filtro `wpm_switcher_items`.
 
+## Portadas por idioma (1.6)
+
+La portada del idioma por defecto está en la raíz del sitio (`/`); la de cada otro idioma en `/{código}/` (`/fr/`, `/es/`). Al guardar los idiomas, `page_on_front` (y `page_for_posts`) pasan a la versión del idioma por defecto y las demás portadas reciben el slug de su idioma (solo se cambia el slug, nunca el contenido, para no marcar traducciones como desactualizadas); la dirección antigua redirige con 301 (`_wpm_old_slug`). Una traducción nueva de la portada se crea directamente con el slug de su idioma. La portada solo redirige al idioma del visitante cuando navega dentro del sitio (logo, menú).
+
 ## Identidad del sitio, medios y URLs (1.6)
 
 - **Nombre y eslogan por idioma** (Réglages > Identité du site): en el sitio público `get_option( 'blogname' | 'blogdescription' )` devuelve el texto del idioma de la página (título del navegador, bloques Título/Eslogan del sitio, feeds, Yoast, Rank Math). Vacío: el del idioma por defecto. El admin ve siempre los valores reales.

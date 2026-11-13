@@ -281,6 +281,7 @@ class WPM_Admin {
 		return array(
 			'saved'          => array( 'success', __( 'Changes saved.', 'pixellang-multilingual' ) ),
 			'languages'      => array( 'success', __( 'Languages saved.', 'pixellang-multilingual' ) ),
+			'languages_front' => array( 'success', __( 'Languages saved. The home page of the default language is at the root of the site, and each other language has its home page at /code/ (for example /fr/).', 'pixellang-multilingual' ) ),
 			'no_language'    => array( 'error', __( 'Keep at least one language.', 'pixellang-multilingual' ) ),
 			'stats'          => array( 'success', __( 'Statistics recalculated.', 'pixellang-multilingual' ) ),
 			'assigned'       => array( 'success', __( 'Default language assigned to content that had none.', 'pixellang-multilingual' ) ),
@@ -362,7 +363,9 @@ class WPM_Admin {
 
 		WPM_Language_Manager::instance()->save_languages( $clean );
 		WPM_Translations::flush_stats();
-		$this->back( 'wpm-languages', 'languages' );
+		// The site root follows the default language.
+		$front = WPM_Language_Manager::instance()->sync_front_page();
+		$this->back( 'wpm-languages', ( isset( $front['page_on_front'] ) || ! empty( $front['slugs'] ) ) ? 'languages_front' : 'languages' );
 	}
 
 	/**

@@ -131,6 +131,92 @@ class WPM_Language_Manager {
 		}
 	}
 
+	/**
+	 * Home pages follow the languages: the version in the default language is
+	 * the WordPress front page (site root), and every other version lives at
+	 * /{language code}/ (/fr/, /es/…). The posts page follows the default
+	 * language too. Only published translations become the front page. Old
+	 * addresses redirect to the new ones (WordPress keeps the old slug).
+	 *
+	 * @return array What changed: page_on_front / page_for_posts => [ old ID,
+	 *               new ID ], slugs => [ post ID => new slug ].
+	 */
+	public function sync_front_page() {
+		$changed = array();
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return $changed;
+		}
+		$changed = $this->sync_front_option();
+		$front   = (int) get_option( 'page_on_front' );
+		if ( $front ) {
+			foreach ( WPM_Translations::get_post_translations( $front ) as $lang => $id ) {
+				if ( (int) $id === $front || get_post_field( 'post_name', $id ) === $lang ) {
+					continue;
+				}
+				$slug = wp_unique_post_slug( $lang, $id, get_post_status( $id ), 'page', 0 );
+				if ( $slug === $lang ) {
+					$this->set_page_slug( (int) $id, $lang );
+					$changed['slugs'][ $id ] = $lang;
+				}
+			}
+		}
+		return $changed;
+	}
+
+	/**
+	 * Changes only the slug of a page (top level). wp_update_post() would save
+	 * the whole content again, and filters of the site may rewrite it (block
+	 * attributes re-encoded), which would mark its translations outdated.
+	 * The old address keeps redirecting (_wp_old_slug).
+	 *
+	 * @param int    $id   Page ID.
+	 * @param string $slug New slug.
+	 */
+	private function set_page_slug( $id, $slug ) {
+		global $wpdb;
+		$before = get_post( $id );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->update(
+			$wpdb->posts,
+			array(
+				'post_name'   => $slug,
+				'post_parent' => 0,
+			),
+			array( 'ID' => $id )
+		);
+		clean_post_cache( $id );
+		// WordPress keeps old slugs of posts only, not of pages: keep it here
+		// so the old address redirects (WPM_Url_Handler::redirect_old_slug()).
+		if ( $before && $before->post_name && $before->post_name !== $slug ) {
+			$old = (array) get_post_meta( $id, '_wpm_old_slug' );
+			if ( ! in_array( $before->post_name, $old, true ) ) {
+				add_post_meta( $id, '_wpm_old_slug', $before->post_name );
+			}
+		}
+	}
+
+	/**
+	 * page_on_front and page_for_posts: version in the default language.
+	 *
+	 * @return array option => [ old ID, new ID ].
+	 */
+	private function sync_front_option() {
+		$changed = array();
+		$default = $this->get_default();
+		foreach ( array( 'page_on_front', 'page_for_posts' ) as $option ) {
+			$current = (int) get_option( $option );
+			if ( ! $current || WPM_Translations::get_post_language( $current ) === $default ) {
+				continue;
+			}
+			$target = WPM_Translations::get_post_translation( $current, $default );
+			if ( $target && 'publish' === get_post_status( $target ) ) {
+				update_option( $option, $target );
+				$changed[ $option ] = array( $current, $target );
+			}
+		}
+		return $changed;
+	}
+
 	public function get_current() {
 		return $this->current_lang ? $this->current_lang : $this->get_default();
 	}

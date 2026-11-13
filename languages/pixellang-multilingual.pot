@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-13T18:08:13+00:00\n"
+"POT-Creation-Date: 2026-11-13T18:19:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pixellang-multilingual\n"
@@ -82,7 +82,7 @@ msgid "Languages"
 msgstr ""
 
 #: admin/views/languages.php:56
-msgid "The order below is the order of the language switcher. The default language is used for visitors without a preference and for the x-default hreflang."
+msgid "The order below is the order of the language switcher. The default language is shown at the root of the site (its home page), to visitors without a preference and for the x-default hreflang."
 msgstr ""
 
 #: admin/views/languages.php:65
@@ -1382,92 +1382,96 @@ msgid "Languages saved."
 msgstr ""
 
 #: includes/class-admin.php:284
-msgid "Keep at least one language."
+msgid "Languages saved. The home page of the default language is at the root of the site, and each other language has its home page at /code/ (for example /fr/)."
 msgstr ""
 
 #: includes/class-admin.php:285
-msgid "Statistics recalculated."
+msgid "Keep at least one language."
 msgstr ""
 
 #: includes/class-admin.php:286
-msgid "Default language assigned to content that had none."
+msgid "Statistics recalculated."
 msgstr ""
 
 #: includes/class-admin.php:287
-msgid "Translation draft created."
+msgid "Default language assigned to content that had none."
 msgstr ""
 
 #: includes/class-admin.php:288
-msgid "The translation could not be created."
+msgid "Translation draft created."
 msgstr ""
 
 #: includes/class-admin.php:289
-msgid "String registered. Add its translations below."
+msgid "The translation could not be created."
 msgstr ""
 
 #: includes/class-admin.php:290
-msgid "This string was already registered: it is shown below."
+msgid "String registered. Add its translations below."
 msgstr ""
 
 #: includes/class-admin.php:291
-msgid "Enter the original text, and a text domain for a theme or plugin string."
+msgid "This string was already registered: it is shown below."
 msgstr ""
 
 #: includes/class-admin.php:292
-msgid "Scan finished."
+msgid "Enter the original text, and a text domain for a theme or plugin string."
 msgstr ""
 
 #: includes/class-admin.php:293
-msgid "This theme or plugin could not be scanned."
+msgid "Scan finished."
 msgstr ""
 
 #: includes/class-admin.php:294
-msgid "Discovery is on for 30 minutes. Browse your site while logged in: the strings used on each page are registered."
+msgid "This theme or plugin could not be scanned."
 msgstr ""
 
 #: includes/class-admin.php:295
-msgid "Discovery is off."
+msgid "Discovery is on for 30 minutes. Browse your site while logged in: the strings used on each page are registered."
 msgstr ""
 
 #: includes/class-admin.php:296
-msgid "Selected strings deleted."
+msgid "Discovery is off."
 msgstr ""
 
 #: includes/class-admin.php:297
-msgid "License key saved."
+msgid "Selected strings deleted."
 msgstr ""
 
 #: includes/class-admin.php:298
-msgid "License key removed."
+msgid "License key saved."
 msgstr ""
 
 #: includes/class-admin.php:299
+msgid "License key removed."
+msgstr ""
+
+#: includes/class-admin.php:300
 #: includes/class-license.php:250
 msgid "This license key is not valid. Copy it again exactly as Agence Pixel sent it."
 msgstr ""
 
-#: includes/class-admin.php:300
+#: includes/class-admin.php:301
 msgid "Add a valid license key to change the PixelLang settings."
 msgstr ""
 
-#: includes/class-admin.php:310
+#: includes/class-admin.php:311
 #: includes/class-strings-admin.php:58
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
-#: includes/class-admin.php:440
+#: includes/class-admin.php:443
 msgid "Unknown settings section."
 msgstr ""
 
-#: includes/class-admin.php:457
+#: includes/class-admin.php:460
 msgid "Sorry, you are not allowed to translate this content."
 msgstr ""
 
-#: includes/class-admin.php:462
+#: includes/class-admin.php:465
 msgid "Translation"
 msgstr ""
 
-#: includes/class-admin.php:510
+#: includes/class-admin.php:513
 #: includes/class-strings-admin.php:124
 msgid "Unknown task."
 msgstr ""
