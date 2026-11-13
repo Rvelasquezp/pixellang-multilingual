@@ -39,6 +39,7 @@ class WPM_Settings {
 			'taxonomies'        => array(),
 			'menu_locations'    => array(),
 			'form_groups'       => array(),
+			'strings_source_lang' => 'en',
 		);
 	}
 
@@ -100,6 +101,10 @@ class WPM_Settings {
 			case 'filter_queries':
 			case 'hreflang':
 				return (bool) $value;
+
+			case 'strings_source_lang':
+				$value = sanitize_key( $value );
+				return in_array( $value, $langs, true ) ? $value : 'en';
 
 			case 'cookie_days':
 				return min( 3650, max( 1, absint( $value ) ) );

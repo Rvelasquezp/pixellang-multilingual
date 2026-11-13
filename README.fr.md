@@ -51,6 +51,16 @@ Aucune table créée. Langues : option `wpm_languages` ; types : `wpm_post_types
 
 **Migration 1.0** : au premier démarrage de la 1.1, les groupes de l’option `wpm_page_map` deviennent des métas `_wpm_translations` (le premier groupe qui contient un contenu l’emporte, comme en 1.0). Les entrées vides, inexistantes, en double, de types mélangés ou de langue contradictoire sont ignorées et listées dans **Outils**. L’option `wpm_page_map` est conservée telle quelle.
 
+## Traduction de chaînes (1.2)
+
+Traduit les textes des thèmes, extensions et modèles sans modifier leurs fichiers (menu **PixelLang > Traduction de chaînes**).
+
+- **Enregistrement** : analyse d’un thème ou d’une extension (PHP via `token_get_all`, JS via `wp.i18n`), mode découverte (30 min, administrateurs seulement : enregistre les chaînes réellement affichées, avec fichier et ligne) et enregistrement manuel.
+- **Identité** : domaine + contexte + texte original.
+- **Résolution** : filtres `gettext`, `gettext_with_context`, `ngettext`, `ngettext_with_context`, sur le site public, pour la langue active de PixelLang. Une traduction saisie ici l’emporte sur le `.mo` du composant ; sans traduction ici, rien ne change.
+- **Texte écrit directement dans le HTML** : type « Texte HTML », remplacé seulement dans le texte visible (jamais dans les attributs, liens, scripts, styles, commentaires). Limites : correspondance exacte, et les textes créés par JavaScript ne sont pas traduisibles ainsi.
+- **Données** : tables `{prefix}wpm_strings` et `{prefix}wpm_string_translations`. Permission `manage_options` (filtre `wpm_strings_capability`).
+
 ## API pour les thèmes
 
 ```php

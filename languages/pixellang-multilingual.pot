@@ -2,21 +2,21 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: PixelLang Multilingual 1.1.0\n"
+"Project-Id-Version: PixelLang Multilingual 1.2.0\n"
 "Report-Msgid-Bugs-To: https://agencepixel.ca\n"
 "Last-Translator: Agence Pixel\n"
 "Language-Team: Agence Pixel\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-12T22:45:42+00:00\n"
+"POT-Creation-Date: 2026-11-12T23:54:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pixellang-multilingual\n"
 
 #. Plugin Name of the plugin
 #: wp-multilingual.php
-#: includes/class-admin.php:79
+#: includes/class-admin.php:80
 msgid "PixelLang Multilingual"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 
 #: admin/views/overview.php:36
 #: includes/class-admin.php:66
-#: wp-multilingual.php:94
+#: wp-multilingual.php:99
 msgid "Dashboard"
 msgstr ""
 
@@ -294,7 +294,7 @@ msgstr ""
 
 #: admin/views/settings.php:11
 #: admin/views/tools.php:110
-#: includes/class-translations-table.php:61
+#: includes/class-translations-table.php:63
 msgid "Content"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgid "Save changes"
 msgstr ""
 
 #: admin/views/settings.php:71
-#: includes/class-admin.php:69
+#: includes/class-admin.php:70
 msgid "Settings"
 msgstr ""
 
@@ -472,11 +472,14 @@ msgid "Activate Contact Form 7 or Gravity Forms to translate forms."
 msgstr ""
 
 #: admin/views/settings.php:285
+#: admin/views/strings.php:27
+#: includes/class-strings-admin.php:206
 msgid "Plugin"
 msgstr ""
 
 #: admin/views/settings.php:289
 #: admin/views/settings.php:367
+#: includes/class-strings-admin.php:166
 msgid "Actions"
 msgstr ""
 
@@ -530,8 +533,187 @@ msgstr ""
 msgid "Unlinking a part only removes its language versions from this list: the template parts themselves are kept."
 msgstr ""
 
+#: admin/views/strings.php:11
+msgid "The String Translation tables are missing. Deactivate and reactivate the plugin to create them."
+msgstr ""
+
+#: admin/views/strings.php:26
+#: admin/views/tools.php:144
+#: includes/class-strings-admin.php:205
+msgid "Theme"
+msgstr ""
+
+#: admin/views/strings.php:29
+#: includes/class-strings-admin.php:208
+msgid "Manual"
+msgstr ""
+
+#: admin/views/strings.php:30
+#: admin/views/strings.php:174
+#: includes/class-strings-admin.php:209
+msgid "HTML text"
+msgstr ""
+
+#. translators: 1: files read, 2: strings found, 3: new strings.
+#: admin/views/strings.php:39
+#, php-format
+msgid "%1$d files read, %2$d strings found, %3$d new."
+msgstr ""
+
+#: admin/views/strings.php:58
+#: includes/class-admin.php:69
+msgid "String Translation"
+msgstr ""
+
+#: admin/views/strings.php:59
+msgid "Texts of your theme, plugins and templates, translated without editing their files. A translation entered here is shown automatically in the matching language."
+msgstr ""
+
+#: admin/views/strings.php:62
+msgid "strings"
+msgstr ""
+
+#: admin/views/strings.php:66
+msgid "to translate"
+msgstr ""
+
+#: admin/views/strings.php:77
+msgid "Scan a theme or plugin"
+msgstr ""
+
+#: admin/views/strings.php:78
+msgid "Reads its PHP and JavaScript files and registers the texts passed to __(), _e(), esc_html__(), _x(), _n() and similar functions. Files are never modified."
+msgstr ""
+
+#: admin/views/strings.php:80
+msgid "Theme or plugin"
+msgstr ""
+
+#: admin/views/strings.php:87
+msgid "Scan"
+msgstr ""
+
+#: admin/views/strings.php:95
+msgid "Discovery mode"
+msgstr ""
+
+#: admin/views/strings.php:96
+msgid "While it is on, every translatable text actually displayed on the pages you visit (logged in as an administrator) is registered, with the file that printed it. Visitors are not affected."
+msgstr ""
+
+#. translators: %s: time.
+#: admin/views/strings.php:102
+#, php-format
+msgid "On until %s"
+msgstr ""
+
+#: admin/views/strings.php:104
+msgid "Browse the site"
+msgstr ""
+
+#: admin/views/strings.php:106
+msgid "Turn off"
+msgstr ""
+
+#: admin/views/strings.php:108
+msgid "Off"
+msgstr ""
+
+#: admin/views/strings.php:109
+msgid "Turn on for 30 minutes"
+msgstr ""
+
+#: admin/views/strings.php:117
+msgid "Register a string"
+msgstr ""
+
+#: admin/views/strings.php:119
+msgid "Where does the text come from?"
+msgstr ""
+
+#: admin/views/strings.php:120
+msgid "A translation function: __( \"Text\", \"domain\" )"
+msgstr ""
+
+#: admin/views/strings.php:121
+msgid "Text written directly in HTML"
+msgstr ""
+
+#: admin/views/strings.php:124
+msgid "Original text (exact)"
+msgstr ""
+
+#: admin/views/strings.php:129
+#: admin/views/strings.php:170
+#: includes/class-strings-admin.php:215
+msgid "Text domain"
+msgstr ""
+
+#: admin/views/strings.php:133
+msgid "Context (optional)"
+msgstr ""
+
+#: admin/views/strings.php:143
+msgid "Language of the original"
+msgstr ""
+
+#: admin/views/strings.php:150
+msgid "HTML text is replaced in the visible text of the page only (never in links, attributes or scripts). It must match the page exactly. Texts created by JavaScript cannot be translated this way."
+msgstr ""
+
+#: admin/views/strings.php:151
+msgid "Register"
+msgstr ""
+
+#: admin/views/strings.php:159
+msgid "Origin"
+msgstr ""
+
+#: admin/views/strings.php:161
+#: admin/views/strings.php:172
+msgid "All"
+msgstr ""
+
+#: admin/views/strings.php:179
+#: admin/views/translations.php:75
+msgid "Show"
+msgstr ""
+
+#: admin/views/strings.php:181
+msgid "All strings"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/strings.php:186
+#, php-format
+msgid "Not translated in %s"
+msgstr ""
+
+#: admin/views/strings.php:192
+#: admin/views/translations.php:93
+msgid "Filter"
+msgstr ""
+
+#: admin/views/strings.php:193
+#: admin/views/translations.php:94
+msgid "Search"
+msgstr ""
+
+#: admin/views/strings.php:199
+msgid "Delete the selected strings and their translations? The theme and plugin files are not affected."
+msgstr ""
+
+#: admin/views/strings.php:210
+msgid "Language of texts found in code"
+msgstr ""
+
+#: admin/views/strings.php:216
+#: includes/class-strings-admin.php:282
+msgid "Save"
+msgstr ""
+
 #: admin/views/tools.php:17
-#: includes/class-admin.php:70
+#: includes/class-admin.php:71
 msgid "Tools"
 msgstr ""
 
@@ -636,10 +818,6 @@ msgid "Data version"
 msgstr ""
 
 #: admin/views/tools.php:144
-msgid "Theme"
-msgstr ""
-
-#: admin/views/tools.php:144
 msgid "block theme"
 msgstr ""
 
@@ -698,10 +876,6 @@ msgstr ""
 msgid "Source language"
 msgstr ""
 
-#: admin/views/translations.php:75
-msgid "Show"
-msgstr ""
-
 #: admin/views/translations.php:77
 msgid "All content"
 msgstr ""
@@ -710,14 +884,6 @@ msgstr ""
 #: admin/views/translations.php:87
 #, php-format
 msgid "Missing in %s"
-msgstr ""
-
-#: admin/views/translations.php:93
-msgid "Filter"
-msgstr ""
-
-#: admin/views/translations.php:94
-msgid "Search"
 msgstr ""
 
 #: blocks/language-switcher/render.php:51
@@ -783,88 +949,122 @@ msgstr[1] ""
 msgid "Translation draft created from the original content. Translate it, then publish."
 msgstr ""
 
-#: includes/class-admin.php:80
+#: includes/class-admin.php:81
 msgid "PixelLang"
 msgstr ""
 
-#: includes/class-admin.php:119
+#: includes/class-admin.php:120
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: includes/class-admin.php:161
+#: includes/class-admin.php:162
 #: includes/class-meta-box.php:179
 msgid "Published"
 msgstr ""
 
-#: includes/class-admin.php:162
+#: includes/class-admin.php:163
 #: includes/class-meta-box.php:180
 msgid "Draft"
 msgstr ""
 
-#: includes/class-admin.php:163
+#: includes/class-admin.php:164
 #: includes/class-meta-box.php:181
 msgid "Pending"
 msgstr ""
 
-#: includes/class-admin.php:164
+#: includes/class-admin.php:165
 #: includes/class-meta-box.php:182
 msgid "Scheduled"
 msgstr ""
 
-#: includes/class-admin.php:165
+#: includes/class-admin.php:166
 #: includes/class-meta-box.php:183
 msgid "Private"
 msgstr ""
 
-#: includes/class-admin.php:166
+#: includes/class-admin.php:167
 msgid "Trash"
 msgstr ""
 
-#: includes/class-admin.php:275
+#: includes/class-admin.php:276
 msgid "Changes saved."
 msgstr ""
 
-#: includes/class-admin.php:276
+#: includes/class-admin.php:277
 msgid "Languages saved."
 msgstr ""
 
-#: includes/class-admin.php:277
+#: includes/class-admin.php:278
 msgid "Keep at least one language."
 msgstr ""
 
-#: includes/class-admin.php:278
+#: includes/class-admin.php:279
 msgid "Statistics recalculated."
 msgstr ""
 
-#: includes/class-admin.php:279
+#: includes/class-admin.php:280
 msgid "Default language assigned to content that had none."
 msgstr ""
 
-#: includes/class-admin.php:280
+#: includes/class-admin.php:281
 msgid "Translation draft created."
 msgstr ""
 
-#: includes/class-admin.php:281
+#: includes/class-admin.php:282
 msgid "The translation could not be created."
 msgstr ""
 
-#: includes/class-admin.php:291
+#: includes/class-admin.php:283
+msgid "String registered. Add its translations below."
+msgstr ""
+
+#: includes/class-admin.php:284
+msgid "This string was already registered: it is shown below."
+msgstr ""
+
+#: includes/class-admin.php:285
+msgid "Enter the original text, and a text domain for a theme or plugin string."
+msgstr ""
+
+#: includes/class-admin.php:286
+msgid "Scan finished."
+msgstr ""
+
+#: includes/class-admin.php:287
+msgid "This theme or plugin could not be scanned."
+msgstr ""
+
+#: includes/class-admin.php:288
+msgid "Discovery is on for 30 minutes. Browse your site while logged in: the strings used on each page are registered."
+msgstr ""
+
+#: includes/class-admin.php:289
+msgid "Discovery is off."
+msgstr ""
+
+#: includes/class-admin.php:290
+msgid "Selected strings deleted."
+msgstr ""
+
+#: includes/class-admin.php:300
+#: includes/class-strings-admin.php:58
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
-#: includes/class-admin.php:386
+#: includes/class-admin.php:395
 msgid "Unknown settings section."
 msgstr ""
 
-#: includes/class-admin.php:403
+#: includes/class-admin.php:412
 msgid "Sorry, you are not allowed to translate this content."
 msgstr ""
 
-#: includes/class-admin.php:408
+#: includes/class-admin.php:417
 msgid "Translation"
 msgstr ""
 
-#: includes/class-admin.php:456
+#: includes/class-admin.php:465
+#: includes/class-strings-admin.php:123
 msgid "Unknown task."
 msgstr ""
 
@@ -892,7 +1092,7 @@ msgid "Unlink the %s translation"
 msgstr ""
 
 #: includes/class-meta-box.php:108
-#: includes/class-translations-table.php:211
+#: includes/class-translations-table.php:213
 #: admin/js/template-panel.js:125
 msgid "Create"
 msgstr ""
@@ -912,58 +1112,148 @@ msgstr ""
 msgid "Save a draft to create translations from this content."
 msgstr ""
 
-#: includes/class-migration.php:142
+#: includes/class-migration.php:146
 msgid "Content no longer exists"
 msgstr ""
 
-#: includes/class-migration.php:143
+#: includes/class-migration.php:147
 msgid "Language is not active"
 msgstr ""
 
-#: includes/class-migration.php:144
+#: includes/class-migration.php:148
 msgid "Already linked in an earlier group"
 msgstr ""
 
-#: includes/class-migration.php:145
+#: includes/class-migration.php:149
 msgid "Different content type than the group"
 msgstr ""
 
-#: includes/class-migration.php:146
+#: includes/class-migration.php:150
 msgid "Language of the content differs from its slot"
 msgstr ""
 
-#: includes/class-rest.php:152
+#: includes/class-rest.php:153
 msgid "This is not a navigation menu."
 msgstr ""
 
-#: includes/class-rest.php:155
-#: includes/class-rest.php:205
+#: includes/class-rest.php:156
+#: includes/class-rest.php:206
+#: includes/class-strings.php:310
 #: includes/class-translations.php:289
 msgid "Unknown language."
 msgstr ""
 
-#: includes/class-rest.php:199
+#: includes/class-rest.php:200
 #: includes/class-translations.php:286
 msgid "This content cannot be translated."
 msgstr ""
 
-#: includes/class-rest.php:238
-#: includes/class-rest.php:332
+#: includes/class-rest.php:239
+#: includes/class-rest.php:333
 msgid "Invalid request."
 msgstr ""
 
-#: includes/class-rest.php:282
+#: includes/class-rest.php:283
 msgid "Only content of the same type can be linked."
 msgstr ""
 
-#: includes/class-rest.php:285
+#: includes/class-rest.php:286
 msgid "You are not allowed to edit this content."
 msgstr ""
 
 #. translators: %s: language name.
-#: includes/class-rest.php:292
+#: includes/class-rest.php:293
 #, php-format
 msgid "This content is already in %s."
+msgstr ""
+
+#: includes/class-rest.php:411
+#: includes/class-rest.php:443
+#: includes/class-strings.php:307
+msgid "Unknown string."
+msgstr ""
+
+#: includes/class-string-scanner.php:53
+msgid "theme"
+msgstr ""
+
+#: includes/class-string-scanner.php:59
+msgid "parent theme"
+msgstr ""
+
+#: includes/class-string-scanner.php:73
+msgid "plugin"
+msgstr ""
+
+#: includes/class-string-scanner.php:89
+msgid "Unknown theme or plugin."
+msgstr ""
+
+#: includes/class-strings-admin.php:161
+msgid "Original text"
+msgstr ""
+
+#: includes/class-strings-admin.php:175
+msgid "Delete"
+msgstr ""
+
+#: includes/class-strings-admin.php:192
+msgid "No string matches. Scan your theme, turn on discovery or register a string manually."
+msgstr ""
+
+#: includes/class-strings-admin.php:199
+msgid "Select this string"
+msgstr ""
+
+#: includes/class-strings-admin.php:218
+msgid "Context"
+msgstr ""
+
+#: includes/class-strings-admin.php:224
+#: includes/class-strings-admin.php:271
+msgid "Plural"
+msgstr ""
+
+#. translators: %d: number of places.
+#: includes/class-strings-admin.php:231
+#, php-format
+msgid "Used in %d place"
+msgid_plural "Used in %d places"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: language name.
+#: includes/class-strings-admin.php:256
+#, php-format
+msgid "%s translation"
+msgstr ""
+
+#: includes/class-strings-admin.php:262
+msgid "Original language: leave empty to keep the original"
+msgstr ""
+
+#: includes/class-strings-admin.php:262
+msgid "Not translated yet"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-strings-admin.php:270
+#, php-format
+msgid "%s plural translation"
+msgstr ""
+
+#. translators: %s: string.
+#: includes/class-strings-admin.php:283
+#, php-format
+msgid "Delete the string “%s”"
+msgstr ""
+
+#: includes/class-strings-admin.php:305
+msgid "Delete selected"
+msgstr ""
+
+#: includes/class-strings.php:212
+msgid "The original text is empty."
 msgstr ""
 
 #: includes/class-template-switcher.php:164
@@ -996,24 +1286,24 @@ msgstr ""
 msgid "No translation"
 msgstr ""
 
-#: includes/class-translations-table.php:62
+#: includes/class-translations-table.php:64
 msgid "Status"
 msgstr ""
 
-#: includes/class-translations-table.php:146
+#: includes/class-translations-table.php:148
 msgid "Nothing is missing here: every item has this translation."
 msgstr ""
 
-#: includes/class-translations-table.php:148
+#: includes/class-translations-table.php:150
 msgid "No content in this language yet."
 msgstr ""
 
-#: includes/class-translations-table.php:164
+#: includes/class-translations-table.php:166
 msgid "View"
 msgstr ""
 
 #. translators: 1: language name, 2: content title.
-#: includes/class-translations-table.php:209
+#: includes/class-translations-table.php:211
 #, php-format
 msgid "Create the %1$s translation of “%2$s”"
 msgstr ""
@@ -1023,79 +1313,79 @@ msgid "The content is already in this language."
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:125
+#: admin/js/admin.js:132
 #, js-format
 msgid "%s is now the default language."
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:137
+#: admin/js/admin.js:144
 #, js-format
 msgid "%s is already active."
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:153
+#: admin/js/admin.js:160
 #, js-format
 msgid "%s added. Save to apply."
 msgstr ""
 
 #. translators: placeholders: language or content name, number.
-#: admin/js/admin.js:168
+#: admin/js/admin.js:175
 #, js-format
 msgid "%1$s has %2$d items. They keep their language and links, but stop showing as a language of the site until you add it again. Remove it?"
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:176
+#: admin/js/admin.js:183
 #, js-format
 msgid "%s removed. Save to apply."
 msgstr ""
 
-#: admin/js/admin.js:267
+#: admin/js/admin.js:274
 msgid "The code must be 2 or 3 lowercase letters, optionally followed by a dash and a region (pt-br)."
 msgstr ""
 
-#: admin/js/admin.js:269
+#: admin/js/admin.js:276
 msgid "Give the language a name."
 msgstr ""
 
-#: admin/js/admin.js:271
+#: admin/js/admin.js:278
 msgid "The locale looks like fr_CA or pt_BR."
 msgstr ""
 
-#: admin/js/admin.js:331
+#: admin/js/admin.js:338
 msgid "Form group removed. Save to apply."
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:344
+#: admin/js/admin.js:351
 #, js-format
 msgid "Stop translating “%s”? The template parts themselves are kept."
 msgstr ""
 
 #. translators: placeholders: language or content name.
-#: admin/js/admin.js:352
+#: admin/js/admin.js:359
 #, js-format
 msgid "“%s” is no longer translated."
 msgstr ""
 
-#: admin/js/admin.js:356
+#: admin/js/admin.js:363
 #: admin/js/template-panel.js:137
 msgid "The change could not be saved."
 msgstr ""
 
-#: admin/js/admin.js:372
+#: admin/js/admin.js:379
 msgid "Nothing to repair: every template part has a theme."
 msgstr ""
 
 #. translators: %s: comma-separated template part slugs.
-#: admin/js/admin.js:375
+#: admin/js/admin.js:382
 #, js-format
 msgid "Repaired: %s"
 msgstr ""
 
-#: admin/js/admin.js:382
+#: admin/js/admin.js:389
 msgid "The repair failed."
 msgstr ""
 
@@ -1173,6 +1463,24 @@ msgstr ""
 
 #: admin/js/nav-panel.js:85
 msgid "This menu is for"
+msgstr ""
+
+#: admin/js/strings.js:70
+msgid "Saved"
+msgstr ""
+
+#: admin/js/strings.js:74
+msgid "Not saved. Try again."
+msgstr ""
+
+#. translators: %s: original text.
+#: admin/js/strings.js:103
+#, js-format
+msgid "Delete “%s” and its translations? The theme and plugin files are not affected."
+msgstr ""
+
+#: admin/js/strings.js:113
+msgid "Not deleted. Try again."
 msgstr ""
 
 #: admin/js/template-panel.js:64

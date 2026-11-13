@@ -20,7 +20,7 @@ $wpm_notice  = isset( $_GET['wpm_notice'] ) ? sanitize_key( wp_unslash( $_GET['w
 
 	<header class="wpm-topbar">
 		<div class="wpm-topbar__brand">
-			<span class="wpm-topbar__logo"><?php WPM_Icons::render( 'logo', 22 ); ?></span>
+			<span class="wpm-topbar__logo"><?php echo WPM_Icons::mark( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG. ?></span>
 			<span class="wpm-topbar__name">PixelLang <span>Multilingual</span></span>
 			<span class="wpm-topbar__version">v<?php echo esc_html( WPM_VERSION ); ?></span>
 		</div>

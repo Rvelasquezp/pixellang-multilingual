@@ -65,6 +65,18 @@ El plugin no crea tablas.
 
 Al primer arranque de la 1.1, los grupos del option `wpm_page_map` se convierten en meta `_wpm_translations`. El orden se respeta (el primer grupo que contiene una entrada gana, como en 1.0). Se ignoran y se documentan en **Herramientas**: espacios vacíos, contenido inexistente, grupos de un solo elemento, duplicados, tipos de contenido mezclados e idiomas contradictorios. El option `wpm_page_map` se conserva sin cambios como copia de seguridad.
 
+## String Translation (1.2)
+
+Traduce los textos de temas, plugins y plantillas sin modificar sus archivos (menú **PixelLang > Traduction de chaînes**).
+
+- **Registro**: escaneo de un tema o plugin (PHP con `token_get_all` y JS con `wp.i18n`: `__`, `_e`, `esc_html__`, `esc_html_e`, `esc_attr__`, `esc_attr_e`, `_x`, `_n`…), modo descubrimiento (30 min, solo administradores: registra las cadenas realmente mostradas, con su archivo y línea) y registro manual.
+- **Identidad**: dominio + contexto + texto original. El mismo texto en otro dominio o contexto es otra cadena.
+- **Resolución**: filtros `gettext`, `gettext_with_context`, `ngettext` y `ngettext_with_context`, solo en el frontend y para el idioma activo de PixelLang. Una traducción escrita aquí tiene prioridad sobre el `.mo` del componente; sin traducción aquí no se toca nada. Los dominios sin traducciones salen de inmediato (unos 0,7 µs por llamada).
+- **Texto escrito directamente en HTML**: tipo «Texte HTML». Se sustituye solo en el texto visible de la página, nunca en atributos, enlaces, scripts, estilos ni comentarios. Límites: el texto debe coincidir exactamente, y los textos creados por JavaScript no se pueden traducir así.
+- **Datos**: tablas `{prefix}wpm_strings` y `{prefix}wpm_string_translations` (creadas por la migración 3, nunca se borran). Las traducciones se sanean con `wp_kses_post`.
+- **Permisos**: `manage_options` (filtro `wpm_strings_capability`). REST: `POST`/`DELETE /wpm/v1/strings/{id}`.
+- Filtro `wpm_strings_ignored_domains`: dominios que el descubrimiento no registra.
+
 ## API para temas
 
 ```php

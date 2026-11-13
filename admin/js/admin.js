@@ -85,6 +85,13 @@
 		}
 	} );
 
+	// Show field errors only once the user tried to submit.
+	app.addEventListener( 'invalid', function ( event ) {
+		if ( event.target.form ) {
+			event.target.form.classList.add( 'is-submitted' );
+		}
+	}, true );
+
 	// Filters that apply on change.
 	app.querySelectorAll( '[data-wpm-autosubmit]' ).forEach( function ( select ) {
 		select.addEventListener( 'change', function () {

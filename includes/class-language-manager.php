@@ -145,7 +145,7 @@ class WPM_Language_Manager {
 	 * @return string
 	 */
 	public function filter_locale( $locale ) {
-		if ( ! $this->applies_to_request() ) {
+		if ( ! $this->is_front_request() ) {
 			return $locale;
 		}
 		$target = $this->get_locale( $this->get_current() );
@@ -153,12 +153,13 @@ class WPM_Language_Manager {
 	}
 
 	/**
-	 * Whether the visitor language drives the locale of this request:
-	 * front end and front-end AJAX calls, never the admin screens or REST.
+	 * Whether the visitor language drives this request: front end and
+	 * front-end AJAX calls, never the admin screens or REST. Also used by
+	 * String Translation.
 	 *
 	 * @return bool
 	 */
-	private function applies_to_request() {
+	public function is_front_request() {
 		if ( wp_doing_ajax() ) {
 			return true;
 		}

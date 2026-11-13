@@ -3,7 +3,7 @@
  * Plugin Name:       PixelLang Multilingual
  * Plugin URI:        https://github.com/Rvelasquezp/pixellang-multilingual
  * Description:       Multilingual WordPress without lock-in: languages, linked translations of posts, pages, custom post types and terms, language-aware menus, template parts and forms, hreflang and a language switcher block.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Agence Pixel
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPM_VERSION', '1.1.0' );
+define( 'WPM_VERSION', '1.2.0' );
 define( 'WPM_FILE', __FILE__ );
 define( 'WPM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPM_URL', plugin_dir_url( __FILE__ ) );
@@ -35,6 +35,7 @@ require_once WPM_DIR . 'includes/class-hreflang.php';
 require_once WPM_DIR . 'includes/class-compat.php';
 require_once WPM_DIR . 'includes/class-template-switcher.php';
 require_once WPM_DIR . 'includes/class-rest.php';
+require_once WPM_DIR . 'includes/class-strings.php';
 
 if ( is_admin() ) {
 	require_once WPM_DIR . 'includes/class-icons.php';
@@ -42,6 +43,8 @@ if ( is_admin() ) {
 	require_once WPM_DIR . 'includes/class-meta-box.php';
 	require_once WPM_DIR . 'includes/class-admin-columns.php';
 	require_once WPM_DIR . 'includes/class-term-language.php';
+	require_once WPM_DIR . 'includes/class-string-scanner.php';
+	require_once WPM_DIR . 'includes/class-strings-admin.php';
 }
 
 /**
@@ -61,6 +64,7 @@ function wpm() {
 		$instance->templates = WPM_Template_Switcher::instance();
 		$instance->rest      = WPM_Rest::instance();
 		WPM_Translations::init();
+		WPM_Strings::init();
 		WPM_Compat::init();
 
 		if ( is_admin() ) {
@@ -68,6 +72,7 @@ function wpm() {
 			$instance->meta_box = WPM_Meta_Box::instance();
 			$instance->columns  = WPM_Admin_Columns::instance();
 			$instance->terms    = WPM_Term_Language::instance();
+			$instance->strings  = WPM_Strings_Admin::instance();
 		}
 	}
 	return $instance;
@@ -108,6 +113,7 @@ function wpm_activate() {
 		// A fresh install has no 1.0 data to migrate.
 		update_option( 'wpm_db_version', WPM_Migration::DB_VERSION );
 	}
+	WPM_Strings::install();
 	if ( false === get_option( 'wpm_post_types' ) ) {
 		update_option( 'wpm_post_types', array( 'page', 'post' ) );
 	}

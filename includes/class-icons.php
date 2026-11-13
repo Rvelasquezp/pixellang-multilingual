@@ -10,12 +10,44 @@ defined( 'ABSPATH' ) || exit;
 class WPM_Icons {
 
 	/**
+	 * PixelLang mark on a 20×20 grid: two speech bubbles, the front one
+	 * carrying an "A". One filled path (even-odd) so WordPress can recolor
+	 * the menu icon for every admin color scheme and state.
+	 */
+	const MARK = 'M4.5 10H3.5L1 12.5V3.5A2.5 2.5 0 0 1 3.5 1h7A2.5 2.5 0 0 1 13 3.5v1h-1.5v-1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v5h2ZM8.5 6h8A2.5 2.5 0 0 1 19 8.5v10L16.5 16h-8A2.5 2.5 0 0 1 6 13.5v-5A2.5 2.5 0 0 1 8.5 6Zm3 2h2l2.5 6h-1.75l-.5-1.5h-2.5l-.5 1.5H9Zm1 1.75-.75 1.75h1.5Z';
+
+	/**
+	 * The PixelLang mark as inline SVG.
+	 *
+	 * @param int    $size Size in pixels.
+	 * @param string $fill Fill color.
+	 * @return string
+	 */
+	public static function mark( $size = 20, $fill = 'currentColor' ) {
+		return sprintf(
+			'<svg xmlns="http://www.w3.org/2000/svg" class="wpm-icon" width="%1$d" height="%1$d" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path fill="%2$s" fill-rule="evenodd" d="%3$s"/></svg>',
+			(int) $size,
+			esc_attr( $fill ),
+			self::MARK
+		);
+	}
+
+	/**
+	 * Data URI for add_menu_page(). The black fill is replaced by WordPress
+	 * (svg-painter) with the menu color of the active admin scheme.
+	 *
+	 * @return string
+	 */
+	public static function menu_icon() {
+		return 'data:image/svg+xml;base64,' . base64_encode( self::mark( 20, 'black' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Menu icon data URI.
+	}
+
+	/**
 	 * Inner SVG markup per icon.
 	 *
 	 * @var array<string,string>
 	 */
 	private static $paths = array(
-		'logo'      => '<path d="M4 5h9"/><path d="M8.5 3v2"/><path d="M11 5c-.8 3.6-3.4 6.6-7 8"/><path d="M6 9c1 2 2.8 3.6 5 4.5"/><path d="M12 21l4.5-10 4.5 10"/><path d="M13.6 17.5h5.8"/>',
 		'dashboard' => '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
 		'globe'     => '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
 		'files'     => '<path d="M15 3H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7z"/><path d="M15 3v4h4"/><path d="M3 8v11a2 2 0 0 0 2 2h9"/>',
@@ -44,6 +76,7 @@ class WPM_Icons {
 		'eye'       => '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 		'arrow-right' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
 		'tag'       => '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><path d="M7.5 7.5h.01"/>',
+		'type'      => '<path d="M4 7V5h16v2"/><path d="M9 19h6"/><path d="M12 5v14"/>',
 		'shield'    => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
 	);
 

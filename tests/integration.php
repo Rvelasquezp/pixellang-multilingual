@@ -285,6 +285,86 @@ try {
 	$_POST = $_REQUEST = array();
 	WPM_Language_Manager::instance()->save_languages( $langs );
 
+	echo "String Translation: registry\n";
+	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );
+	$a2 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'b.php:9' ) );
+	$b1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'context' => 'button' ) );
+	$c1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'other-domain' ) );
+	wpm_assert( $a1 === $a2 && is_int( $a1 ), 'same domain + context + text = same string' );
+	wpm_assert( 2 === count( json_decode( WPM_Strings::get( $a1 )->locations, true ) ), 'locations merged' );
+	wpm_assert( $b1 !== $a1 && $c1 !== $a1 && $c1 !== $b1, 'other context or domain = other string' );
+	wpm_assert( is_wp_error( WPM_Strings::register( array( 'original' => '  ' ) ) ), 'empty original refused' );
+
+	echo "String Translation: resolution\n";
+	WPM_Strings::save_translation( $a1, 'fr', 'Chaîne de test' );
+	WPM_Strings::save_translation( $b1, 'fr', 'Bouton test' );
+	wpm_assert( isset( WPM_Strings::get_domains()['wpm-test'] ) && ! isset( WPM_Strings::get_domains()['other-domain'] ), 'only translated domains are hooked' );
+	add_filter( 'gettext', array( 'WPM_Strings', 'filter_gettext' ), 20, 3 );
+	add_filter( 'gettext_with_context', array( 'WPM_Strings', 'filter_gettext_with_context' ), 20, 4 );
+	add_filter( 'ngettext', array( 'WPM_Strings', 'filter_ngettext' ), 20, 5 );
+	WPM_Language_Manager::instance()->set_current( 'fr' );
+	wpm_assert( 'Chaîne de test' === __( 'Test string', 'wpm-test' ), '__() translated in FR' );
+	wpm_assert( 'Chaîne de test' === esc_html__( 'Test string', 'wpm-test' ), 'esc_html__() translated' );
+	ob_start();
+	esc_html_e( 'Test string', 'wpm-test' );
+	wpm_assert( 'Chaîne de test' === ob_get_clean(), 'esc_html_e() translated' );
+	wpm_assert( 'Bouton test' === _x( 'Test string', 'button', 'wpm-test' ), '_x() uses its context' );
+	wpm_assert( 'Test string' === __( 'Test string', 'other-domain' ), 'same text in another domain untouched' );
+	WPM_Language_Manager::instance()->set_current( 'en' );
+	wpm_assert( 'Test string' === __( 'Test string', 'wpm-test' ), 'EN shows the original' );
+	WPM_Language_Manager::instance()->set_current( 'fr' );
+	$n1 = WPM_Strings::register( array( 'original' => '%d item', 'original_plural' => '%d items', 'domain' => 'wpm-test' ) );
+	WPM_Strings::save_translation( $n1, 'fr', '%d élément', '%d éléments' );
+	wpm_assert( '%d élément' === _n( '%d item', '%d items', 1, 'wpm-test' ) && '%d éléments' === _n( '%d item', '%d items', 3, 'wpm-test' ) && '%d élément' === _n( '%d item', '%d items', 0, 'wpm-test' ), 'plurals follow the French rule' );
+	WPM_Strings::save_translation( $a1, 'fr', '<script>alert(1)</script><strong>Chaîne</strong>' );
+	wpm_assert( '<strong>Chaîne</strong>' === WPM_Strings::lookup( 'Test string', '', 'wpm-test' ) || 'alert(1)<strong>Chaîne</strong>' === WPM_Strings::lookup( 'Test string', '', 'wpm-test' ), 'translations are sanitized (no script tags)' );
+	WPM_Strings::save_translation( $a1, 'fr', '' );
+	wpm_assert( 'Test string' === __( 'Test string', 'wpm-test' ), 'empty value removes the translation' );
+	remove_filter( 'gettext', array( 'WPM_Strings', 'filter_gettext' ), 20 );
+	remove_filter( 'gettext_with_context', array( 'WPM_Strings', 'filter_gettext_with_context' ), 20 );
+	remove_filter( 'ngettext', array( 'WPM_Strings', 'filter_ngettext' ), 20 );
+
+	echo "String Translation: literal HTML text\n";
+	$l1 = WPM_Strings::register( array( 'original' => 'Hello there', 'source_type' => 'literal' ) );
+	WPM_Strings::save_translation( $l1, 'fr', 'Bonjour à vous' );
+	$html = '<p title="Hello there">Hello there</p><script>var a="Hello there";</script><a href="/x?Hello there">Hello there!</a><!-- Hello there -->';
+	$out  = WPM_Strings::replace_literals( $html );
+	wpm_assert( '<p title="Hello there">Bonjour à vous</p><script>var a="Hello there";</script><a href="/x?Hello there">Bonjour à vous!</a><!-- Hello there -->' === $out, 'literal text replaced in text nodes only' );
+
+	echo "String Translation: scanner\n";
+	$code  = '<?php echo __( \'Scan A\', \'dom\' ); esc_html_e( "Scan B", \'dom\' ); _x( \'Scan C\', \'ctx\', \'dom\' ); _n( \'%d one\', \'%d many\', $n, \'dom\' ); __( $var, \'dom\' ); $o->__( \'No\', \'dom\' ); __( \'Core\' ); __( \'Core2\', \'default\' ); __( \'It\\\'s\', \'dom\' );';
+	$found = WPM_String_Scanner::parse_php( $code );
+	$texts = wp_list_pluck( $found, 'original' );
+	wpm_assert( array( 'Scan A', 'Scan B', 'Scan C', '%d one', "It's" ) === $texts, 'PHP scan: literals kept, variables, methods and core skipped' );
+	wpm_assert( 'ctx' === $found[2]['context'] && '%d many' === $found[3]['original_plural'], 'PHP scan: context and plural read' );
+	$js = WPM_String_Scanner::parse_js( "const a = __( 'Js A', 'dom' ); wp.i18n._x( \"Js B\", 'ctx', 'dom' ); obj.__( 'No', 'dom' );" );
+	wpm_assert( array( 'Js A', 'Js B' ) === wp_list_pluck( $js, 'original' ), 'JS scan' );
+
+	echo "String Translation: permissions and deletion\n";
+	wp_set_current_user( 0 );
+	$req = new WP_REST_Request( 'POST', '/wpm/v1/strings/' . $b1 );
+	$req->set_body_params( array( 'translations' => array( 'fr' => array( 'value' => 'hack' ) ) ) );
+	wpm_assert( in_array( rest_do_request( $req )->get_status(), array( 401, 403 ), true ), 'anonymous users cannot edit strings' );
+	wp_set_current_user( 1 );
+	wpm_assert( 200 === rest_do_request( $req )->get_status() && 'hack' === WPM_Strings::get( $b1 )->translations['fr']->value, 'administrators can edit through REST' );
+	wpm_assert( 4 === WPM_Strings::delete( array( $a1, $b1, $c1, $n1 ) ) && null === WPM_Strings::get( $b1 ), 'strings deleted with their translations' );
+
+	echo "String Translation: performance\n";
+	add_filter( 'gettext', array( 'WPM_Strings', 'filter_gettext' ), 20, 3 );
+	$t0 = microtime( true );
+	for ( $i = 0; $i < 20000; $i++ ) {
+		__( 'Some untranslated text', 'some-plugin' );
+	}
+	$untranslated = ( microtime( true ) - $t0 ) * 1000;
+	remove_filter( 'gettext', array( 'WPM_Strings', 'filter_gettext' ), 20 );
+	$t0 = microtime( true );
+	for ( $i = 0; $i < 20000; $i++ ) {
+		__( 'Some untranslated text', 'some-plugin' );
+	}
+	$baseline = ( microtime( true ) - $t0 ) * 1000;
+	printf( "  20 000 gettext calls: %.1f ms with String Translation, %.1f ms without\n", $untranslated, $baseline );
+	wpm_assert( $untranslated - $baseline < 40, 'overhead under 2 microseconds per call' );
+
 	echo "Locale stays the user's in the admin\n";
 	WPM_Language_Manager::instance()->set_current( 'en' );
 	wpm_assert( 'xx_XX' === WPM_Language_Manager::instance()->filter_locale( 'xx_XX' ), 'admin locale not changed by the visitor language' );

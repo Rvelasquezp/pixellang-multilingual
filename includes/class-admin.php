@@ -66,15 +66,14 @@ class WPM_Admin {
 			'wp-multilingual'  => array( __( 'Dashboard', 'pixellang-multilingual' ), 'edit_others_posts', 'overview', 'dashboard' ),
 			'wpm-languages'    => array( __( 'Languages', 'pixellang-multilingual' ), self::CAP, 'languages', 'globe' ),
 			'wpm-translations' => array( __( 'Translations', 'pixellang-multilingual' ), 'edit_others_posts', 'translations', 'files' ),
+			'wpm-strings'      => array( __( 'String Translation', 'pixellang-multilingual' ), WPM_Strings_Admin::capability(), 'strings', 'type' ),
 			'wpm-settings'     => array( __( 'Settings', 'pixellang-multilingual' ), self::CAP, 'settings', 'settings' ),
 			'wpm-tools'        => array( __( 'Tools', 'pixellang-multilingual' ), self::CAP, 'tools', 'tools' ),
 		);
 	}
 
 	public function register_menu() {
-		$icon = 'data:image/svg+xml;base64,' . base64_encode( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Menu icon data URI.
-			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9"/><path d="M8.5 3v2"/><path d="M11 5c-.8 3.6-3.4 6.6-7 8"/><path d="M6 9c1 2 2.8 3.6 5 4.5"/><path d="M12 21l4.5-10 4.5 10"/><path d="M13.6 17.5h5.8"/></svg>'
-		);
+		$icon = WPM_Icons::menu_icon();
 		$this->hooks[] = add_menu_page(
 			__( 'PixelLang Multilingual', 'pixellang-multilingual' ),
 			__( 'PixelLang', 'pixellang-multilingual' ),
@@ -279,6 +278,14 @@ class WPM_Admin {
 			'assigned'       => array( 'success', __( 'Default language assigned to content that had none.', 'pixellang-multilingual' ) ),
 			'created'        => array( 'success', __( 'Translation draft created.', 'pixellang-multilingual' ) ),
 			'create_failed'  => array( 'error', __( 'The translation could not be created.', 'pixellang-multilingual' ) ),
+			'string_added'   => array( 'success', __( 'String registered. Add its translations below.', 'pixellang-multilingual' ) ),
+			'string_exists'  => array( 'info', __( 'This string was already registered: it is shown below.', 'pixellang-multilingual' ) ),
+			'string_invalid' => array( 'error', __( 'Enter the original text, and a text domain for a theme or plugin string.', 'pixellang-multilingual' ) ),
+			'scanned'        => array( 'success', __( 'Scan finished.', 'pixellang-multilingual' ) ),
+			'scan_failed'    => array( 'error', __( 'This theme or plugin could not be scanned.', 'pixellang-multilingual' ) ),
+			'discovery_on'   => array( 'success', __( 'Discovery is on for 30 minutes. Browse your site while logged in: the strings used on each page are registered.', 'pixellang-multilingual' ) ),
+			'discovery_off'  => array( 'success', __( 'Discovery is off.', 'pixellang-multilingual' ) ),
+			'strings_deleted' => array( 'success', __( 'Selected strings deleted.', 'pixellang-multilingual' ) ),
 		);
 	}
 

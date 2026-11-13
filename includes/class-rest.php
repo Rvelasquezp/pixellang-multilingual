@@ -13,6 +13,7 @@ class WPM_Rest {
 
 	private function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'rest_api_init', array( $this, 'register_strings_routes' ) );
 	}
 
 	public static function instance() {
@@ -359,5 +360,88 @@ class WPM_Rest {
 			);
 		}
 		return rest_ensure_response( $items );
+	}
+
+	// ---------------------------------------------------------------------
+	// REST
+	// ---------------------------------------------------------------------
+
+	public function register_strings_routes() {
+		$can = function () {
+			return current_user_can( WPM_Strings::capability() );
+		};
+		register_rest_route(
+			'wpm/v1',
+			'/strings/(?P<id>\d+)',
+			array(
+				array(
+					'methods'             => 'POST',
+					'callback'            => array( $this, 'strings_save' ),
+					'permission_callback' => $can,
+					'args'                => array(
+						'id'           => array(
+							'type'              => 'integer',
+							'sanitize_callback' => 'absint',
+						),
+						'translations' => array(
+							'type'     => 'object',
+							'required' => true,
+						),
+					),
+				),
+				array(
+					'methods'             => 'DELETE',
+					'callback'            => array( $this, 'strings_delete' ),
+					'permission_callback' => $can,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Saves the translations of one string: { lang: { value, plural } }.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function strings_save( $request ) {
+		$id     = (int) $request['id'];
+		$string = WPM_Strings::get( $id );
+		if ( ! $string ) {
+			return new WP_Error( 'wpm_unknown_string', __( 'Unknown string.', 'pixellang-multilingual' ), array( 'status' => 404 ) );
+		}
+		foreach ( (array) $request->get_param( 'translations' ) as $lang => $data ) {
+			$lang   = sanitize_key( $lang );
+			$value  = is_array( $data ) ? ( $data['value'] ?? '' ) : $data;
+			$plural = is_array( $data ) ? ( $data['plural'] ?? '' ) : '';
+			$result = WPM_Strings::save_translation( $id, $lang, (string) $value, (string) $plural );
+			if ( is_wp_error( $result ) ) {
+				$result->add_data( array( 'status' => 400 ) );
+				return $result;
+			}
+		}
+		$string = WPM_Strings::get( $id );
+		$out    = array();
+		foreach ( $string->translations as $lang => $row ) {
+			$out[ $lang ] = array(
+				'value'  => $row->value,
+				'plural' => (string) $row->value_plural,
+			);
+		}
+		return rest_ensure_response(
+			array(
+				'id'           => $id,
+				'translations' => (object) $out,
+				'missing'      => WPM_Strings::missing_langs( $string ),
+			)
+		);
+	}
+
+	public function strings_delete( $request ) {
+		$done = WPM_Strings::delete( array( (int) $request['id'] ) );
+		if ( ! $done ) {
+			return new WP_Error( 'wpm_unknown_string', __( 'Unknown string.', 'pixellang-multilingual' ), array( 'status' => 404 ) );
+		}
+		return rest_ensure_response( array( 'deleted' => true ) );
 	}
 }

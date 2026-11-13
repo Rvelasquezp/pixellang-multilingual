@@ -51,6 +51,16 @@ No custom table. Languages: option `wpm_languages`; types: `wpm_post_types`; 1.1
 
 **1.0 migration**: on the first 1.1 load, groups of the `wpm_page_map` option become `_wpm_translations` meta (the first group containing a post wins, like 1.0). Empty, missing, duplicate, mixed-type or contradictory entries are skipped and listed in **Tools**. The `wpm_page_map` option is kept unchanged.
 
+## String Translation (1.2)
+
+Translates texts of themes, plugins and templates without editing their files (menu **PixelLang > String Translation**).
+
+- **Registering**: scan of a theme or plugin (PHP through `token_get_all`, JS through `wp.i18n`), discovery mode (30 min, administrators only: records the strings actually displayed, with file and line) and manual registration.
+- **Identity**: text domain + context + original text.
+- **Resolution**: `gettext`, `gettext_with_context`, `ngettext`, `ngettext_with_context` filters, on the front end, for the active PixelLang language. A translation entered here wins over the component `.mo`; without one, nothing changes.
+- **Text written directly in HTML**: "HTML text" type, replaced in visible text only (never in attributes, links, scripts, styles, comments). Limits: exact match, and texts created by JavaScript cannot be translated this way.
+- **Data**: tables `{prefix}wpm_strings` and `{prefix}wpm_string_translations`. Capability `manage_options` (filter `wpm_strings_capability`).
+
 ## Theme API
 
 ```php
