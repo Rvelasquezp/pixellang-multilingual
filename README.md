@@ -97,6 +97,12 @@ Página sin traducción: el idioma enlaza a su portada; un idioma sin la página
 
 Compatibilidad: el atributo `style` (flags/text/dropdown) de la 1.0 chocaba con los estilos de bloque de WordPress; ya no se declara, pero el valor guardado se sigue leyendo (`$block->parsed_block`), así que los bloques existentes no cambian. Clases 1.0 conservadas. Filtro `wpm_switcher_items`.
 
+## Identidad del sitio, medios y URLs (1.6)
+
+- **Nombre y eslogan por idioma** (Réglages > Identité du site): en el sitio público `get_option( 'blogname' | 'blogdescription' )` devuelve el texto del idioma de la página (título del navegador, bloques Título/Eslogan del sitio, feeds, Yoast, Rank Math). Vacío: el del idioma por defecto. El admin ve siempre los valores reales.
+- **Imágenes**: campos «Texte alternatif (English)» y «Légende (English)» por idioma en la ventana de medios y en la pantalla del medio (meta `_wpm_media`). En el sitio público se aplican a todo lo que lee la Biblioteca: `_wp_attachment_image_alt` (imagen destacada, `wp_get_attachment_image()` de los temas, Open Graph) y `wp_get_attachment_caption()`. Los bloques Imagen de una página guardan su propio texto: se traducen en la página traducida.
+- **Slugs de URL** (Réglages > URL): para los tipos de contenido y taxonomías públicos y traducibles con base propia, un slug por idioma (`/projets/` → `/projects/`). Permalinks, enlaces de términos y de archivos usan el slug del idioma; reglas de reescritura para cada slug (ficha, archivo y paginación, términos); una URL con la base de otro idioma redirige con 301; en un archivo, la base decide el idioma. Las reglas se regeneran en la petición siguiente al cambio.
+
 ## Licencia (1.5)
 
 PixelLang Multilingual es solo para clientes de Agence Pixel. Cada sitio necesita una **clave firmada** por Pixel para su dominio (pantalla *Licence* o `wp pixellang license activate <clave>`).

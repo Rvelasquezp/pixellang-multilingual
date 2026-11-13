@@ -395,6 +395,14 @@ class WPM_Admin {
 				);
 				break;
 
+			case 'site':
+				WPM_Settings::update( array( 'site_texts' => isset( $_POST['site_texts'] ) ? (array) wp_unslash( $_POST['site_texts'] ) : array() ) );
+				break;
+
+			case 'urls':
+				WPM_Settings::update( array( 'slugs' => isset( $_POST['slugs'] ) ? (array) wp_unslash( $_POST['slugs'] ) : array() ) );
+				break;
+
 			case 'switcher':
 				WPM_Settings::update(
 					array(

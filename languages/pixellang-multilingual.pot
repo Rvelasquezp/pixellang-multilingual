@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: PixelLang Multilingual 1.5.0\n"
+"Project-Id-Version: PixelLang Multilingual 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pixellang-multilingual\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-13T17:05:09+00:00\n"
+"POT-Creation-Date: 2026-11-13T18:08:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pixellang-multilingual\n"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: admin/views/languages.php:42
 #: admin/views/overview.php:70
-#: admin/views/settings.php:416
+#: admin/views/settings.php:537
 msgid "Default"
 msgstr ""
 
@@ -118,7 +118,7 @@ msgid "Add"
 msgstr ""
 
 #: admin/views/languages.php:118
-#: includes/class-license.php:264
+#: includes/class-license.php:265
 msgid "Active"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr ""
 
 #: admin/views/overview.php:45
 #: includes/class-admin.php:66
-#: wp-multilingual.php:109
+#: wp-multilingual.php:115
 msgid "Dashboard"
 msgstr ""
 
@@ -349,7 +349,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: admin/views/overview.php:179
-#: admin/views/settings.php:547
+#: admin/views/settings.php:668
 msgid "No template part has language versions yet"
 msgstr ""
 
@@ -376,12 +376,13 @@ msgid "Type"
 msgstr ""
 
 #: admin/views/overview.php:222
-#: admin/views/settings.php:499
+#: admin/views/settings.php:620
 #: blocks/language-switcher/editor.js:141
 msgid "None"
 msgstr ""
 
 #: admin/views/settings.php:11
+#: admin/views/settings.php:269
 #: admin/views/tools.php:110
 #: includes/class-translations-table.php:71
 msgid "Content"
@@ -392,414 +393,515 @@ msgid "Visitors & SEO"
 msgstr ""
 
 #: admin/views/settings.php:13
-msgid "Language switcher"
+msgid "Site identity"
 msgstr ""
 
 #: admin/views/settings.php:14
-msgid "Menus"
+msgid "URLs"
 msgstr ""
 
 #: admin/views/settings.php:15
-msgid "Forms"
+msgid "Language switcher"
 msgstr ""
 
 #: admin/views/settings.php:16
+msgid "Menus"
+msgstr ""
+
+#: admin/views/settings.php:17
+msgid "Forms"
+msgstr ""
+
+#: admin/views/settings.php:18
 msgid "Template parts"
 msgstr ""
 
-#: admin/views/settings.php:42
+#: admin/views/settings.php:44
 msgid "Save changes"
 msgstr ""
 
-#: admin/views/settings.php:72
+#: admin/views/settings.php:74
 #: includes/class-admin.php:70
 msgid "Settings"
 msgstr ""
 
-#: admin/views/settings.php:73
+#: admin/views/settings.php:75
 msgid "Each tab saves on its own."
 msgstr ""
 
-#: admin/views/settings.php:78
+#: admin/views/settings.php:80
 msgid "Settings sections"
 msgstr ""
 
-#: admin/views/settings.php:93
+#: admin/views/settings.php:95
 msgid "Translatable content types"
 msgstr ""
 
-#: admin/views/settings.php:95
+#: admin/views/settings.php:97
 msgid "Enabled types get a language, the Translations box in the editor and the language columns. Pages and posts are always enabled."
 msgstr ""
 
-#: admin/views/settings.php:97
+#: admin/views/settings.php:99
+#: admin/views/settings.php:261
 #: admin/views/tools.php:36
 msgid "Content types"
 msgstr ""
 
-#: admin/views/settings.php:109
+#: admin/views/settings.php:111
 msgid "Always on"
 msgstr ""
 
-#: admin/views/settings.php:116
+#: admin/views/settings.php:118
 msgid "Translatable taxonomies"
 msgstr ""
 
-#: admin/views/settings.php:118
+#: admin/views/settings.php:120
 msgid "Terms of enabled taxonomies get a language and can be linked to their translations. When a translation is created, its terms are replaced by their translations."
 msgstr ""
 
-#: admin/views/settings.php:120
+#: admin/views/settings.php:122
 msgid "Taxonomies"
 msgstr ""
 
-#: admin/views/settings.php:136
+#: admin/views/settings.php:138
 msgid "Visitor language"
 msgstr ""
 
-#: admin/views/settings.php:138
+#: admin/views/settings.php:140
 msgid "A translated page always shows in its own language. These options decide the language of pages that have none (home, archives, search)."
 msgstr ""
 
-#: admin/views/settings.php:142
+#: admin/views/settings.php:144
 msgid "Suggest the translation"
 msgstr ""
 
-#: admin/views/settings.php:142
+#: admin/views/settings.php:144
 msgid "Visitors stay on the page they opened. A small banner, written in their language, offers the translation. Search engines and page caches see the same page for everyone."
 msgstr ""
 
-#: admin/views/settings.php:143
+#: admin/views/settings.php:145
 msgid "Choose the language automatically"
 msgstr ""
 
-#: admin/views/settings.php:143
+#: admin/views/settings.php:145
 msgid "On a first visit, pages without a language (home, archives) show in the first browser language active on the site."
 msgstr ""
 
-#: admin/views/settings.php:144
+#: admin/views/settings.php:146
 msgid "Ignore the browser language"
 msgstr ""
 
-#: admin/views/settings.php:144
+#: admin/views/settings.php:146
 msgid "The default language is used until the visitor picks one with the language switcher."
 msgstr ""
 
-#: admin/views/settings.php:148
+#: admin/views/settings.php:150
 msgid "Browser language"
 msgstr ""
 
-#: admin/views/settings.php:149
+#: admin/views/settings.php:151
 msgid "What happens when the browser of a visitor prefers another language than the page."
 msgstr ""
 
-#: admin/views/settings.php:158
-#: admin/views/settings.php:239
+#: admin/views/settings.php:160
+#: admin/views/settings.php:355
 msgid "Recommended"
 msgstr ""
 
-#: admin/views/settings.php:168
+#: admin/views/settings.php:170
 msgid "Send visitors to the home page of their language"
 msgstr ""
 
-#: admin/views/settings.php:168
-msgid "A visitor who chose English and opens the French home page is redirected to the English home page, if it exists."
+#: admin/views/settings.php:170
+msgid "A visitor browsing in English who clicks a link to the home page (logo, menu) lands on the English home page, if it exists. An address typed in the browser or a link from another site keeps the home page asked for."
 msgstr ""
 
-#: admin/views/settings.php:169
+#: admin/views/settings.php:171
 msgid "Filter listings by language"
 msgstr ""
 
-#: admin/views/settings.php:169
+#: admin/views/settings.php:171
 msgid "Blog, archives and search only list content in the current language (and content without language). Leave off if your theme already filters its listings."
 msgstr ""
 
-#: admin/views/settings.php:173
+#: admin/views/settings.php:175
 msgid "Remember the language for"
 msgstr ""
 
-#: admin/views/settings.php:174
+#: admin/views/settings.php:176
 msgid "Lifetime of the wpm_lang cookie, in days (1 to 3650)."
 msgstr ""
 
-#: admin/views/settings.php:178
+#: admin/views/settings.php:180
 msgid "days"
 msgstr ""
 
-#: admin/views/settings.php:183
+#: admin/views/settings.php:185
 msgid "Search engines"
 msgstr ""
 
-#: admin/views/settings.php:185
+#: admin/views/settings.php:187
 msgid "Output hreflang tags"
 msgstr ""
 
-#: admin/views/settings.php:185
+#: admin/views/settings.php:187
 msgid "Tells search engines which page is the translation of which, in the page head and in the XML sitemaps (WordPress, Yoast SEO, Rank Math), with x-default on the default language. Turn off only if another plugin already outputs them."
 msgstr ""
 
 #. translators: %s: sitemap URL.
-#: admin/views/settings.php:190
+#: admin/views/settings.php:192
 #, php-format
 msgid "Sitemap: %s"
 msgstr ""
 
+#: admin/views/settings.php:208
+msgid "Site title and tagline"
+msgstr ""
+
+#: admin/views/settings.php:210
+msgid "Shown in the browser tab, in search results, in the Site Title and Site Tagline blocks and by SEO plugins. Empty fields use the text of the default language."
+msgstr ""
+
+#: admin/views/settings.php:215
+#: admin/views/tools.php:109
+#: includes/class-admin-columns.php:73
+#: includes/class-admin-columns.php:155
+#: includes/class-admin-columns.php:321
+#: includes/class-switcher.php:209
+#: includes/class-term-language.php:64
+#: includes/class-term-language.php:82
+#: includes/class-term-language.php:186
+#: admin/js/nav-panel.js:83
+msgid "Language"
+msgstr ""
+
 #: admin/views/settings.php:216
-#: admin/views/settings.php:250
+msgid "Site title"
+msgstr ""
+
+#: admin/views/settings.php:217
+msgid "Tagline"
+msgstr ""
+
+#: admin/views/settings.php:227
+msgid "(none)"
+msgstr ""
+
+#: admin/views/settings.php:228
+msgid "Edit in Settings > General"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/settings.php:232
+#, php-format
+msgid "Site title (%s)"
+msgstr ""
+
+#. translators: %s: language name.
+#: admin/views/settings.php:233
+#, php-format
+msgid "Tagline (%s)"
+msgstr ""
+
+#: admin/views/settings.php:240
+msgid "Image texts: the alternative text and caption of each image can be translated in the Media Library, under the fields of the default language."
+msgstr ""
+
+#: admin/views/settings.php:251
+msgid "Translated URL slugs"
+msgstr ""
+
+#: admin/views/settings.php:253
+msgid "The part of the address that names a content type or a taxonomy, in each language: /equipe/marie/ in French, /team/marie/ in English. Old addresses redirect to the right one."
+msgstr ""
+
+#: admin/views/settings.php:258
+msgid "No content type with its own address"
+msgstr ""
+
+#: admin/views/settings.php:259
+msgid "Translated slugs apply to public custom post types and taxonomies enabled in the Content tab. Pages and posts have no slug to translate: each page has its own address."
+msgstr ""
+
+#: admin/views/settings.php:284
+#: admin/views/translations.php:36
+msgid "Content type"
+msgstr ""
+
+#: admin/views/settings.php:284
+msgid "Taxonomy"
+msgstr ""
+
+#. translators: 1: content type, 2: language name.
+#: admin/views/settings.php:295
+#, php-format
+msgid "Slug of %1$s in %2$s"
+msgstr ""
+
+#: admin/views/settings.php:309
+msgid "Lowercase letters, digits and hyphens. Empty: the slug of the default language is kept. Avoid a slug already used by a page."
+msgstr ""
+
+#: admin/views/settings.php:332
+#: admin/views/settings.php:366
 msgid "In a menu"
 msgstr ""
 
-#: admin/views/settings.php:216
+#: admin/views/settings.php:332
 msgid "The languages become the last items of the menus you choose and take their look, on desktop and in the mobile menu. Works with any theme."
 msgstr ""
 
-#: admin/views/settings.php:217
-#: admin/views/settings.php:304
+#: admin/views/settings.php:333
+#: admin/views/settings.php:425
 msgid "Floating"
 msgstr ""
 
-#: admin/views/settings.php:217
+#: admin/views/settings.php:333
 msgid "A compact dropdown fixed in a bottom corner of every page. Useful when the menu has no room left."
 msgstr ""
 
-#: admin/views/settings.php:218
+#: admin/views/settings.php:334
 msgid "Block only"
 msgstr ""
 
-#: admin/views/settings.php:218
+#: admin/views/settings.php:334
 msgid "Nothing is added automatically. Insert the Language Switcher block where you want it (header, footer) and choose its design."
 msgstr ""
 
-#: admin/views/settings.php:222
+#: admin/views/settings.php:338
 msgid "Where the language switcher appears"
 msgstr ""
 
-#: admin/views/settings.php:224
+#: admin/views/settings.php:340
 msgid "Like WPML, the plugin can add the switcher for you. The Language Switcher block stays available in the editor whatever you choose here."
 msgstr ""
 
-#: admin/views/settings.php:226
+#: admin/views/settings.php:342
 msgid "Placement"
 msgstr ""
 
-#: admin/views/settings.php:254
+#: admin/views/settings.php:370
+msgid "The header of your theme already contains a Language Switcher block. To avoid showing the languages twice, they are not added to the menus: choose \"Block only\", or remove the block from the header in the Site Editor."
+msgstr ""
+
+#: admin/views/settings.php:375
 msgid "Navigation menus"
 msgstr ""
 
-#: admin/views/settings.php:262
-#: admin/views/settings.php:379
+#: admin/views/settings.php:383
+#: admin/views/settings.php:500
 #: includes/class-meta-box.php:102
 #: admin/js/meta-box.js:155
 #: admin/js/meta-box.js:296
 msgid "(no title)"
 msgstr ""
 
-#: admin/views/settings.php:273
+#: admin/views/settings.php:394
 msgid "A menu that has language versions (Menus tab) gets the switcher in all its versions."
 msgstr ""
 
-#: admin/views/settings.php:277
-#: admin/views/settings.php:391
+#: admin/views/settings.php:398
+#: admin/views/settings.php:512
 msgid "Classic menu locations"
 msgstr ""
 
-#: admin/views/settings.php:287
+#: admin/views/settings.php:408
 msgid "This site has no menu yet."
 msgstr ""
 
-#: admin/views/settings.php:291
+#: admin/views/settings.php:412
 #: blocks/language-switcher/editor.js:126
 msgid "Show languages as"
 msgstr ""
 
-#: admin/views/settings.php:292
+#: admin/views/settings.php:413
 msgid "Codes keep the menu compact; names are clearer for visitors."
 msgstr ""
 
-#: admin/views/settings.php:295
+#: admin/views/settings.php:416
 #: blocks/language-switcher/editor.js:129
 msgid "Codes (EN)"
 msgstr ""
 
-#: admin/views/settings.php:296
+#: admin/views/settings.php:417
 #: blocks/language-switcher/editor.js:130
 msgid "Names (English)"
 msgstr ""
 
-#: admin/views/settings.php:299
+#: admin/views/settings.php:420
 #: blocks/language-switcher/editor.js:205
 msgid "Hide the current language"
 msgstr ""
 
-#: admin/views/settings.php:299
+#: admin/views/settings.php:420
 msgid "Show only the other languages, as most bilingual sites do."
 msgstr ""
 
-#: admin/views/settings.php:308
+#: admin/views/settings.php:429
 msgid "Position"
 msgstr ""
 
-#: admin/views/settings.php:309
+#: admin/views/settings.php:430
 msgid "The panel opens upward, toward the page."
 msgstr ""
 
-#: admin/views/settings.php:312
+#: admin/views/settings.php:433
 msgid "Bottom right"
 msgstr ""
 
-#: admin/views/settings.php:313
+#: admin/views/settings.php:434
 msgid "Bottom left"
 msgstr ""
 
-#: admin/views/settings.php:318
+#: admin/views/settings.php:439
 msgid "Appearance"
 msgstr ""
 
-#: admin/views/settings.php:319
+#: admin/views/settings.php:440
 msgid "Pick the one that stands out from your pages."
 msgstr ""
 
-#: admin/views/settings.php:322
+#: admin/views/settings.php:443
 #: blocks/language-switcher/editor.js:192
 msgid "Light"
 msgstr ""
 
-#: admin/views/settings.php:323
+#: admin/views/settings.php:444
 #: blocks/language-switcher/editor.js:193
 msgid "Dark"
 msgstr ""
 
-#: admin/views/settings.php:329
+#: admin/views/settings.php:450
 msgid "Designs of the Language Switcher block"
 msgstr ""
 
-#: admin/views/settings.php:331
+#: admin/views/settings.php:452
 msgid "Choose them in the block settings, with colors, typography, border and spacing. Preview with the languages of this site:"
 msgstr ""
 
-#: admin/views/settings.php:335
+#: admin/views/settings.php:456
 #: blocks/language-switcher/editor.js:52
 msgid "Minimal"
 msgstr ""
 
-#: admin/views/settings.php:336
+#: admin/views/settings.php:457
 #: blocks/language-switcher/editor.js:53
 msgid "Segmented"
 msgstr ""
 
-#: admin/views/settings.php:337
+#: admin/views/settings.php:458
 #: blocks/language-switcher/editor.js:54
 msgid "Dropdown"
 msgstr ""
 
-#: admin/views/settings.php:338
+#: admin/views/settings.php:459
 #: blocks/language-switcher/editor.js:55
 msgid "Select"
 msgstr ""
 
-#: admin/views/settings.php:367
+#: admin/views/settings.php:488
 msgid "Navigation blocks"
 msgstr ""
 
-#: admin/views/settings.php:369
+#: admin/views/settings.php:490
 msgid "A Navigation block that shows one of these menus displays the menu of the visitor language instead. You can also assign a language from the Site Editor, in the menu settings."
 msgstr ""
 
-#: admin/views/settings.php:376
+#: admin/views/settings.php:497
 msgid "No menu"
 msgstr ""
 
-#: admin/views/settings.php:387
+#: admin/views/settings.php:508
 msgid "This site has no Navigation menu yet."
 msgstr ""
 
-#: admin/views/settings.php:394
+#: admin/views/settings.php:515
 msgid "For classic themes: the menu shown in each location, per language. Leave empty to keep the menu set in Appearance > Menus."
 msgstr ""
 
-#: admin/views/settings.php:403
+#: admin/views/settings.php:524
 msgid "Location"
 msgstr ""
 
-#: admin/views/settings.php:429
+#: admin/views/settings.php:550
 msgid "The active theme registers no classic menu location: menus are handled by Navigation blocks above."
 msgstr ""
 
-#: admin/views/settings.php:456
+#: admin/views/settings.php:577
 msgid "Form translations"
 msgstr ""
 
-#: admin/views/settings.php:458
+#: admin/views/settings.php:579
 msgid "Link the versions of a form: wherever one of them is inserted, visitors see the version of their language."
 msgstr ""
 
-#: admin/views/settings.php:461
+#: admin/views/settings.php:582
 msgid "No supported form plugin"
 msgstr ""
 
-#: admin/views/settings.php:461
+#: admin/views/settings.php:582
 msgid "Activate Contact Form 7 or Gravity Forms to translate forms."
 msgstr ""
 
-#: admin/views/settings.php:475
+#: admin/views/settings.php:596
 #: admin/views/strings.php:27
 #: includes/class-strings-admin.php:207
 msgid "Plugin"
 msgstr ""
 
-#: admin/views/settings.php:479
-#: admin/views/settings.php:557
+#: admin/views/settings.php:600
+#: admin/views/settings.php:678
 #: includes/class-strings-admin.php:167
 msgid "Actions"
 msgstr ""
 
-#: admin/views/settings.php:488
+#: admin/views/settings.php:609
 msgid "Form plugin"
 msgstr ""
 
-#: admin/views/settings.php:508
+#: admin/views/settings.php:629
 msgid "Remove this form group"
 msgstr ""
 
-#: admin/views/settings.php:533
+#: admin/views/settings.php:654
 msgid "No form is linked yet."
 msgstr ""
 
-#: admin/views/settings.php:534
+#: admin/views/settings.php:655
 msgid "Link a form"
 msgstr ""
 
-#: admin/views/settings.php:542
+#: admin/views/settings.php:663
 msgid "Template parts per language"
 msgstr ""
 
-#: admin/views/settings.php:543
+#: admin/views/settings.php:664
 msgid "Open the Site Editor"
 msgstr ""
 
-#: admin/views/settings.php:545
+#: admin/views/settings.php:666
 msgid "Header, footer and other parts can have one version per language. Open a part in the Site Editor: the Languages panel of its settings assigns its language and creates the other versions."
 msgstr ""
 
-#: admin/views/settings.php:547
+#: admin/views/settings.php:668
 msgid "Without versions, every language shares the same header and footer."
 msgstr ""
 
-#: admin/views/settings.php:553
+#: admin/views/settings.php:674
 msgid "Part"
 msgstr ""
 
-#: admin/views/settings.php:571
+#: admin/views/settings.php:692
 msgid "Missing"
 msgstr ""
 
 #. translators: %s: template group.
-#: admin/views/settings.php:577
+#: admin/views/settings.php:698
 #, php-format
 msgid "Stop translating %s"
 msgstr ""
 
-#: admin/views/settings.php:584
+#: admin/views/settings.php:705
 msgid "Unlinking a part only removes its language versions from this list: the template parts themselves are kept."
 msgstr ""
 
@@ -1059,18 +1161,6 @@ msgstr[1] ""
 msgid "Old group"
 msgstr ""
 
-#: admin/views/tools.php:109
-#: includes/class-admin-columns.php:73
-#: includes/class-admin-columns.php:155
-#: includes/class-admin-columns.php:321
-#: includes/class-switcher.php:207
-#: includes/class-term-language.php:64
-#: includes/class-term-language.php:82
-#: includes/class-term-language.php:186
-#: admin/js/nav-panel.js:83
-msgid "Language"
-msgstr ""
-
 #: admin/views/tools.php:111
 msgid "Reason"
 msgstr ""
@@ -1124,10 +1214,6 @@ msgstr ""
 
 #: admin/views/translations.php:32
 msgid "Each row is a content in the source language. Create a missing translation in one click: a draft copy opens in the editor, ready to translate."
-msgstr ""
-
-#: admin/views/translations.php:36
-msgid "Content type"
 msgstr ""
 
 #. translators: %s: number of items.
@@ -1254,7 +1340,7 @@ msgid "PixelLang"
 msgstr ""
 
 #: includes/class-admin.php:122
-#: includes/class-license.php:330
+#: includes/class-license.php:331
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
@@ -1356,7 +1442,7 @@ msgid "License key removed."
 msgstr ""
 
 #: includes/class-admin.php:299
-#: includes/class-license.php:249
+#: includes/class-license.php:250
 msgid "This license key is not valid. Copy it again exactly as Agence Pixel sent it."
 msgstr ""
 
@@ -1369,19 +1455,19 @@ msgstr ""
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
-#: includes/class-admin.php:432
+#: includes/class-admin.php:440
 msgid "Unknown settings section."
 msgstr ""
 
-#: includes/class-admin.php:449
+#: includes/class-admin.php:457
 msgid "Sorry, you are not allowed to translate this content."
 msgstr ""
 
-#: includes/class-admin.php:454
+#: includes/class-admin.php:462
 msgid "Translation"
 msgstr ""
 
-#: includes/class-admin.php:502
+#: includes/class-admin.php:510
 #: includes/class-strings-admin.php:124
 msgid "Unknown task."
 msgstr ""
@@ -1398,66 +1484,84 @@ msgstr ""
 msgid "Language suggestion"
 msgstr ""
 
-#: includes/class-license.php:265
+#: includes/class-license.php:266
 msgid "Expires soon"
 msgstr ""
 
-#: includes/class-license.php:266
+#: includes/class-license.php:267
 msgid "Development site"
 msgstr ""
 
-#: includes/class-license.php:267
+#: includes/class-license.php:268
 msgid "No license"
 msgstr ""
 
-#: includes/class-license.php:268
+#: includes/class-license.php:269
 msgid "Invalid key"
 msgstr ""
 
-#: includes/class-license.php:269
+#: includes/class-license.php:270
 msgid "Other domain"
 msgstr ""
 
-#: includes/class-license.php:270
+#: includes/class-license.php:271
 msgid "Expired"
 msgstr ""
 
-#: includes/class-license.php:284
+#: includes/class-license.php:285
 msgid "PixelLang Multilingual has no license key. The site keeps working in all its languages, but the plugin settings are locked until a key from Agence Pixel is added."
 msgstr ""
 
-#: includes/class-license.php:286
+#: includes/class-license.php:287
 msgid "The PixelLang Multilingual license key is not valid. The site keeps working, but the plugin settings are locked."
 msgstr ""
 
 #. translators: %s: site domain.
-#: includes/class-license.php:289
+#: includes/class-license.php:290
 #, php-format
 msgid "The PixelLang Multilingual license key is not issued for %s. The site keeps working, but the plugin settings are locked. Ask Agence Pixel for a key for this domain."
 msgstr ""
 
-#: includes/class-license.php:291
+#: includes/class-license.php:292
 msgid "The PixelLang Multilingual license has expired. The site keeps working, but the plugin settings are locked until the license is renewed with Agence Pixel."
 msgstr ""
 
 #. translators: %d: number of days.
-#: includes/class-license.php:294
+#: includes/class-license.php:295
 #, php-format
 msgid "The PixelLang Multilingual license expires in %d day. Contact Agence Pixel to renew it."
 msgid_plural "The PixelLang Multilingual license expires in %d days. Contact Agence Pixel to renew it."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-license.php:296
+#: includes/class-license.php:297
 msgid "No license key is needed on a development site (.local, .test, localhost). The key of the live site is checked on its own domain."
 msgstr ""
 
-#: includes/class-license.php:298
+#: includes/class-license.php:299
 msgid "PixelLang Multilingual is licensed for this site."
 msgstr ""
 
-#: includes/class-license.php:321
+#: includes/class-license.php:322
 msgid "Manage the license"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-media.php:117
+#, php-format
+msgid "Alternative text (%s)"
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-media.php:121
+#, php-format
+msgid "Empty: the default language text is used on %s pages."
+msgstr ""
+
+#. translators: %s: language name.
+#: includes/class-media.php:125
+#, php-format
+msgid "Caption (%s)"
 msgstr ""
 
 #: includes/class-meta-box.php:33
@@ -1693,16 +1797,16 @@ msgstr ""
 msgid "The original text is empty."
 msgstr ""
 
-#: includes/class-switcher.php:295
+#: includes/class-switcher.php:297
 msgid "Choose a language"
 msgstr ""
 
-#: includes/class-switcher.php:328
+#: includes/class-switcher.php:330
 msgid ", change language"
 msgstr ""
 
 #. translators: %s: name of the current language.
-#: includes/class-switcher.php:330
+#: includes/class-switcher.php:332
 #, php-format
 msgid " (%s), change language"
 msgstr ""

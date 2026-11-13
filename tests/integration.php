@@ -454,6 +454,8 @@ try {
 	WPM_Language_Manager::instance()->set_current( 'fr' );
 
 	echo "Language switcher placement (1.4)\n";
+	// The active theme may have a switcher in its header: test the menu placement alone.
+	set_transient( 'wpm_header_switcher_' . get_stylesheet(), 'no', 600 );
 	$navs = get_option( 'wpm_menus' );
 	$nfr  = wp_insert_post( array( 'post_type' => 'wp_navigation', 'post_status' => 'publish', 'post_title' => 'Nav FR test', 'post_content' => '<!-- wp:navigation-link {"label":"Accueil","url":"/"} /-->' ) );
 	$nen  = wp_insert_post( array( 'post_type' => 'wp_navigation', 'post_status' => 'publish', 'post_title' => 'Nav EN test', 'post_content' => '<!-- wp:navigation-link {"label":"Home","url":"/"} /-->' ) );
@@ -558,6 +560,74 @@ try {
 	remove_filter( 'wpm_license_is_dev_host', $live );
 	remove_filter( 'wpm_license_public_key', $use_test_key );
 	WPM_License::save( '' );
+
+	echo "Site title and tagline per language (1.6)\n";
+	WPM_Settings::update( array( 'site_texts' => array( 'en' => array( 'blogname' => 'My Site', 'blogdescription' => '<b>Hello</b>' ), 'fr' => array( 'blogname' => 'Ignored' ), 'xx' => array( 'blogname' => 'No' ) ) ) );
+	$st = WPM_Settings::get( 'site_texts' );
+	wpm_assert( array( 'en' ) === array_keys( $st ) && 'Hello' === $st['en']['blogdescription'], 'default and unknown languages dropped, text sanitized' );
+	$real_name = get_option( 'blogname' );
+	wpm_assert( $real_name === WPM_Site_Texts::filter_option( $real_name, 'blogname' ), 'admin keeps the real site title' );
+	wpm_assert( 'My Site' === WPM_Site_Texts::get( 'en' )['blogname'] && '' === WPM_Site_Texts::get( 'es' )['blogname'], 'texts per language, empty when not translated' );
+
+	echo "Media texts per language (1.6)\n";
+	$att = wp_insert_attachment( array( 'post_title' => 'Photo', 'post_mime_type' => 'image/jpeg', 'post_status' => 'inherit' ) );
+	update_post_meta( $att, '_wp_attachment_image_alt', 'Une voiture' );
+	wp_update_post( array( 'ID' => $att, 'post_excerpt' => 'Légende FR' ) );
+	WPM_Media::save( array( 'ID' => $att ), array( 'wpm_alt_en' => 'A car', 'wpm_caption_en' => 'English caption', 'wpm_alt_es' => '', 'wpm_caption_es' => '' ) );
+	wpm_assert( array( 'en' => array( 'alt' => 'A car', 'caption' => 'English caption' ) ) === get_post_meta( $att, '_wpm_media', true ), 'fields saved, empty language not stored' );
+	$fields = WPM_Media::fields( array(), get_post( $att ) );
+	wpm_assert( isset( $fields['wpm_alt_en'], $fields['wpm_caption_es'] ) && ! isset( $fields['wpm_alt_fr'] ) && 'A car' === $fields['wpm_alt_en']['value'], 'one alt and caption field per non-default language' );
+	wpm_assert( null === WPM_Media::filter_alt( null, $att, '_wp_attachment_image_alt', true ), 'admin: alt untouched' );
+	wpm_assert( 'Légende FR' === WPM_Media::filter_caption( 'Légende FR', $att ), 'admin: caption untouched' );
+	WPM_Media::save( array( 'ID' => $att ), array( 'wpm_alt_en' => '', 'wpm_caption_en' => '' ) );
+	wpm_assert( '' === get_post_meta( $att, '_wpm_media', true ), 'clearing the fields removes the meta' );
+
+	echo "Translated URL slugs (1.6)\n";
+	register_post_type( 'wpm_test_cpt', array( 'public' => true, 'has_archive' => true, 'rewrite' => array( 'slug' => 'projets' ) ) );
+	register_taxonomy( 'wpm_test_tax', 'wpm_test_cpt', array( 'public' => true, 'rewrite' => array( 'slug' => 'type-projet' ) ) );
+	update_option( 'wpm_post_types', array( 'page', 'post', 'wpm_test_cpt' ) );
+	WPM_Settings::update( array( 'taxonomies' => array( 'wpm_test_tax' ) ) );
+	WPM_Settings::update( array( 'slugs' => array( 'post_type' => array( 'wpm_test_cpt' => array( 'en' => 'Projects Area', 'fr' => 'ignored', 'es' => 'projets' ), 'nope' => array( 'en' => 'x' ) ), 'taxonomy' => array( 'wpm_test_tax' => array( 'en' => 'project-type' ) ) ) ) );
+	$sl = WPM_Settings::get( 'slugs' );
+	wpm_assert( array( 'en' => 'projects-area' ) === $sl['post_type']['wpm_test_cpt'] && ! isset( $sl['post_type']['nope'] ) && 'project-type' === $sl['taxonomy']['wpm_test_tax']['en'], 'slugs sanitized; default language, same-as-base and unknown types dropped' );
+	wpm_assert( 'projets' === WPM_Slugs::slug( 'post_type', 'wpm_test_cpt', 'fr' ) && 'projets' === WPM_Slugs::slug( 'post_type', 'wpm_test_cpt', 'es' ) && 'projects-area' === WPM_Slugs::slug( 'post_type', 'wpm_test_cpt', 'en' ), 'slug per language, registered base by default' );
+	$pf = wp_insert_post( array( 'post_type' => 'wpm_test_cpt', 'post_status' => 'publish', 'post_title' => 'Maison', 'post_name' => 'maison' ) );
+	$pe = wp_insert_post( array( 'post_type' => 'wpm_test_cpt', 'post_status' => 'publish', 'post_title' => 'House', 'post_name' => 'house' ) );
+	update_post_meta( $pf, '_wpm_language', 'fr' );
+	update_post_meta( $pe, '_wpm_language', 'en' );
+	wpm_assert( home_url( '/projets/maison/' ) === get_permalink( $pf ) && home_url( '/projects-area/house/' ) === get_permalink( $pe ), 'permalinks use the base of their language' );
+	$tf = wp_insert_term( 'Résidentiel', 'wpm_test_tax' );
+	$te = wp_insert_term( 'Residential', 'wpm_test_tax' );
+	update_term_meta( $te['term_id'], '_wpm_language', 'en' );
+	update_term_meta( $tf['term_id'], '_wpm_language', 'fr' );
+	wpm_assert( false !== strpos( get_term_link( $te['term_id'], 'wpm_test_tax' ), '/project-type/' ) && false !== strpos( get_term_link( $tf['term_id'], 'wpm_test_tax' ), '/type-projet/' ), 'term links use the base of their language' );
+	WPM_Slugs::add_rules();
+	global $wp_rewrite;
+	wpm_assert( isset( $wp_rewrite->extra_rules_top['^projects\\-area/([^/]+)/?$'] ) && isset( $wp_rewrite->extra_rules_top['^projects\\-area/?$'] ) && isset( $wp_rewrite->extra_rules_top['^project\\-type/([^/]+)/?$'] ), 'rewrite rules for translated bases (single, archive, term)' );
+	wpm_assert( 'en' === WPM_Slugs::language_of_base( 'post_type', 'wpm_test_cpt', 'projects-area' ) && '' === WPM_Slugs::language_of_base( 'post_type', 'wpm_test_cpt', 'projets' ), 'base decides the language only when one language owns it' );
+	wpm_assert( home_url( '/projects-area/' ) === WPM_Slugs::archive_url( 'wpm_test_cpt', 'en' ), 'archive URL per language' );
+	wpm_assert( (bool) get_option( 'wpm_flush_rewrite' ), 'changing slugs schedules a rewrite rules rebuild' );
+	delete_option( 'wpm_flush_rewrite' );
+	update_option( 'wpm_post_types', array( 'page', 'post' ) );
+	WPM_Settings::update( array( 'taxonomies' => array(), 'slugs' => array() ) );
+
+	echo "Front page redirect and duplicate switcher (1.6)\n";
+	$internal = new ReflectionMethod( 'WPM_Url_Handler', 'is_internal_navigation' );
+	$internal->setAccessible( true );
+	unset( $_SERVER['HTTP_REFERER'] );
+	wpm_assert( ! $internal->invoke( WPM_Url_Handler::instance() ), 'typed address: not internal navigation (no redirect of the front page)' );
+	$_SERVER['HTTP_REFERER'] = 'https://www.google.com/search?q=x';
+	wpm_assert( ! $internal->invoke( WPM_Url_Handler::instance() ), 'link from another site: not internal' );
+	$_SERVER['HTTP_REFERER'] = home_url( '/content-blocks/' );
+	wpm_assert( $internal->invoke( WPM_Url_Handler::instance() ), 'link from a page of the site: internal' );
+	unset( $_SERVER['HTTP_REFERER'] );
+	set_transient( 'wpm_header_switcher_' . get_stylesheet(), 'yes', 60 );
+	WPM_Settings::update( array( 'switcher_placement' => 'menu', 'switcher_menus' => array( $nfr ) ) );
+	$plain = '<nav><ul><li>X</li></ul></nav>';
+	wpm_assert( $plain === WPM_Switcher::add_to_navigation_block( $plain, array( 'attrs' => array( 'ref' => $nfr ) ) ), 'header already has a switcher block: nothing added to the menu' );
+	WPM_Switcher::forget_header_check();
+	wpm_assert( false === get_transient( 'wpm_header_switcher_' . get_stylesheet() ), 'header check forgotten when a template part changes' );
+	WPM_Settings::update( array( 'switcher_placement' => 'none' ) );
 
 	echo "String Translation: registry\n";
 	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );

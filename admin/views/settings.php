@@ -10,7 +10,9 @@ defined( 'ABSPATH' ) || exit;
 $wpm_tabs = array(
 	'content'   => array( __( 'Content', 'pixellang-multilingual' ), 'files' ),
 	'behavior'  => array( __( 'Visitors & SEO', 'pixellang-multilingual' ), 'globe' ),
-	'switcher'  => array( __( 'Language switcher', 'pixellang-multilingual' ), 'link' ),
+	'site'      => array( __( 'Site identity', 'pixellang-multilingual' ), 'type' ),
+	'urls'      => array( __( 'URLs', 'pixellang-multilingual' ), 'link' ),
+	'switcher'  => array( __( 'Language switcher', 'pixellang-multilingual' ), 'globe' ),
 	'menus'     => array( __( 'Menus', 'pixellang-multilingual' ), 'menu' ),
 	'forms'     => array( __( 'Forms', 'pixellang-multilingual' ), 'form' ),
 	'templates' => array( __( 'Template parts', 'pixellang-multilingual' ), 'layout' ),
@@ -165,7 +167,7 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 			</div>
 		</fieldset>
 		<?php
-		$wpm_toggle( 'front_redirect', WPM_Settings::get( 'front_redirect' ), __( 'Send visitors to the home page of their language', 'pixellang-multilingual' ), __( 'A visitor who chose English and opens the French home page is redirected to the English home page, if it exists.', 'pixellang-multilingual' ) );
+		$wpm_toggle( 'front_redirect', WPM_Settings::get( 'front_redirect' ), __( 'Send visitors to the home page of their language', 'pixellang-multilingual' ), __( 'A visitor browsing in English who clicks a link to the home page (logo, menu) lands on the English home page, if it exists. An address typed in the browser or a link from another site keeps the home page asked for.', 'pixellang-multilingual' ) );
 		$wpm_toggle( 'filter_queries', WPM_Settings::get( 'filter_queries' ), __( 'Filter listings by language', 'pixellang-multilingual' ), __( 'Blog, archives and search only list content in the current language (and content without language). Leave off if your theme already filters its listings.', 'pixellang-multilingual' ) );
 		?>
 		<div class="wpm-setting">
@@ -192,6 +194,120 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 			);
 			?>
 		</span></p>
+		<?php $wpm_form_close(); ?>
+
+	<?php elseif ( 'site' === $wpm_tab ) : ?>
+		<?php
+		$wpm_form_open( 'site' );
+		$wpm_default_lang = $wpm_manager->get_default();
+		// Real options, not the front-end translations.
+		$wpm_site_name = get_option( 'blogname' );
+		$wpm_site_desc = get_option( 'blogdescription' );
+		?>
+		<div class="wpm-card__head">
+			<h3 class="wpm-card__title"><?php esc_html_e( 'Site title and tagline', 'pixellang-multilingual' ); ?></h3>
+		</div>
+		<p class="wpm-card__intro"><?php esc_html_e( 'Shown in the browser tab, in search results, in the Site Title and Site Tagline blocks and by SEO plugins. Empty fields use the text of the default language.', 'pixellang-multilingual' ); ?></p>
+		<div class="wpm-table-wrap">
+			<table class="wpm-table wpm-table--form">
+				<thead>
+					<tr>
+						<th scope="col"><?php esc_html_e( 'Language', 'pixellang-multilingual' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Site title', 'pixellang-multilingual' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Tagline', 'pixellang-multilingual' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $wpm_languages as $wpm_slug => $wpm_cfg ) : ?>
+						<tr>
+							<th scope="row"><?php WPM_Admin::language_chip( $wpm_slug, true ); ?></th>
+							<?php if ( $wpm_slug === $wpm_default_lang ) : ?>
+								<td><?php echo esc_html( $wpm_site_name ); ?></td>
+								<td>
+									<?php echo $wpm_site_desc ? esc_html( $wpm_site_desc ) : '<span class="wpm-muted">' . esc_html__( '(none)', 'pixellang-multilingual' ) . '</span>'; ?>
+									<a class="wpm-link wpm-table__aside" href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e( 'Edit in Settings > General', 'pixellang-multilingual' ); ?></a>
+								</td>
+							<?php else : ?>
+								<?php $wpm_texts = WPM_Site_Texts::get( $wpm_slug ); ?>
+								<td><input type="text" class="wpm-input" name="site_texts[<?php echo esc_attr( $wpm_slug ); ?>][blogname]" value="<?php echo esc_attr( $wpm_texts['blogname'] ); ?>" placeholder="<?php echo esc_attr( $wpm_site_name ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: language name. */ __( 'Site title (%s)', 'pixellang-multilingual' ), $wpm_cfg['label'] ) ); ?>" /></td>
+								<td><input type="text" class="wpm-input" name="site_texts[<?php echo esc_attr( $wpm_slug ); ?>][blogdescription]" value="<?php echo esc_attr( $wpm_texts['blogdescription'] ); ?>" placeholder="<?php echo esc_attr( $wpm_site_desc ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: language name. */ __( 'Tagline (%s)', 'pixellang-multilingual' ), $wpm_cfg['label'] ) ); ?>" /></td>
+							<?php endif; ?>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+		<p class="wpm-help"><?php WPM_Icons::render( 'info', 16 ); ?><span><?php esc_html_e( 'Image texts: the alternative text and caption of each image can be translated in the Media Library, under the fields of the default language.', 'pixellang-multilingual' ); ?></span></p>
+		<?php $wpm_form_close(); ?>
+
+	<?php elseif ( 'urls' === $wpm_tab ) : ?>
+		<?php
+		$wpm_url_types = WPM_Slugs::post_types();
+		$wpm_url_taxes = WPM_Slugs::taxonomies();
+		$wpm_default_lang = $wpm_manager->get_default();
+		$wpm_form_open( 'urls' );
+		?>
+		<div class="wpm-card__head">
+			<h3 class="wpm-card__title"><?php esc_html_e( 'Translated URL slugs', 'pixellang-multilingual' ); ?></h3>
+		</div>
+		<p class="wpm-card__intro"><?php esc_html_e( 'The part of the address that names a content type or a taxonomy, in each language: /equipe/marie/ in French, /team/marie/ in English. Old addresses redirect to the right one.', 'pixellang-multilingual' ); ?></p>
+		<?php if ( ! $wpm_url_types && ! $wpm_url_taxes ) : ?>
+			<?php
+			WPM_Admin::empty_state(
+				'link',
+				__( 'No content type with its own address', 'pixellang-multilingual' ),
+				__( 'Translated slugs apply to public custom post types and taxonomies enabled in the Content tab. Pages and posts have no slug to translate: each page has its own address.', 'pixellang-multilingual' ),
+				WPM_Admin::url( 'wpm-settings', array( 'tab' => 'content' ) ),
+				__( 'Content types', 'pixellang-multilingual' )
+			);
+			?>
+		<?php else : ?>
+			<div class="wpm-table-wrap">
+				<table class="wpm-table wpm-table--form">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Content', 'pixellang-multilingual' ); ?></th>
+							<?php foreach ( $wpm_languages as $wpm_slug => $wpm_cfg ) : ?>
+								<th scope="col"><?php WPM_Admin::language_chip( $wpm_slug ); ?></th>
+							<?php endforeach; ?>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach ( array( 'post_type' => $wpm_url_types, 'taxonomy' => $wpm_url_taxes ) as $wpm_kind => $wpm_objects ) :
+							foreach ( $wpm_objects as $wpm_name => $wpm_obj ) :
+								$wpm_base = WPM_Slugs::base( $wpm_kind, $wpm_name );
+								?>
+								<tr>
+									<th scope="row">
+										<strong><?php echo esc_html( $wpm_obj->labels->name ); ?></strong>
+										<span class="wpm-muted wpm-table__sub"><?php echo esc_html( 'post_type' === $wpm_kind ? __( 'Content type', 'pixellang-multilingual' ) : __( 'Taxonomy', 'pixellang-multilingual' ) ); ?></span>
+									</th>
+									<?php foreach ( $wpm_languages as $wpm_slug => $wpm_cfg ) : ?>
+										<td>
+											<?php if ( $wpm_slug === $wpm_default_lang ) : ?>
+												<code class="wpm-slug">/<?php echo esc_html( $wpm_base ); ?>/</code>
+											<?php else : ?>
+												<?php $wpm_current_slug = WPM_Slugs::slug( $wpm_kind, $wpm_name, $wpm_slug ); ?>
+												<span class="wpm-slug-input">
+													<span aria-hidden="true">/</span>
+													<input type="text" class="wpm-input" name="slugs[<?php echo esc_attr( $wpm_kind ); ?>][<?php echo esc_attr( $wpm_name ); ?>][<?php echo esc_attr( $wpm_slug ); ?>]" value="<?php echo esc_attr( $wpm_current_slug !== $wpm_base ? $wpm_current_slug : '' ); ?>" placeholder="<?php echo esc_attr( $wpm_base ); ?>" spellcheck="false"
+														aria-label="<?php echo esc_attr( sprintf( /* translators: 1: content type, 2: language name. */ __( 'Slug of %1$s in %2$s', 'pixellang-multilingual' ), $wpm_obj->labels->name, $wpm_cfg['label'] ) ); ?>" />
+													<span aria-hidden="true">/</span>
+												</span>
+											<?php endif; ?>
+										</td>
+									<?php endforeach; ?>
+								</tr>
+								<?php
+							endforeach;
+						endforeach;
+						?>
+					</tbody>
+				</table>
+			</div>
+			<p class="wpm-help"><?php WPM_Icons::render( 'info', 16 ); ?><span><?php esc_html_e( 'Lowercase letters, digits and hyphens. Empty: the slug of the default language is kept. Avoid a slug already used by a page.', 'pixellang-multilingual' ); ?></span></p>
+		<?php endif; ?>
 		<?php $wpm_form_close(); ?>
 
 	<?php elseif ( 'switcher' === $wpm_tab ) : ?>
@@ -249,6 +365,11 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 			<div class="wpm-card__head wpm-card__head--section">
 				<h3 class="wpm-card__title"><?php esc_html_e( 'In a menu', 'pixellang-multilingual' ); ?></h3>
 			</div>
+			<?php
+			if ( WPM_Switcher::theme_header_has_block() ) {
+				WPM_Admin::notice( 'warning', __( 'The header of your theme already contains a Language Switcher block. To avoid showing the languages twice, they are not added to the menus: choose "Block only", or remove the block from the header in the Site Editor.', 'pixellang-multilingual' ) );
+			}
+			?>
 			<?php if ( $wpm_nav_posts ) : ?>
 				<fieldset class="wpm-option-grid">
 					<legend class="wpm-setting__label"><?php esc_html_e( 'Navigation menus', 'pixellang-multilingual' ); ?></legend>

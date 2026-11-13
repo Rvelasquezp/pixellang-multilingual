@@ -3,7 +3,7 @@
  * Plugin Name:       PixelLang Multilingual
  * Plugin URI:        https://github.com/Rvelasquezp/pixellang-multilingual
  * Description:       Multilingual WordPress without lock-in: languages, linked translations of posts, pages, custom post types and terms, language-aware menus, template parts and forms, hreflang, multilingual sitemaps, outdated translation tracking, a language suggestion banner, and a language switcher block with design options that can also be added automatically to menus or float on the page.
- * Version:           1.5.0
+ * Version:           1.6.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Agence Pixel
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPM_VERSION', '1.5.0' );
+define( 'WPM_VERSION', '1.6.0' );
 define( 'WPM_FILE', __FILE__ );
 define( 'WPM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPM_URL', plugin_dir_url( __FILE__ ) );
@@ -39,6 +39,9 @@ require_once WPM_DIR . 'includes/class-strings.php';
 require_once WPM_DIR . 'includes/class-sync.php';
 require_once WPM_DIR . 'includes/class-switcher.php';
 require_once WPM_DIR . 'includes/class-license.php';
+require_once WPM_DIR . 'includes/class-site-texts.php';
+require_once WPM_DIR . 'includes/class-media.php';
+require_once WPM_DIR . 'includes/class-slugs.php';
 require_once WPM_DIR . 'includes/class-sitemaps.php';
 require_once WPM_DIR . 'includes/class-language-banner.php';
 
@@ -76,6 +79,9 @@ function wpm() {
 		WPM_Language_Banner::init();
 		WPM_Switcher::init();
 		WPM_License::init();
+		WPM_Site_Texts::init();
+		WPM_Media::init();
+		WPM_Slugs::init();
 
 		if ( is_admin() ) {
 			$instance->admin    = WPM_Admin::instance();

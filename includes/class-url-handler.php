@@ -85,7 +85,9 @@ class WPM_Url_Handler {
 		$content = $this->get_queried_language();
 
 		// Static front page: send visitors to the front page of their language.
-		if ( $content && $content !== $visitor && is_front_page() && ! is_paged() && WPM_Settings::get( 'front_redirect' ) && $this->visitor_has_preference() ) {
+		// Only while browsing the site (logo, menu): an address typed in the
+		// browser or a link from another site shows the front page asked for.
+		if ( $content && $content !== $visitor && is_front_page() && ! is_paged() && WPM_Settings::get( 'front_redirect' ) && $this->visitor_has_preference() && $this->is_internal_navigation() ) {
 			$translation = WPM_Translations::get_public_post_translation( get_queried_object_id(), $visitor );
 			if ( $translation ) {
 				$url = get_permalink( $translation );
@@ -99,6 +101,30 @@ class WPM_Url_Handler {
 		if ( $content && $content !== $visitor ) {
 			$this->switch_to( $content );
 		}
+
+		// Archives have no language: a translated URL base gives one.
+		if ( ! $content && is_post_type_archive() && class_exists( 'WPM_Slugs' ) ) {
+			$type = get_query_var( 'post_type' );
+			$type = is_array( $type ) ? reset( $type ) : $type;
+			$lang = WPM_Slugs::language_of_base( 'post_type', (string) $type, $this->request_base() );
+			if ( $lang && $lang !== $visitor ) {
+				$this->switch_to( $lang );
+			}
+		}
+	}
+
+	/**
+	 * First segment of the requested path (without the home path).
+	 *
+	 * @return string
+	 */
+	public function request_base() {
+		$path   = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$prefix = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		if ( $prefix && 0 === strpos( $path, $prefix . '/' ) ) {
+			$path = substr( $path, strlen( $prefix ) + 1 );
+		}
+		return (string) strtok( $path, '/' );
 	}
 
 	/**
@@ -136,6 +162,17 @@ class WPM_Url_Handler {
 		}
 		$manager->set_current( $slug );
 		$this->set_cookie( $slug );
+	}
+
+	/**
+	 * Whether the request comes from a page of this site (Referer header).
+	 *
+	 * @return bool
+	 */
+	private function is_internal_navigation() {
+		$referer = isset( $_SERVER['HTTP_REFERER'] ) ? (string) wp_unslash( $_SERVER['HTTP_REFERER'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$host    = $referer ? strtolower( (string) wp_parse_url( $referer, PHP_URL_HOST ) ) : '';
+		return '' !== $host && strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) === $host;
 	}
 
 	/**
@@ -285,6 +322,16 @@ class WPM_Url_Handler {
 				if ( ! is_wp_error( $link ) ) {
 					return $link;
 				}
+			}
+		}
+
+		// Archive of a content type: the archive in that language.
+		if ( is_post_type_archive() && class_exists( 'WPM_Slugs' ) ) {
+			$type = get_query_var( 'post_type' );
+			$type = is_array( $type ) ? reset( $type ) : $type;
+			$url  = WPM_Slugs::archive_url( (string) $type, $slug );
+			if ( $url ) {
+				return add_query_arg( 'set_lang', $slug, $url );
 			}
 		}
 

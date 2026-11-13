@@ -73,6 +73,12 @@ Traduit les textes des thèmes, extensions et modèles sans modifier leurs fichi
 - **Placement automatique** (Réglages > Sélecteur de langue), comme WPML : dans un menu (prend l'apparence du menu, aussi sur mobile), flottant (coin inférieur, clair ou foncé) ou bloc seulement.
 - Les blocs existants gardent leur apparence.
 
+## Identité du site, médias et URL (1.6)
+
+- Titre et slogan du site par langue (Réglages > Identité du site).
+- Texte alternatif et légende des images par langue, dans la médiathèque.
+- Slugs d'URL traduits pour les types de contenu et taxonomies (`/projets/` → `/projects/`), avec redirection 301 depuis l'autre base.
+
 ## Licence (1.5)
 
 - Réservé aux clients d'Agence Pixel : chaque site a besoin d'une clé signée pour son domaine (écran Licence ou `wp pixellang license activate <clé>`).

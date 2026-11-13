@@ -48,6 +48,11 @@ class WPM_Settings {
 			'switcher_hide_current' => true,
 			'switcher_floating_position' => 'right',
 			'switcher_floating_theme'    => 'light',
+			'site_texts'                 => array(),
+			'slugs'                      => array(
+				'post_type' => array(),
+				'taxonomy'  => array(),
+			),
 		);
 	}
 
@@ -109,6 +114,12 @@ class WPM_Settings {
 			case 'filter_queries':
 			case 'hreflang':
 				return (bool) $value;
+
+			case 'site_texts':
+				return WPM_Site_Texts::sanitize( $value );
+
+			case 'slugs':
+				return WPM_Slugs::sanitize( $value );
 
 			case 'switcher_placement':
 				return in_array( $value, array( 'none', 'menu', 'floating' ), true ) ? $value : 'none';

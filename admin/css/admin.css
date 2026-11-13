@@ -2191,3 +2191,44 @@ tr.is-dirty .wpm-str__status::before {
 .wpm-btn--danger-text {
 	color: var(--wpm-danger);
 }
+
+/* --------------------------------------------------------------------------
+   Settings > Site identity, URLs
+   -------------------------------------------------------------------------- */
+
+.wpm-table--form td {
+	vertical-align: middle;
+}
+
+.wpm-table--form .wpm-input {
+	width: 100%;
+	min-width: 140px;
+}
+
+.wpm-table__aside {
+	display: inline-block;
+	margin-left: 8px;
+	font-size: 12px;
+}
+
+.wpm-table__sub {
+	display: block;
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.wpm-slug {
+	font-family: var(--wpm-mono);
+}
+
+.wpm-slug-input {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+	color: var(--wpm-subtle);
+	font-family: var(--wpm-mono);
+}
+
+.wpm-slug-input .wpm-input {
+	font-family: var(--wpm-mono);
+}

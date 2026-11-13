@@ -36,6 +36,8 @@ class WPM_Switcher {
 	const DISPLAYS = array( 'code', 'name', 'both' );
 
 	public static function init() {
+		add_action( 'save_post_wp_template_part', array( __CLASS__, 'forget_header_check' ) );
+		add_action( 'switch_theme', array( __CLASS__, 'forget_header_check' ) );
 		if ( is_admin() ) {
 			return;
 		}
@@ -425,6 +427,41 @@ class WPM_Switcher {
 	}
 
 	/**
+	 * Whether a header template part of the active theme already contains a
+	 * Language Switcher block: the menu placement would show it twice, so it
+	 * steps aside. Cached until a template part is saved or the theme changes.
+	 *
+	 * @return bool
+	 */
+	public static function theme_header_has_block() {
+		$key    = 'wpm_header_switcher_' . get_stylesheet();
+		$cached = get_transient( $key );
+		if ( false !== $cached ) {
+			return 'yes' === $cached;
+		}
+		$found = false;
+		if ( function_exists( 'get_block_templates' ) && wp_is_block_theme() ) {
+			// Themes do not always declare the header area: the slug counts too.
+			foreach ( get_block_templates( array(), 'wp_template_part' ) as $part ) {
+				$is_header = 'header' === $part->area || false !== strpos( (string) $part->slug, 'header' );
+				if ( $is_header && false !== strpos( (string) $part->content, 'wp:wp-multilingual/language-switcher' ) ) {
+					$found = true;
+					break;
+				}
+			}
+		}
+		set_transient( $key, $found ? 'yes' : 'no', DAY_IN_SECONDS );
+		return $found;
+	}
+
+	/**
+	 * Forgets the header check (a template part was saved, the theme changed).
+	 */
+	public static function forget_header_check() {
+		delete_transient( 'wpm_header_switcher_' . get_stylesheet() );
+	}
+
+	/**
 	 * Whether a navigation menu was chosen for the switcher. A menu that has
 	 * language versions counts with all of them.
 	 *
@@ -452,7 +489,7 @@ class WPM_Switcher {
 	 * @return string
 	 */
 	public static function add_to_navigation_block( $content, $block ) {
-		if ( 'menu' !== self::placement() || false !== strpos( $content, 'wpm-menu-language' ) ) {
+		if ( 'menu' !== self::placement() || false !== strpos( $content, 'wpm-menu-language' ) || self::theme_header_has_block() ) {
 			return $content;
 		}
 		$ref = isset( $block['attrs']['ref'] ) ? (int) $block['attrs']['ref'] : 0;
