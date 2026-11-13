@@ -61,6 +61,12 @@ Translates texts of themes, plugins and templates without editing their files (m
 - **Text written directly in HTML**: "HTML text" type, replaced in visible text only (never in attributes, links, scripts, styles, comments). Limits: exact match, and texts created by JavaScript cannot be translated this way.
 - **Data**: tables `{prefix}wpm_strings` and `{prefix}wpm_string_translations`. Capability `manage_options` (filter `wpm_strings_capability`).
 
+## SEO and quality (1.3)
+
+- **Outdated translations**: when the text of an original changes (title, content, excerpt), its translations are flagged "Needs update" in the editor, the content lists, the Translations screen and the dashboard, with a link to the changes (revisions) and a "Mark as up to date" action (one by one or in bulk).
+- **Multilingual sitemaps**: every translated URL of the WordPress, Yoast SEO and Rank Math sitemaps lists its translations (`xhtml:link hreflang`, `x-default`). `og:locale` follows the page language with Yoast SEO and Rank Math.
+- **Language suggestion banner**: instead of redirecting by browser language, the page stays and a banner, written in the visitor's language, offers its translation. Works with page caches and search engines. Setting: Visitors & SEO > Browser language.
+
 ## Theme API
 
 ```php

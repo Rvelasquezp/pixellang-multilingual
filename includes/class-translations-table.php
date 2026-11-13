@@ -35,6 +35,13 @@ class WPM_Translations_Table extends WP_List_Table {
 	 */
 	public $missing = '';
 
+	/**
+	 * Only rows with at least one outdated translation.
+	 *
+	 * @var bool
+	 */
+	public $outdated = false;
+
 	public function __construct() {
 		parent::__construct(
 			array(
@@ -54,6 +61,7 @@ class WPM_Translations_Table extends WP_List_Table {
 		$source          = isset( $_GET['source'] ) ? sanitize_key( wp_unslash( $_GET['source'] ) ) : '';
 		$this->source    = $manager->is_valid( $source ) ? $source : $manager->get_default();
 		$missing         = isset( $_GET['missing'] ) ? sanitize_key( wp_unslash( $_GET['missing'] ) ) : '';
+		$this->outdated  = 'outdated' === $missing;
 		$this->missing   = ( $manager->is_valid( $missing ) && $missing !== $this->source ) ? $missing : '';
 		// phpcs:enable
 	}
@@ -104,6 +112,15 @@ class WPM_Translations_Table extends WP_List_Table {
 				),
 			);
 		}
+		$post_in = array();
+		if ( $this->outdated ) {
+			foreach ( WPM_Sync::get_outdated( array( 'post_type' => $this->post_type ) ) as $row ) {
+				if ( WPM_Translations::get_post_language( $row['source'] ) === $this->source ) {
+					$post_in[] = $row['source'];
+				}
+			}
+			$post_in = $post_in ? array_values( array_unique( $post_in ) ) : array( 0 );
+		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$orderby = isset( $_GET['orderby'] ) && 'title' === $_GET['orderby'] ? 'title' : 'modified';
 		$order   = isset( $_GET['order'] ) && 'asc' === strtolower( sanitize_key( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : ( 'title' === $orderby ? 'ASC' : 'DESC' );
@@ -120,6 +137,7 @@ class WPM_Translations_Table extends WP_List_Table {
 				'orderby'                => $orderby,
 				'order'                  => $order,
 				'meta_query'             => $meta, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'post__in'               => $post_in,
 				'update_post_term_cache' => false,
 			)
 		);
@@ -144,7 +162,9 @@ class WPM_Translations_Table extends WP_List_Table {
 	}
 
 	public function no_items() {
-		if ( $this->missing ) {
+		if ( $this->outdated ) {
+			esc_html_e( 'Every translation is up to date with its original.', 'pixellang-multilingual' );
+		} elseif ( $this->missing ) {
 			esc_html_e( 'Nothing is missing here: every item has this translation.', 'pixellang-multilingual' );
 		} else {
 			esc_html_e( 'No content in this language yet.', 'pixellang-multilingual' );
@@ -192,13 +212,19 @@ class WPM_Translations_Table extends WP_List_Table {
 		$lang = substr( $column_name, 5 );
 		$id   = WPM_Translations::get_post_translation( $post->ID, $lang );
 		if ( $id && get_post( $id ) ) {
-			$status = get_post_status( $id );
+			$status   = get_post_status( $id );
+			$outdated = WPM_Sync::is_outdated( $id );
+			$label    = esc_html( WPM_Admin::status_label( $status ) );
+			if ( $outdated ) {
+				$label .= ' · ' . WPM_Icons::get( 'alert', 12 ) . '<strong>' . esc_html__( 'Needs update', 'pixellang-multilingual' ) . '</strong>';
+			}
 			return sprintf(
-				'<div class="wpm-cell is-%1$s"><a class="wpm-cell__title" href="%2$s">%3$s</a><span class="wpm-cell__status">%4$s</span></div>',
+				'<div class="wpm-cell is-%1$s%2$s"><a class="wpm-cell__title" href="%3$s">%4$s</a><span class="wpm-cell__status">%5$s</span></div>',
 				'publish' === $status ? 'done' : 'draft',
+				$outdated ? ' is-outdated' : '',
 				esc_url( (string) get_edit_post_link( $id ) ),
 				esc_html( _draft_or_post_title( $id ) ),
-				esc_html( WPM_Admin::status_label( $status ) )
+				$label // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 			);
 		}
 		if ( ! current_user_can( 'edit_post', $post->ID ) ) {

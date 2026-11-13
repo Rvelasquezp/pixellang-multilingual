@@ -65,6 +65,26 @@
 	color: #92400e;
 }
 
+.wpm-trans__item.is-outdated {
+	border-color: #f59e0b;
+	background: #fffbeb;
+	color: #92400e;
+}
+
+.wpm-trans__item svg {
+	flex: none;
+}
+
+.wpm-col-outdated {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+	margin-top: 4px;
+	color: #92400e;
+	font-size: 12px;
+	font-weight: 600;
+}
+
 .wpm-trans__item.is-missing {
 	border-color: #cbd5e1;
 	border-style: dashed;

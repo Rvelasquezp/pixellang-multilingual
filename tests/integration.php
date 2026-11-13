@@ -285,6 +285,128 @@ try {
 	$_POST = $_REQUEST = array();
 	WPM_Language_Manager::instance()->save_languages( $langs );
 
+	echo "Locale switch reloads WordPress translations\n";
+	WPM_Language_Manager::instance()->set_current( 'fr' );
+	$sw = new ReflectionMethod( 'WPM_Url_Handler', 'switch_to' );
+	$sw->setAccessible( true );
+	$sw->invoke( WPM_Url_Handler::instance(), 'en' );
+	wpm_assert( 'en' === WPM_Language_Manager::instance()->get_current(), 'switch_to() sets the language' );
+	wpm_assert( is_locale_switched() && 'en_US' === get_locale(), 'switch_to() really switches the WordPress locale (html lang, core strings)' );
+	restore_current_locale();
+	WPM_Language_Manager::instance()->set_current( 'fr' );
+
+	echo "Outdated translations (1.3)\n";
+	$os = wpm_post( 'Original FR', 'fr' );
+	$ot = WPM_Translations::create_post_translation( $os, 'en' );
+	wpm_assert( $os === WPM_Sync::get_source( $ot ) && WPM_Sync::NONE === WPM_Sync::get_status( $os ), 'new translation knows its source; the source is an original' );
+	wpm_assert( WPM_Sync::CURRENT === WPM_Sync::get_status( $ot ), 'new translation starts up to date' );
+	wp_update_post( array( 'ID' => $os, 'post_status' => 'draft' ) );
+	wp_update_post( array( 'ID' => $os, 'post_status' => 'publish' ) );
+	wpm_assert( WPM_Sync::CURRENT === WPM_Sync::get_status( $ot ), 'status changes do not outdate translations' );
+	wp_update_post( array( 'ID' => $os, 'post_content' => '<p>Texte modifié</p>' ) );
+	wpm_assert( WPM_Sync::OUTDATED === WPM_Sync::get_status( $ot ), 'editing the original text outdates the translation' );
+	wpm_assert( in_array( $ot, wp_list_pluck( WPM_Sync::get_outdated(), 'id' ), true ), 'get_outdated() lists it' );
+	WPM_Translations::flush_stats();
+	$st = WPM_Translations::get_stats();
+	wpm_assert( ! empty( $st['outdated']['en']['page'] ), 'dashboard stats count it' );
+	wp_update_post( array( 'ID' => $ot, 'post_content' => '<p>Changed text</p>' ) );
+	wpm_assert( WPM_Sync::is_outdated( $ot ), 'editing the translation alone does not mark it up to date' );
+	$req = new WP_REST_Request( 'POST', '/wpm/v1/mark-synced' );
+	$req->set_body_params( array( 'post_id' => $ot ) );
+	$res = rest_do_request( $req );
+	wpm_assert( 200 === $res->get_status() && 'current' === $res->get_data()['status'], 'POST /mark-synced marks it up to date' );
+	$req = new WP_REST_Request( 'POST', '/wpm/v1/mark-synced' );
+	$req->set_body_params( array( 'post_id' => $os ) );
+	wpm_assert( 400 === rest_do_request( $req )->get_status(), '/mark-synced refuses an original' );
+	$req = new WP_REST_Request( 'POST', '/wpm/v1/link' );
+	$req->set_body_params( array( 'post_id' => $os, 'source_lang' => 'fr', 'lang' => 'es', 'target' => 0 ) );
+	$res = rest_do_request( $req );
+	wpm_assert( isset( $res->get_data()['group']['en']['outdated'] ) && false === $res->get_data()['group']['en']['outdated'], 'editor box receives the outdated flag' );
+
+	// Bulk action from the content list.
+	wp_update_post( array( 'ID' => $os, 'post_title' => 'Original FR v2' ) );
+	$redir = WPM_Admin_Columns::instance()->handle_bulk_actions( admin_url( 'edit.php?post_type=page' ), 'wpm_mark_synced', array( $ot, $os ) );
+	wpm_assert( false !== strpos( $redir, 'wpm_synced=1' ) && WPM_Sync::CURRENT === WPM_Sync::get_status( $ot ), 'bulk "Mark as up to date" counts only outdated translations' );
+
+	// Translations screen filter.
+	wp_update_post( array( 'ID' => $os, 'post_excerpt' => 'Nouveau résumé' ) );
+	require_once WPM_DIR . 'includes/class-translations-table.php';
+	$_GET = array( 'content_type' => 'page', 'source' => 'fr', 'missing' => 'outdated' );
+	$tbl  = new WPM_Translations_Table();
+	$tbl->prepare_items();
+	wpm_assert( $tbl->outdated && array( $os ) === wp_list_pluck( $tbl->items, 'ID' ), 'Translations screen lists sources with outdated translations' );
+	$_GET = array();
+
+	// Linking existing content: the default language is the source.
+	$lf = wpm_post( 'Lien FR', 'fr' );
+	$le = wpm_post( 'Link EN', 'en' );
+	WPM_Translations::link( 'post', array( 'en' => $le, 'fr' => $lf ) );
+	wpm_assert( $lf === WPM_Sync::get_source( $le ) && 0 === WPM_Sync::get_source( $lf ), 'linked group: default language is the source' );
+	wpm_assert( WPM_Sync::CURRENT === WPM_Sync::get_status( $le ), 'linked translation starts up to date' );
+	WPM_Translations::unlink( 'post', $le );
+	wpm_assert( WPM_Sync::NONE === WPM_Sync::get_status( $le ) && '' === get_post_meta( $le, '_wpm_source', true ), 'unlinking clears the source' );
+
+	// A translation made from a non-default language keeps that source.
+	$xe = wpm_post( 'Only in English', 'en' );
+	$xf = WPM_Translations::create_post_translation( $xe, 'fr' );
+	wpm_assert( $xe === WPM_Sync::get_source( $xf ) && 0 === WPM_Sync::get_source( $xe ), 'source stays the content translated from, even in another language' );
+	$xs = WPM_Translations::create_post_translation( $xe, 'es' );
+	wpm_assert( $xe === WPM_Sync::get_source( $xs ) && $xe === WPM_Sync::get_source( $xf ), 'third language keeps the same source' );
+
+	echo "XML sitemaps (1.3)\n";
+	WPM_Settings::update( array( 'hreflang' => true ) );
+	$entry = WPM_Sitemaps::core_post_entry( array( 'loc' => get_permalink( $hf ) ), get_post( $hf ) );
+	wpm_assert( isset( $entry['wpm_alternates']['fr-FR'], $entry['wpm_alternates']['en-US'], $entry['wpm_alternates']['x-default'] ) && ! isset( $entry['wpm_alternates']['es-ES'] ), 'core entry lists published translations and x-default' );
+	$solo = WPM_Sitemaps::core_post_entry( array( 'loc' => 'x' ), get_post( wpm_post( 'Seule', 'fr' ) ) );
+	wpm_assert( ! isset( $solo['wpm_alternates'] ), 'untranslated content has no alternates' );
+	require_once WPM_DIR . 'includes/class-sitemaps-renderer.php';
+	$xml = ( new WPM_Sitemaps_Renderer() )->get_sitemap_xml( array( $entry, array( 'loc' => home_url( '/a/' ) ) ) );
+	$doc = simplexml_load_string( $xml );
+	wpm_assert( $doc && 3 === count( $doc->url[0]->children( WPM_Sitemaps::XHTML_NS ) ) && 0 === count( $doc->url[1]->children( WPM_Sitemaps::XHTML_NS ) ), 'core sitemap XML is valid with xhtml:link alternates' );
+	$seo = WPM_Sitemaps::seo_url( "<url>\n\t<loc>x</loc>\n</url>\n", WPM_Sitemaps::seo_entry( array( 'loc' => 'x' ), 'post', get_post( $hf ) ) );
+	wpm_assert( 3 === substr_count( $seo, '<xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate"' ) && false !== simplexml_load_string( '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . $seo . '</urlset>' ), 'Yoast / Rank Math URLs get valid alternates' );
+	wpm_assert( false === WPM_Sitemaps::seo_entry( false, 'post', get_post( $hf ) ), 'excluded SEO entries stay excluded' );
+	WPM_Settings::update( array( 'hreflang' => false ) );
+	wpm_assert( ! isset( WPM_Sitemaps::core_post_entry( array( 'loc' => 'x' ), get_post( $hf ) )['wpm_alternates'] ), 'no alternates when hreflang is off' );
+	WPM_Settings::update( array( 'hreflang' => true ) );
+	WPM_Language_Manager::instance()->set_current( 'en' );
+	wpm_assert( 'en_US' === WPM_Sitemaps::og_locale( 'fr_FR' ), 'og:locale follows the page language' );
+
+	echo "Language suggestion banner (1.3)\n";
+	WPM_Settings::update( array( 'browser_mode' => '', 'browser_detection' => true ) );
+	wpm_assert( 'redirect' === WPM_Settings::browser_mode(), 'sites saved before 1.3 keep browser detection' );
+	WPM_Settings::update( array( 'browser_mode' => 'nope' ) );
+	wpm_assert( '' === WPM_Settings::get( 'browser_mode' ), 'unknown mode rejected' );
+	// resolve_language() skips detection in the admin (these tests run there):
+	// the mode gate is checked in the browser, the header parsing here.
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es;q=0.1, en-CA,en;q=0.9';
+	$detect = new ReflectionMethod( 'WPM_Url_Handler', 'detect_browser_language' );
+	$detect->setAccessible( true );
+	wpm_assert( 'en' === $detect->invoke( WPM_Url_Handler::instance() ), 'Accept-Language parsed by weight' );
+	unset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+	WPM_Settings::update( array( 'browser_mode' => 'banner' ) );
+	wpm_visit( array( 'page_id' => $he ), 'en' );
+	$sug = WPM_Language_Banner::get_suggestions();
+	wpm_assert( isset( $sug['fr'] ) && ! isset( $sug['es'] ) && ! isset( $sug['en'] ), 'banner offers published translations except the current language' );
+	wpm_assert( get_permalink( $hf ) === $sug['fr']['url'] && 'fr-FR' === $sug['fr']['hreflang'], 'banner links straight to the translation' );
+	wpm_assert( 'Cette page est offerte dans votre langue.' === $sug['fr']['text'] && 'Fermer' === $sug['fr']['close'], 'banner text is written in the suggested language' );
+	wpm_assert( 'Fermer' === WPM_Language_Banner::translate( 'Close', 'fr_CA' ) && 'Close' === WPM_Language_Banner::translate( 'Close', 'en_GB' ), 'locale fallbacks' );
+	ob_start();
+	WPM_Language_Banner::render();
+	$out = ob_get_clean();
+	preg_match( '#<script type="application/json" id="wpm-banner-data">(.*?)</script>#s', $out, $m );
+	$json = isset( $m[1] ) ? json_decode( $m[1], true ) : null;
+	wpm_assert( false !== strpos( $out, 'id="wpm-banner"' ) && false !== strpos( $out, ' hidden' ) && is_array( $json ) && 'en' === $json['current'], 'banner markup is hidden until the script decides' );
+	WPM_Settings::update( array( 'browser_mode' => 'off' ) );
+	ob_start();
+	WPM_Language_Banner::render();
+	wpm_assert( '' === ob_get_clean(), 'no banner when the mode is off' );
+	add_filter( 'wp_redirect', $catch );
+	$r = $run( 'handle_save_settings', array( 'section' => 'behavior', 'cookie_days' => '30', 'hreflang' => '1', 'browser_mode' => 'banner' ), 'wpm_save_settings' );
+	remove_filter( 'wp_redirect', $catch );
+	WPM_Settings::flush();
+	wpm_assert( 'banner' === WPM_Settings::browser_mode() && ! WPM_Settings::get( 'browser_detection' ), 'settings screen saves the browser mode' );
+
 	echo "String Translation: registry\n";
 	$a1 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'a.php:1' ) );
 	$a2 = WPM_Strings::register( array( 'original' => 'Test string', 'domain' => 'wpm-test', 'source_type' => 'theme', 'source_name' => 't', 'location' => 'b.php:9' ) );

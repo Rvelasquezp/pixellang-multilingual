@@ -9,7 +9,8 @@
  *    language, whatever the cookie says. Every translated URL is therefore
  *    canonical and safe for page caches and search engines.
  * 3. The wpm_lang cookie (last language seen or chosen).
- * 4. The browser Accept-Language header (optional).
+ * 4. The browser Accept-Language header (optional, "redirect" mode; the
+ *    "banner" mode only suggests the translation, see WPM_Language_Banner).
  * 5. The default language.
  *
  * @package PixelLang_Multilingual
@@ -60,7 +61,7 @@ class WPM_Url_Handler {
 			return;
 		}
 
-		if ( WPM_Settings::get( 'browser_detection' ) && ! is_admin() ) {
+		if ( 'redirect' === WPM_Settings::browser_mode() && ! is_admin() ) {
 			$slug = $this->detect_browser_language();
 			if ( $slug ) {
 				$this->set_cookie( $slug );
@@ -124,14 +125,17 @@ class WPM_Url_Handler {
 	private function switch_to( $slug ) {
 		$manager = WPM_Language_Manager::instance();
 		$before  = determine_locale();
-		$manager->set_current( $slug );
-		$this->set_cookie( $slug );
 
-		// Text domains were loaded with the previous locale: reload them.
+		// Text domains (WordPress core included, which gives <html lang>) were
+		// loaded with the previous locale: reload them. switch_to_locale() must
+		// run while the previous language is still current, otherwise it sees
+		// the new locale through the 'locale' filter and does nothing.
 		$locale = $manager->get_locale( $slug );
 		if ( $locale && $locale !== $before && function_exists( 'switch_to_locale' ) ) {
 			switch_to_locale( $locale );
 		}
+		$manager->set_current( $slug );
+		$this->set_cookie( $slug );
 	}
 
 	/**

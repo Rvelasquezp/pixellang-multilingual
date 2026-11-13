@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class WPM_Migration {
 
-	const DB_VERSION = 3;
+	const DB_VERSION = 4;
 	const OPTION     = 'wpm_db_version';
 	const REPORT     = 'wpm_migration_report';
 
@@ -33,6 +33,10 @@ class WPM_Migration {
 		if ( $version < 3 ) {
 			// 1.2: String Translation tables (new tables, nothing changed).
 			WPM_Strings::install();
+		}
+		if ( $version < 4 ) {
+			// 1.3: every translation group gets a source for outdated tracking.
+			WPM_Sync::migrate();
 		}
 
 		update_option( self::OPTION, self::DB_VERSION, true );

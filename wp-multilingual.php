@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       PixelLang Multilingual
  * Plugin URI:        https://github.com/Rvelasquezp/pixellang-multilingual
- * Description:       Multilingual WordPress without lock-in: languages, linked translations of posts, pages, custom post types and terms, language-aware menus, template parts and forms, hreflang and a language switcher block.
- * Version:           1.2.0
+ * Description:       Multilingual WordPress without lock-in: languages, linked translations of posts, pages, custom post types and terms, language-aware menus, template parts and forms, hreflang, multilingual sitemaps, outdated translation tracking, a language suggestion banner and a language switcher block.
+ * Version:           1.3.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Agence Pixel
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPM_VERSION', '1.2.0' );
+define( 'WPM_VERSION', '1.3.0' );
 define( 'WPM_FILE', __FILE__ );
 define( 'WPM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPM_URL', plugin_dir_url( __FILE__ ) );
@@ -36,6 +36,9 @@ require_once WPM_DIR . 'includes/class-compat.php';
 require_once WPM_DIR . 'includes/class-template-switcher.php';
 require_once WPM_DIR . 'includes/class-rest.php';
 require_once WPM_DIR . 'includes/class-strings.php';
+require_once WPM_DIR . 'includes/class-sync.php';
+require_once WPM_DIR . 'includes/class-sitemaps.php';
+require_once WPM_DIR . 'includes/class-language-banner.php';
 
 if ( is_admin() ) {
 	require_once WPM_DIR . 'includes/class-icons.php';
@@ -66,6 +69,9 @@ function wpm() {
 		WPM_Translations::init();
 		WPM_Strings::init();
 		WPM_Compat::init();
+		WPM_Sync::init();
+		WPM_Sitemaps::init();
+		WPM_Language_Banner::init();
 
 		if ( is_admin() ) {
 			$instance->admin    = WPM_Admin::instance();
@@ -114,6 +120,10 @@ function wpm_activate() {
 		update_option( 'wpm_db_version', WPM_Migration::DB_VERSION );
 	}
 	WPM_Strings::install();
+	if ( false === get_option( WPM_Settings::OPTION ) ) {
+		// New sites suggest translations instead of redirecting by browser language.
+		update_option( WPM_Settings::OPTION, array( 'browser_mode' => 'banner' ), true );
+	}
 	if ( false === get_option( 'wpm_post_types' ) ) {
 		update_option( 'wpm_post_types', array( 'page', 'post' ) );
 	}

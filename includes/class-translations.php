@@ -200,6 +200,13 @@ class WPM_Translations {
 		if ( $rest ) {
 			self::write_group( $type, $rest );
 		}
+		/**
+		 * Fires after an object left its translation group.
+		 *
+		 * @param string $type 'post' or 'term'.
+		 * @param int    $id   Object ID.
+		 */
+		do_action( 'wpm_object_unlinked', $type, $id );
 		self::flush_stats();
 	}
 
@@ -214,11 +221,19 @@ class WPM_Translations {
 			foreach ( $group as $id ) {
 				delete_metadata( $type, (int) $id, self::META_GROUP );
 			}
-			return;
+		} else {
+			foreach ( $group as $id ) {
+				update_metadata( $type, (int) $id, self::META_GROUP, $group );
+			}
 		}
-		foreach ( $group as $id ) {
-			update_metadata( $type, (int) $id, self::META_GROUP, $group );
-		}
+		/**
+		 * Fires after a translation group was stored (a group of one is no
+		 * longer a relation).
+		 *
+		 * @param string $type  'post' or 'term'.
+		 * @param array  $group lang => id.
+		 */
+		do_action( 'wpm_group_written', $type, $group );
 	}
 
 	// ---------------------------------------------------------------------
@@ -333,6 +348,8 @@ class WPM_Translations {
 
 		self::copy_post_meta( $source->ID, $new_id );
 		self::copy_post_terms( $source, $new_id, $lang );
+		// Before linking, so the group keeps this post's source as its source.
+		update_post_meta( $new_id, WPM_Sync::META_SOURCE, $source->ID );
 
 		$group          = self::get_post_translations( $source->ID );
 		$group[ $lang ] = $new_id;
@@ -407,7 +424,7 @@ class WPM_Translations {
 	/**
 	 * Counts per post type and language, cached until content changes.
 	 *
-	 * @return array{by_lang: array, unassigned: array, translated: array, totals: array}
+	 * @return array{by_lang: array, unassigned: array, translated: array, totals: array, outdated: array}
 	 */
 	public static function get_stats() {
 		$stats = get_transient( 'wpm_stats' );
@@ -421,6 +438,7 @@ class WPM_Translations {
 			'unassigned' => array(),
 			'translated' => array(),
 			'totals'     => array(),
+			'outdated'   => array(),
 		);
 		if ( ! $types ) {
 			return $stats;
@@ -466,6 +484,10 @@ class WPM_Translations {
 			if ( $manager->is_valid( $row->lang ) ) {
 				$stats['translated'][ $row->lang ][ $row->post_type ] = (int) $row->total;
 			}
+		}
+
+		foreach ( WPM_Sync::get_outdated() as $row ) {
+			$stats['outdated'][ $row['lang'] ][ $row['post_type'] ] = ( isset( $stats['outdated'][ $row['lang'] ][ $row['post_type'] ] ) ? $stats['outdated'][ $row['lang'] ][ $row['post_type'] ] : 0 ) + 1;
 		}
 
 		set_transient( 'wpm_stats', $stats, HOUR_IN_SECONDS );

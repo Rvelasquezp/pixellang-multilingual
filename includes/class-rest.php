@@ -108,6 +108,25 @@ class WPM_Rest {
 
 		register_rest_route(
 			'wpm/v1',
+			'/mark-synced',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'mark_synced' ),
+				'permission_callback' => function ( $request ) {
+					return current_user_can( 'edit_post', absint( $request->get_param( 'post_id' ) ) );
+				},
+				'args'                => array(
+					'post_id' => array(
+						'required'          => true,
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			'wpm/v1',
 			'/search',
 			array(
 				'methods'             => 'GET',
@@ -215,14 +234,39 @@ class WPM_Rest {
 		}
 		$out = array();
 		foreach ( $result as $l => $id ) {
-			$out[ $l ] = array(
-				'id'     => $id,
-				'title'  => html_entity_decode( get_the_title( $id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
-				'status' => get_post_status( $id ),
-				'edit'   => get_edit_post_link( $id, 'raw' ),
-			);
+			$out[ $l ] = self::group_item( $id );
 		}
 		return rest_ensure_response( array( 'group' => $out ) );
+	}
+
+	/**
+	 * One member of a group, as returned to the editor box.
+	 *
+	 * @param int $id Post ID.
+	 * @return array
+	 */
+	public static function group_item( $id ) {
+		return array(
+			'id'       => $id,
+			'title'    => html_entity_decode( get_the_title( $id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
+			'status'   => get_post_status( $id ),
+			'edit'     => get_edit_post_link( $id, 'raw' ),
+			'outdated' => WPM_Sync::is_outdated( $id ),
+		);
+	}
+
+	/**
+	 * Marks a translation as up to date with its original.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function mark_synced( $request ) {
+		$id = (int) $request->get_param( 'post_id' );
+		if ( ! WPM_Sync::mark_synced( $id ) ) {
+			return new WP_Error( 'wpm_no_source', __( 'This content is not a translation.', 'pixellang-multilingual' ), array( 'status' => 400 ) );
+		}
+		return rest_ensure_response( array( 'status' => WPM_Sync::get_status( $id ) ) );
 	}
 
 	/**
@@ -241,12 +285,7 @@ class WPM_Rest {
 		WPM_Translations::set_language( 'post', $post->ID, $lang );
 		$out = array();
 		foreach ( WPM_Translations::get_post_translations( $post->ID ) as $l => $id ) {
-			$out[ $l ] = array(
-				'id'     => $id,
-				'title'  => html_entity_decode( get_the_title( $id ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
-				'status' => get_post_status( $id ),
-				'edit'   => get_edit_post_link( $id, 'raw' ),
-			);
+			$out[ $l ] = self::group_item( $id );
 		}
 		return rest_ensure_response(
 			array(

@@ -136,7 +136,34 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 		</div>
 		<p class="wpm-card__intro"><?php esc_html_e( 'A translated page always shows in its own language. These options decide the language of pages that have none (home, archives, search).', 'pixellang-multilingual' ); ?></p>
 		<?php
-		$wpm_toggle( 'browser_detection', WPM_Settings::get( 'browser_detection' ), __( 'Detect the browser language', 'pixellang-multilingual' ), __( 'On a first visit, use the first browser language that is active on the site.', 'pixellang-multilingual' ) );
+		$wpm_mode  = WPM_Settings::browser_mode();
+		$wpm_modes = array(
+			'banner'   => array( __( 'Suggest the translation', 'pixellang-multilingual' ), __( 'Visitors stay on the page they opened. A small banner, written in their language, offers the translation. Search engines and page caches see the same page for everyone.', 'pixellang-multilingual' ), true ),
+			'redirect' => array( __( 'Choose the language automatically', 'pixellang-multilingual' ), __( 'On a first visit, pages without a language (home, archives) show in the first browser language active on the site.', 'pixellang-multilingual' ), false ),
+			'off'      => array( __( 'Ignore the browser language', 'pixellang-multilingual' ), __( 'The default language is used until the visitor picks one with the language switcher.', 'pixellang-multilingual' ), false ),
+		);
+		?>
+		<fieldset class="wpm-setting wpm-setting--stack">
+			<legend class="wpm-setting__label"><?php esc_html_e( 'Browser language', 'pixellang-multilingual' ); ?></legend>
+			<p class="wpm-setting__help"><?php esc_html_e( 'What happens when the browser of a visitor prefers another language than the page.', 'pixellang-multilingual' ); ?></p>
+			<div class="wpm-option-grid wpm-option-grid--modes">
+				<?php foreach ( $wpm_modes as $wpm_key => $wpm_m ) : ?>
+					<label class="wpm-option wpm-option--radio">
+						<input type="radio" name="browser_mode" value="<?php echo esc_attr( $wpm_key ); ?>" <?php checked( $wpm_mode, $wpm_key ); ?> />
+						<span class="wpm-option__body">
+							<span class="wpm-option__title">
+								<strong><?php echo esc_html( $wpm_m[0] ); ?></strong>
+								<?php if ( $wpm_m[2] ) : ?>
+									<span class="wpm-badge wpm-badge--success"><?php esc_html_e( 'Recommended', 'pixellang-multilingual' ); ?></span>
+								<?php endif; ?>
+							</span>
+							<span class="wpm-option__help"><?php echo esc_html( $wpm_m[1] ); ?></span>
+						</span>
+					</label>
+				<?php endforeach; ?>
+			</div>
+		</fieldset>
+		<?php
 		$wpm_toggle( 'front_redirect', WPM_Settings::get( 'front_redirect' ), __( 'Send visitors to the home page of their language', 'pixellang-multilingual' ), __( 'A visitor who chose English and opens the French home page is redirected to the English home page, if it exists.', 'pixellang-multilingual' ) );
 		$wpm_toggle( 'filter_queries', WPM_Settings::get( 'filter_queries' ), __( 'Filter listings by language', 'pixellang-multilingual' ), __( 'Blog, archives and search only list content in the current language (and content without language). Leave off if your theme already filters its listings.', 'pixellang-multilingual' ) );
 		?>
@@ -154,7 +181,16 @@ $wpm_toggle = function ( $name, $checked, $label, $help ) {
 		<div class="wpm-card__head wpm-card__head--section">
 			<h3 class="wpm-card__title"><?php esc_html_e( 'Search engines', 'pixellang-multilingual' ); ?></h3>
 		</div>
-		<?php $wpm_toggle( 'hreflang', WPM_Settings::get( 'hreflang' ), __( 'Output hreflang tags', 'pixellang-multilingual' ), __( 'Tells search engines which page is the translation of which, with x-default on the default language. Turn off only if an SEO plugin already outputs them.', 'pixellang-multilingual' ) ); ?>
+		<?php $wpm_toggle( 'hreflang', WPM_Settings::get( 'hreflang' ), __( 'Output hreflang tags', 'pixellang-multilingual' ), __( 'Tells search engines which page is the translation of which, in the page head and in the XML sitemaps (WordPress, Yoast SEO, Rank Math), with x-default on the default language. Turn off only if another plugin already outputs them.', 'pixellang-multilingual' ) ); ?>
+		<p class="wpm-help"><?php WPM_Icons::render( 'info', 16 ); ?><span>
+			<?php
+			printf(
+				/* translators: %s: sitemap URL. */
+				esc_html__( 'Sitemap: %s', 'pixellang-multilingual' ),
+				'<a href="' . esc_url( defined( 'WPSEO_VERSION' ) || class_exists( 'RankMath' ) ? home_url( '/sitemap_index.xml' ) : home_url( '/wp-sitemap.xml' ) ) . '" target="_blank" rel="noopener">' . esc_html( defined( 'WPSEO_VERSION' ) || class_exists( 'RankMath' ) ? home_url( '/sitemap_index.xml' ) : home_url( '/wp-sitemap.xml' ) ) . '</a>'
+			);
+			?>
+		</span></p>
 		<?php $wpm_form_close(); ?>
 
 	<?php elseif ( 'menus' === $wpm_tab ) : ?>

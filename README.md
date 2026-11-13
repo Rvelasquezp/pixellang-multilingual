@@ -13,7 +13,9 @@ Versiones: [Français](README.fr.md) · [English](README.en.md)
 - **Menús**: bloques Navigation por idioma (temas de bloques) y ubicaciones de menú por idioma (temas clásicos).
 - **Template parts** (cabecera, pie…) con una versión por idioma, gestionadas desde el Site Editor.
 - **Formularios**: Contact Form 7 y Gravity Forms, por grupos de formularios.
-- **SEO**: etiquetas `hreflang` con permalinks limpios y `x-default`.
+- **SEO**: etiquetas `hreflang` con permalinks limpios y `x-default`, alternativas `xhtml:link` en los sitemaps XML (WordPress, Yoast SEO, Rank Math) y `og:locale` / `og:locale:alternate`.
+- **Traducciones desactualizadas**: cuando cambia el texto del original, sus traducciones se marcan "À mettre à jour" en el editor, las listas, la tabla de traducciones y el tablero, con enlace a los cambios (revisiones) y acción "Marcar como al día" (individual o masiva).
+- **Banner de sugerencia de idioma**: en vez de redirigir según el navegador, propone la traducción de la página en el idioma del visitante; compatible con caché de página y buscadores.
 - **Bloque Language Switcher**: códigos, nombres o lista desplegable; opciones para ocultar el idioma actual o los idiomas sin traducción.
 - **Administración**: tablero (cobertura por idioma, estado del sitio), tabla de traducciones con filtro "faltantes", columnas y filtro por idioma en las listas, acción masiva "Definir el idioma", edición rápida, herramientas de mantenimiento.
 - **Compatibilidad WPML**: responde a `wpml_current_language`, `wpml_default_language`, `wpml_active_languages`, `wpml_object_id` y `wpml_element_language_code` cuando WPML no está activo.
@@ -40,7 +42,7 @@ Versiones: [Français](README.fr.md) · [English](README.en.md)
 1. ?set_lang=xx         elección explícita: cookie + redirección a la traducción de la página de origen
 2. El contenido         una entrada o un término con idioma se muestra en ese idioma (y actualiza la cookie)
 3. Cookie wpm_lang      último idioma visto o elegido (duración configurable)
-4. Navegador            Accept-Language, por orden de preferencia (opcional)
+4. Navegador            Accept-Language, solo en modo "redirect" (el modo "banner" solo sugiere)
 5. Idioma por defecto
 ```
 
@@ -76,6 +78,14 @@ Traduce los textos de temas, plugins y plantillas sin modificar sus archivos (me
 - **Datos**: tablas `{prefix}wpm_strings` y `{prefix}wpm_string_translations` (creadas por la migración 3, nunca se borran). Las traducciones se sanean con `wp_kses_post`.
 - **Permisos**: `manage_options` (filtro `wpm_strings_capability`). REST: `POST`/`DELETE /wpm/v1/strings/{id}`.
 - Filtro `wpm_strings_ignored_domains`: dominios que el descubrimiento no registra.
+
+## SEO y calidad (1.3)
+
+**Traducciones desactualizadas.** Cada contenido guarda un hash de su título, contenido y extracto (`_wpm_content_hash`). Una traducción guarda su original (`_wpm_source`) y el hash del original cuando se puso al día (`_wpm_source_hash`), más la revisión del original en ese momento (`_wpm_source_revision`) para el enlace "Voir les changements". Solo cambia el estado si cambia el texto: estados, fechas y campos personalizados no cuentan. La migración db 4 asigna un original a cada grupo existente (el contenido del idioma por defecto) y deja todas las traducciones al día. REST: `POST wpm/v1/mark-synced`. Filtro `wpm_sync_text` para ampliar el texto comparado.
+
+**Sitemaps.** El renderer de los sitemaps de WordPress se sustituye por una subclase que añade `<xhtml:link rel="alternate" hreflang>` a cada URL traducida (mismas reglas que las etiquetas `hreflang`: solo traducciones publicadas, al menos dos idiomas, `x-default`). Con Yoast SEO o Rank Math se usan sus filtros `*sitemap_entry` / `*sitemap_url`. Se desactiva junto con la opción hreflang o con el filtro `wpm_sitemap_alternates`.
+
+**Banner.** Ajustes > Visiteurs et SEO > Langue du navigateur: `banner` (recomendado, por defecto en instalaciones nuevas), `redirect` (comportamiento 1.2) u `off`. El servidor imprime las traducciones de la página con sus textos ya en cada idioma; `assets/js/banner.js` elige según `navigator.languages`. No vuelve a mostrarse cuando el visitante lo cierra, lo sigue o usa un selector de idioma (`localStorage`). Colores personalizables con las variables `--wpm-banner-*`. Filtro `wpm_banner_suggestions`.
 
 ## API para temas
 

@@ -75,6 +75,7 @@ if ( $wpm_none ) {
 			<span class="wpm-field__label"><?php esc_html_e( 'Show', 'pixellang-multilingual' ); ?></span>
 			<select name="missing" class="wpm-select" data-wpm-autosubmit>
 				<option value=""><?php esc_html_e( 'All content', 'pixellang-multilingual' ); ?></option>
+				<option value="outdated" <?php selected( $wpm_table->outdated ); ?>><?php esc_html_e( 'Translations that need an update', 'pixellang-multilingual' ); ?></option>
 				<?php
 				foreach ( $wpm_manager->get_all() as $wpm_slug => $wpm_cfg ) :
 					if ( $wpm_slug === $wpm_table->source ) {

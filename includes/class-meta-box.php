@@ -65,8 +65,15 @@ class WPM_Meta_Box {
 		}
 		$group    = WPM_Translations::get_post_translations( $post->ID );
 		$is_saved = 'auto-draft' !== $post->post_status;
+		$sync     = WPM_Sync::get_status( $post->ID );
+		$source   = WPM_Sync::get_source( $post->ID );
+		$compare  = WPM_Sync::OUTDATED === $sync ? WPM_Sync::get_compare_url( $post->ID ) : '';
 		?>
-		<div class="wpm-mb" data-post="<?php echo esc_attr( $post->ID ); ?>" data-post-type="<?php echo esc_attr( $post->post_type ); ?>">
+		<div class="wpm-mb" data-post="<?php echo esc_attr( $post->ID ); ?>" data-post-type="<?php echo esc_attr( $post->post_type ); ?>"
+			data-sync="<?php echo esc_attr( $sync ); ?>" data-compare="<?php echo esc_url( $compare ); ?>">
+			<?php if ( $source ) : ?>
+				<?php $this->render_sync( $sync, $source, $compare ); ?>
+			<?php endif; ?>
 			<div class="wpm-mb__field">
 				<label class="wpm-mb__label" for="wpm-page-lang"><?php esc_html_e( 'Language of this content', 'pixellang-multilingual' ); ?></label>
 				<select name="wpm_page_lang" id="wpm-page-lang" class="wpm-mb__select">
@@ -94,6 +101,9 @@ class WPM_Meta_Box {
 							<?php if ( $linked_id ) : ?>
 								<a class="wpm-mb__title" href="<?php echo esc_url( (string) get_edit_post_link( $linked_id ) ); ?>"><?php echo esc_html( get_the_title( $linked_id ) ? get_the_title( $linked_id ) : __( '(no title)', 'pixellang-multilingual' ) ); ?></a>
 								<?php WPM_Admin::status_badge( get_post_status( $linked_id ) ); ?>
+								<?php if ( WPM_Sync::is_outdated( $linked_id ) ) : ?>
+									<span class="wpm-badge wpm-badge--warning wpm-mb__outdated"><?php esc_html_e( 'Needs update', 'pixellang-multilingual' ); ?></span>
+								<?php endif; ?>
 							<?php else : ?>
 								<span class="wpm-mb__title"></span>
 							<?php endif; ?>
@@ -123,6 +133,53 @@ class WPM_Meta_Box {
 				<p class="wpm-mb__hint"><?php esc_html_e( 'Save a draft to create translations from this content.', 'pixellang-multilingual' ); ?></p>
 			<?php endif; ?>
 			<p class="wpm-mb__live screen-reader-text" aria-live="polite"></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Sync state of a translation: up to date, or outdated with the actions
+	 * that resolve it.
+	 *
+	 * @param string $sync    WPM_Sync status.
+	 * @param int    $source  Source post ID.
+	 * @param string $compare Revision compare URL or ''.
+	 */
+	private function render_sync( $sync, $source, $compare ) {
+		$source_lang  = WPM_Translations::get_post_language( $source );
+		$source_label = $source_lang ? WPM_Language_Manager::instance()->get_label( $source_lang ) : '';
+		$source_edit  = current_user_can( 'edit_post', $source ) ? get_edit_post_link( $source ) : '';
+		if ( WPM_Sync::OUTDATED !== $sync ) {
+			?>
+			<p class="wpm-mb__sync is-current">
+				<?php WPM_Icons::render( 'check-circle', 16 ); ?>
+				<span>
+					<?php
+					/* translators: %s: language name of the original. */
+					echo esc_html( sprintf( __( 'Up to date with the %s original.', 'pixellang-multilingual' ), $source_label ) );
+					?>
+				</span>
+			</p>
+			<?php
+			return;
+		}
+		?>
+		<div class="wpm-mb__sync is-outdated">
+			<p class="wpm-mb__sync-title"><?php WPM_Icons::render( 'alert', 16 ); ?><strong><?php esc_html_e( 'Needs update', 'pixellang-multilingual' ); ?></strong></p>
+			<p class="wpm-mb__sync-text">
+				<?php
+				/* translators: %s: language name of the original. */
+				echo esc_html( sprintf( __( 'The %s original changed after this translation was last updated.', 'pixellang-multilingual' ), $source_label ) );
+				?>
+			</p>
+			<div class="wpm-mb__sync-actions">
+				<?php if ( $compare ) : ?>
+					<a class="wpm-mb__sync-link" href="<?php echo esc_url( $compare ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'See what changed', 'pixellang-multilingual' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'pixellang-multilingual' ); ?></span></a>
+				<?php elseif ( $source_edit ) : ?>
+					<a class="wpm-mb__sync-link" href="<?php echo esc_url( $source_edit ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open the original', 'pixellang-multilingual' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'pixellang-multilingual' ); ?></span></a>
+				<?php endif; ?>
+				<button type="button" class="button button-small wpm-mb__mark-synced"><?php WPM_Icons::render( 'check', 14 ); ?><?php esc_html_e( 'Mark as up to date', 'pixellang-multilingual' ); ?></button>
+			</div>
 		</div>
 		<?php
 	}
@@ -175,6 +232,7 @@ class WPM_Meta_Box {
 			'wpm-meta-box',
 			'wpmMetaBox',
 			array(
+				'upToDate' => __( 'Up to date with the original.', 'pixellang-multilingual' ),
 				'statuses' => array(
 					'publish' => __( 'Published', 'pixellang-multilingual' ),
 					'draft'   => __( 'Draft', 'pixellang-multilingual' ),

@@ -30,6 +30,15 @@ if ( ! $wpm_languages ) {
 
 $wpm_default_total = isset( $wpm_stats['by_lang'][ $wpm_default ] ) ? $wpm_sum( $wpm_stats['by_lang'][ $wpm_default ] ) : 0;
 $wpm_unassigned    = $wpm_sum( $wpm_stats['unassigned'] );
+$wpm_outdated      = isset( $wpm_stats['outdated'] ) ? (array) $wpm_stats['outdated'] : array();
+$wpm_outdated_all  = 0;
+$wpm_outdated_type = '';
+foreach ( $wpm_outdated as $wpm_by_type ) {
+	$wpm_outdated_all += $wpm_sum( $wpm_by_type );
+	if ( ! $wpm_outdated_type && $wpm_by_type ) {
+		$wpm_outdated_type = (string) key( $wpm_by_type );
+	}
+}
 ?>
 <div class="wpm-page-head">
 	<div>
@@ -85,6 +94,20 @@ $wpm_unassigned    = $wpm_sum( $wpm_stats['unassigned'] );
 					?>
 				</p>
 			<?php endif; ?>
+			<?php
+			$wpm_lang_outdated = isset( $wpm_outdated[ $wpm_slug ] ) ? $wpm_sum( $wpm_outdated[ $wpm_slug ] ) : 0;
+			if ( $wpm_lang_outdated ) :
+				?>
+				<p class="wpm-lang-card__outdated">
+					<?php WPM_Icons::render( 'alert', 14 ); ?>
+					<a href="<?php echo esc_url( WPM_Admin::url( 'wpm-translations', array( 'missing' => 'outdated', 'content_type' => (string) key( $wpm_outdated[ $wpm_slug ] ) ) ) ); ?>">
+						<?php
+						/* translators: %s: number of translations. */
+						echo esc_html( sprintf( _n( '%s translation needs an update', '%s translations need an update', $wpm_lang_outdated, 'pixellang-multilingual' ), number_format_i18n( $wpm_lang_outdated ) ) );
+						?>
+					</a>
+				</p>
+			<?php endif; ?>
 			<a class="wpm-link" href="<?php echo esc_url( WPM_Admin::url( 'wpm-translations', $wpm_is_default ? array() : array( 'missing' => $wpm_slug ) ) ); ?>">
 				<?php $wpm_is_default ? esc_html_e( 'View content', 'pixellang-multilingual' ) : esc_html_e( 'View missing translations', 'pixellang-multilingual' ); ?>
 				<?php WPM_Icons::render( 'arrow-right', 14 ); ?>
@@ -107,6 +130,15 @@ $wpm_unassigned    = $wpm_sum( $wpm_stats['unassigned'] );
 					? sprintf( _n( '%s item has no language', '%s items have no language', $wpm_unassigned, 'pixellang-multilingual' ), number_format_i18n( $wpm_unassigned ) )
 					: __( 'All content has a language', 'pixellang-multilingual' ),
 				$wpm_unassigned ? array( WPM_Admin::url( 'wpm-tools' ), __( 'Assign the default language', 'pixellang-multilingual' ) ) : null,
+			);
+
+			$wpm_checks[] = array(
+				$wpm_outdated_all ? 'warning' : 'ok',
+				$wpm_outdated_all
+					/* translators: %s: number of translations. */
+					? sprintf( _n( '%s translation is older than its original', '%s translations are older than their original', $wpm_outdated_all, 'pixellang-multilingual' ), number_format_i18n( $wpm_outdated_all ) )
+					: __( 'Every translation is up to date with its original', 'pixellang-multilingual' ),
+				$wpm_outdated_all ? array( WPM_Admin::url( 'wpm-translations', array( 'missing' => 'outdated', 'content_type' => $wpm_outdated_type ) ), __( 'Review', 'pixellang-multilingual' ) ) : null,
 			);
 
 			$wpm_menus    = get_option( 'wpm_menus', array() );

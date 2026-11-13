@@ -61,6 +61,12 @@ Traduit les textes des thèmes, extensions et modèles sans modifier leurs fichi
 - **Texte écrit directement dans le HTML** : type « Texte HTML », remplacé seulement dans le texte visible (jamais dans les attributs, liens, scripts, styles, commentaires). Limites : correspondance exacte, et les textes créés par JavaScript ne sont pas traduisibles ainsi.
 - **Données** : tables `{prefix}wpm_strings` et `{prefix}wpm_string_translations`. Permission `manage_options` (filtre `wpm_strings_capability`).
 
+## SEO et qualité (1.3)
+
+- **Traductions à mettre à jour** : quand le texte d'un original change (titre, contenu, extrait), ses traductions sont signalées « À mettre à jour » dans l'éditeur, les listes, l'écran Traductions et le tableau de bord, avec un lien vers les changements (révisions) et l'action « Marquer comme à jour » (une à une ou en lot).
+- **Plans de site multilingues** : chaque URL traduite des plans de site WordPress, Yoast SEO et Rank Math liste ses traductions (`xhtml:link hreflang`, `x-default`). `og:locale` suit la langue de la page avec Yoast SEO et Rank Math.
+- **Bannière de suggestion de langue** : au lieu de rediriger selon le navigateur, la page reste affichée et une bannière, écrite dans la langue du visiteur, propose sa traduction. Compatible avec les caches de page et les moteurs de recherche. Réglage : Visiteurs et SEO > Langue du navigateur.
+
 ## API pour les thèmes
 
 ```php

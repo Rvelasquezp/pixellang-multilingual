@@ -361,7 +361,8 @@ class WPM_Admin {
 			case 'behavior':
 				WPM_Settings::update(
 					array(
-						'browser_detection' => ! empty( $_POST['browser_detection'] ),
+						'browser_mode'      => isset( $_POST['browser_mode'] ) ? sanitize_key( wp_unslash( $_POST['browser_mode'] ) ) : 'banner',
+						'browser_detection' => isset( $_POST['browser_mode'] ) && 'redirect' === $_POST['browser_mode'],
 						'front_redirect'    => ! empty( $_POST['front_redirect'] ),
 						'filter_queries'    => ! empty( $_POST['filter_queries'] ),
 						'hreflang'          => ! empty( $_POST['hreflang'] ),

@@ -32,6 +32,7 @@ class WPM_Settings {
 	public static function defaults() {
 		return array(
 			'browser_detection' => true,
+			'browser_mode'      => '',
 			'cookie_days'       => 30,
 			'front_redirect'    => true,
 			'filter_queries'    => false,
@@ -102,6 +103,9 @@ class WPM_Settings {
 			case 'hreflang':
 				return (bool) $value;
 
+			case 'browser_mode':
+				return in_array( $value, array( 'banner', 'redirect', 'off' ), true ) ? $value : '';
+
 			case 'strings_source_lang':
 				$value = sanitize_key( $value );
 				return in_array( $value, $langs, true ) ? $value : 'en';
@@ -159,6 +163,21 @@ class WPM_Settings {
 				return $clean;
 		}
 		return $value;
+	}
+
+	/**
+	 * What to do with the browser language: 'banner' (suggest the
+	 * translation), 'redirect' (pick the language of pages that have none),
+	 * or 'off'. Sites saved before 1.3 keep their browser_detection choice.
+	 *
+	 * @return string
+	 */
+	public static function browser_mode() {
+		$mode = (string) self::get( 'browser_mode' );
+		if ( '' === $mode ) {
+			$mode = self::get( 'browser_detection' ) ? 'redirect' : 'off';
+		}
+		return $mode;
 	}
 
 	/**

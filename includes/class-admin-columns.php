@@ -84,6 +84,9 @@ class WPM_Admin_Columns {
 			printf( '<span class="wpm-qe-lang" hidden>%s</span>', esc_html( $lang ) );
 			if ( $lang ) {
 				WPM_Admin::language_chip( $lang, true );
+				if ( WPM_Sync::is_outdated( $post_id ) ) {
+					printf( '<span class="wpm-col-outdated">%s%s</span>', WPM_Icons::get( 'alert', 12 ), esc_html__( 'Needs update', 'pixellang-multilingual' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG.
+				}
 			} else {
 				printf( '<span class="wpm-col-unset">%s</span>', esc_html__( 'Not set', 'pixellang-multilingual' ) );
 			}
@@ -107,20 +110,28 @@ class WPM_Admin_Columns {
 			}
 			$linked = isset( $group[ $slug ] ) ? (int) $group[ $slug ] : 0;
 			if ( $linked ) {
-				$status = get_post_status( $linked );
-				$title  = sprintf(
+				$status   = get_post_status( $linked );
+				$outdated = WPM_Sync::is_outdated( $linked );
+				$state    = WPM_Admin::status_label( $status );
+				if ( $outdated ) {
+					/* translators: %s: publication status. */
+					$state = sprintf( __( '%s, needs update', 'pixellang-multilingual' ), $state );
+				}
+				$title = sprintf(
 					/* translators: 1: language, 2: title, 3: status. */
 					__( '%1$s: %2$s (%3$s). Edit', 'pixellang-multilingual' ),
 					$cfg['label'],
 					get_the_title( $linked ),
-					WPM_Admin::status_label( $status )
+					$state
 				);
 				printf(
-					'<a class="wpm-trans__item %1$s" href="%2$s" title="%3$s" aria-label="%3$s">%4$s</a>',
+					'<a class="wpm-trans__item %1$s%2$s" href="%3$s" title="%4$s" aria-label="%4$s">%5$s%6$s</a>',
 					'publish' === $status ? 'is-published' : 'is-draft',
+					$outdated ? ' is-outdated' : '',
 					esc_url( (string) get_edit_post_link( $linked ) ),
 					esc_attr( $title ),
-					esc_html( strtoupper( $slug ) )
+					esc_html( strtoupper( $slug ) ),
+					$outdated ? WPM_Icons::get( 'alert', 10 ) : '' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG.
 				);
 			} elseif ( current_user_can( 'edit_post', $post_id ) ) {
 				/* translators: %s: language name. */
@@ -217,6 +228,7 @@ class WPM_Admin_Columns {
 			/* translators: %s: language name. */
 			$actions[ 'wpm_set_lang_' . $slug ] = sprintf( __( 'Set language: %s', 'pixellang-multilingual' ), $cfg['label'] );
 		}
+		$actions['wpm_mark_synced'] = __( 'Mark translations as up to date', 'pixellang-multilingual' );
 		return $actions;
 	}
 
@@ -230,6 +242,15 @@ class WPM_Admin_Columns {
 	 * @return string
 	 */
 	public function handle_bulk_actions( $redirect, $action, $ids ) {
+		if ( 'wpm_mark_synced' === $action ) {
+			$done = 0;
+			foreach ( array_map( 'absint', (array) $ids ) as $id ) {
+				if ( current_user_can( 'edit_post', $id ) && WPM_Sync::is_outdated( $id ) && WPM_Sync::mark_synced( $id ) ) {
+					++$done;
+				}
+			}
+			return add_query_arg( 'wpm_synced', $done, remove_query_arg( array( 'wpm_bulk_lang', 'wpm_bulk_done', 'wpm_synced' ), $redirect ) );
+		}
 		if ( 0 !== strpos( $action, 'wpm_set_lang_' ) ) {
 			return $redirect;
 		}
@@ -254,6 +275,18 @@ class WPM_Admin_Columns {
 	}
 
 	public function bulk_notice() {
+		if ( isset( $_GET['wpm_synced'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$done = absint( $_GET['wpm_synced'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			printf(
+				'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+				esc_html(
+					$done
+						/* translators: %d: number of translations. */
+						? sprintf( _n( '%d translation marked as up to date.', '%d translations marked as up to date.', $done, 'pixellang-multilingual' ), $done )
+						: __( 'No selected translation needed an update.', 'pixellang-multilingual' )
+				)
+			);
+		}
 		if ( empty( $_GET['wpm_bulk_lang'] ) || ! isset( $_GET['wpm_bulk_done'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}

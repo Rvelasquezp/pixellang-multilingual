@@ -26,6 +26,55 @@
 		);
 	}
 
+	// ---------------------------------------------------------------------
+	// Outdated translation: notice in the block editor and "Mark as up to date".
+	// ---------------------------------------------------------------------
+	var notices = wp.data && wp.data.dispatch( 'core/notices' );
+
+	function markSynced() {
+		var button = box.querySelector( '.wpm-mb__mark-synced' );
+		if ( button ) {
+			button.disabled = true;
+		}
+		return wp.apiFetch( {
+			path: '/wpm/v1/mark-synced',
+			method: 'POST',
+			data: { post_id: postId },
+		} ).then( function () {
+			var block = box.querySelector( '.wpm-mb__sync' );
+			if ( block ) {
+				var done = document.createElement( 'p' );
+				done.className = 'wpm-mb__sync is-current';
+				done.textContent = ( window.wpmMetaBox && window.wpmMetaBox.upToDate ) || '';
+				block.replaceWith( done );
+			}
+			box.dataset.sync = 'current';
+			if ( notices ) {
+				notices.removeNotice( 'wpm-outdated' );
+			}
+			announce( __( 'Translation marked as up to date.', 'pixellang-multilingual' ) );
+		} ).catch( function ( error ) {
+			if ( button ) {
+				button.disabled = false;
+			}
+			var message = ( error && error.message ) || __( 'The translation could not be marked as up to date.', 'pixellang-multilingual' );
+			showError( box.querySelector( '.wpm-mb__sync' ) || box, message );
+			announce( message );
+		} );
+	}
+
+	if ( box.dataset.sync === 'outdated' && notices && document.body.classList.contains( 'block-editor-page' ) ) {
+		var actions = [];
+		if ( box.dataset.compare ) {
+			actions.push( { label: __( 'See what changed', 'pixellang-multilingual' ), url: box.dataset.compare } );
+		}
+		actions.push( { label: __( 'Mark as up to date', 'pixellang-multilingual' ), onClick: markSynced } );
+		notices.createWarningNotice(
+			__( 'The original changed after this translation was last updated.', 'pixellang-multilingual' ),
+			{ id: 'wpm-outdated', isDismissible: true, actions: actions }
+		);
+	}
+
 	function announce( message ) {
 		live.textContent = '';
 		window.setTimeout( function () {
@@ -116,6 +165,16 @@
 			badge.className = 'wpm-badge wpm-badge--' + ( item.status === 'publish' ? 'success' : 'neutral' );
 			badge.textContent = statuses[ item.status ] || item.status;
 			title.after( badge );
+			var oldOutdated = linked.querySelector( '.wpm-mb__outdated' );
+			if ( oldOutdated ) {
+				oldOutdated.remove();
+			}
+			if ( item.outdated ) {
+				var outdated = document.createElement( 'span' );
+				outdated.className = 'wpm-badge wpm-badge--warning wpm-mb__outdated';
+				outdated.textContent = __( 'Needs update', 'pixellang-multilingual' );
+				badge.after( outdated );
+			}
 		} else {
 			value.value = '';
 		}
@@ -177,6 +236,10 @@
 	}
 
 	box.addEventListener( 'click', function ( event ) {
+		if ( event.target.closest( '.wpm-mb__mark-synced' ) ) {
+			markSynced();
+			return;
+		}
 		var unlink = event.target.closest( '.wpm-mb__unlink' );
 		if ( unlink ) {
 			saveLink( unlink.closest( '.wpm-mb__row' ), 0, '' );
